@@ -1,6 +1,6 @@
 {
-  "name": "Pollofolio",
-  "version": "2.0",
+  "name": "Uglyfolio",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
