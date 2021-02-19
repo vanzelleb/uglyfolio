@@ -1,5 +1,5 @@
 {
-  "name": "Uglyfolio",
+  "name": "uglyfolio",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -23,5 +23,6 @@
     "vite": "^2.0.0-beta.70",
     "netlify-lambda": "1.6.3"
   },
-  "description": "A stock data viewing app."
+  "description": "",
+  "keywords": []
 }

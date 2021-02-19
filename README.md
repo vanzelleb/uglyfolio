@@ -1,2 +1,0 @@
-# uglyfolio
-Created with CodeSandbox
