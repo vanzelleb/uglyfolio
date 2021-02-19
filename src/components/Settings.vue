@@ -181,7 +181,7 @@ export default {
           var allTextLines = fileContent.split(/\r\n|\n/);
 
           if (allTextLines.length >= 1) {
-            assets = [];
+            store.assetList = [];
             allTextLines.forEach(function (line) {
               try {
                 const json = JSON.parse(line);
