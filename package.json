@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "vite",
     "start": "vite build",
-    "serve": "vite preview",
     "start:lambda": "netlify-lambda serve ./functions",
     "build:lambda": "netlify-lambda build ./functions"
   },
