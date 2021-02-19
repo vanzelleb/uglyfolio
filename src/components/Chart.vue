@@ -10,14 +10,10 @@
 </template>
 
 <script>
-import VueApexCharts from "vue";
 import { posColor, negColor } from "../utils";
 
 export default {
   props: ["prices", "dates", "height"],
-  components: {
-    apexchart: VueApexCharts,
-  },
   data: function () {
     return {
       series: [
