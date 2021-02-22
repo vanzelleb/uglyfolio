@@ -1,10 +1,10 @@
 <template>
   <main>
     <h2>{{ asset.name }}</h2>
+    <button @click="goHome()">Back</button>
     <button v-if="asset.id" @click="remove(asset)">Delete</button>
-    <button v-if="asset.id" @click="goHome()">Cancel</button>
-    <Form />
     <Info />
+    <Form />
   </main>
   <!--
       <v-alert

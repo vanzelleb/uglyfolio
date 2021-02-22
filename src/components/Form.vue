@@ -36,7 +36,7 @@
       />
 
       <label for="buyPrice"
-        >Price per share @ purchase date (in {{ asset.currency }})</label
+        >Buy price per share (in {{ asset.currency }})</label
       >
       <input
         id="buyPrice"
@@ -54,6 +54,17 @@
       <input
         id="sellValue"
         v-model.number="asset.sellValue"
+        type="number"
+        step="0.01"
+        min="0"
+      />
+
+      <label for="sellPrice"
+        >Sell price per share (in {{ asset.currency }})</label
+      >
+      <input
+        id="sellPrice"
+        v-model.number="asset.sellPrice"
         type="number"
         step="0.01"
         min="0"
@@ -130,6 +141,15 @@ export default {
       (dateBuy, oldDateBuy) => {
         // gets executed when store.settings.currency changes
         console.log("change in buy date detected");
+        useAPI.requestHandler("history", { asset: asset });
+      }
+    );
+
+    watch(
+      () => asset.dateSell,
+      (dateBuy, oldDateBuy) => {
+        // gets executed when store.settings.currency changes
+        console.log("change in sell date detected");
         useAPI.requestHandler("history", { asset: asset });
       }
     );

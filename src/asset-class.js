@@ -15,6 +15,7 @@ export default class Asset {
     this.timeseries = item._timeseries;
     this.payouts = item._payouts;
     this.buyPrice = item._buyPrice;
+    this.sellPrice = item._sellPrice;
     this.targetPrice = item._targetPrice;
     this.yearlyHigh = item._yearlyHigh;
     this.yearlyLow = item._yearlyLow;
@@ -139,7 +140,13 @@ export default class Asset {
   set dateSell(date) {
     if (date) {
       let dt = new Date(date);
-      this._dateBuy = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
+      this._dateSell = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
+      // trim timeseries if needed
+      /*for (date in this.timeseries) {
+        if (date > this.dateSell) {
+          delete this.timeseries[date];
+        }
+      }*/
     } else this._dateSell = null;
   }
 
@@ -216,6 +223,15 @@ export default class Asset {
 
   get buyPrice() {
     return this._buyPrice;
+  }
+
+  set sellPrice(val) {
+    this._sellPrice = val ? parseFloat(val) : null;
+    this._timeseries[this.dateSell] = this.sellPrice;
+  }
+
+  get sellPrice() {
+    return this._sellPrice;
   }
 
   get payouts() {

@@ -1,6 +1,6 @@
 <template>
   <details>
-    <summary>⚙️ Settings</summary>
+    <summary>⚙️ <span class="link">Settings</span></summary>
     <div>
       <fieldset>
         <legend>Backup & Restore</legend>

@@ -1,11 +1,23 @@
 <template>
-  <fieldset>
+  <fieldset v-if="asset.id">
     <legend>Asset information</legend>
     <label>Industry:</label>
-    <i v-if="asset.industry">{{ asset.industry }}</i>
+    <small
+      ><i v-if="asset.industry">{{ asset.industry }}</i></small
+    >
+    <label>Description:</label>
+    <small
+      ><i>
+        <template v-if="asset.description">
+          {{ asset.description }}
+        </template>
+        <template v-else> None </template>
+      </i>
+    </small>
     <label>Address:</label>
-    <div v-if="asset.description">{{ asset.description }}</div>
-    <address v-if="asset.address">{{ asset.address }}</address>
+    <small
+      ><address v-if="asset.address">{{ asset.address }}</address></small
+    >
   </fieldset>
 </template>
 

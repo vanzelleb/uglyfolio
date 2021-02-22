@@ -1,14 +1,27 @@
 <template>
   <details>
-    <summary>🏆 Portfolio Stats</summary>
-    <div>
-      <div v-for="(kpi, name) in kpis" :key="name">
-        <span style="font-size: 12pt"
-          >{{ name }}: {{ toLocaleNumber(kpi.value, 0) }}</span
-        >
-        <span style="font-size: 8pt">&nbsp;{{ kpi.unit }}</span>
-      </div>
-    </div>
+    <summary>🏆 <span class="link">Portfolio Stats</span></summary>
+    <fieldset>
+      <legend>Current balance</legend>
+      <table>
+        <tr v-for="(kpi, name) in kpis" :key="name">
+          <td style="font-size: 12pt">{{ name }}:</td>
+          <td style="font-size: 12pt; text-align: right">
+            {{ toLocaleNumber(kpi.value, 0) }}
+            <span style="font-size: 8pt">&nbsp;{{ kpi.unit }}</span>
+          </td>
+        </tr>
+        <tr>
+          <th>Current balance:</th>
+          <th>
+            {{ toLocaleNumber(kpis["Current balance"].value, 0) }}
+            <span style="font-size: 8pt"
+              >&nbsp;{{ kpis["Current balance"].unit }}</span
+            >
+          </th>
+        </tr>
+      </table>
+    </fieldset>
   </details>
 </template>
 
@@ -21,6 +34,13 @@ import { toLocaleNumber } from "../utils";
 export default {
   setup() {
     const kpis = reactive({
+      "Curently Invested": {
+        icon: "🧾",
+        subtitle: "Purchase value of your assets.",
+        info: "https://www.investopedia.com/terms/i/investment.asp",
+        value: usePortfolio.invested(assets.value),
+        unit: store.settings.currency,
+      },
       "Day's change": {
         subtitle: "How much you are up or down today.",
         info: null,
@@ -34,11 +54,25 @@ export default {
         value: usePortfolio.change(assets.value),
         unit: store.settings.currency,
       },
-      "Forex effects": {
+      "Currency exchange effects": {
         icon: "😢",
         subtitle: "Effect of currency exchange rate changes.",
         info: null,
         value: usePortfolio.FXChange(assets.value),
+        unit: store.settings.currency,
+      },
+      "Profit/Loss from selling": {
+        icon: "💰",
+        subtitle: "Gain/Loss from sold assets & dividends.",
+        info: "https://www.investopedia.com/terms/r/return.asp",
+        value: usePortfolio.returns(assets.value),
+        unit: store.settings.currency,
+      },
+      "Dividend payouts": {
+        icon: "🗓️",
+        subtitle: "Income from receiving dividends.",
+        info: "https://www.investopedia.com/terms/d/dividend.asp",
+        value: usePortfolio.income(assets.value),
         unit: store.settings.currency,
       },
       "Current balance": {
@@ -59,27 +93,6 @@ export default {
     unit: "appCurrency"
   },*/
 
-      Invested: {
-        icon: "🧾",
-        subtitle: "Purchase value of your assets.",
-        info: "https://www.investopedia.com/terms/i/investment.asp",
-        value: usePortfolio.invested(assets.value),
-        unit: store.settings.currency,
-      },
-      Returns: {
-        icon: "💰",
-        subtitle: "Gain/Loss from sold assets & dividends.",
-        info: "https://www.investopedia.com/terms/r/return.asp",
-        value: usePortfolio.returns(assets.value),
-        unit: store.settings.currency,
-      },
-      Income: {
-        icon: "🗓️",
-        subtitle: "Income from receiving dividends.",
-        info: "https://www.investopedia.com/terms/d/dividend.asp",
-        value: usePortfolio.income(assets.value),
-        unit: store.settings.currency,
-      },
       /*
   {
     name: "Avg. monthly income",
@@ -107,7 +120,7 @@ export default {
     method: "sum",
     kpi: null,
     unit: this.$store.store.settings.currency
-  },*/ "Missed Gain": {
+  },*/ "Missed Profit": {
         icon: "😢",
         subtitle: "Drop in value from highest point.",
         info: null,

@@ -43,14 +43,14 @@ function relativeChange(items, benchmark) {
 
 function change(items) {
   const result = items.map((asset) => {
-    if (asset.isSold()) return null;
+    if (asset.isSold()) return 0;
     if (asset.lastPrice)
       return (
         (asset.lastPrice / asset.buyPrice) * asset.buyValue - asset.buyValue
       );
     return null;
   });
-  return sum(result) + FXChange(items);
+  return sum(result);
 }
 
 function FXChange(items) {
@@ -127,7 +127,13 @@ function lastChange(items) {
 }*/
 
 function value(items) {
-  return invested(items) + change(items);
+  return (
+    invested(items) +
+    change(items) +
+    returns(items) +
+    income(items) +
+    FXChange(items)
+  );
 }
 
 function missedGain(items) {

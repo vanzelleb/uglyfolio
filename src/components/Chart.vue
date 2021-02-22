@@ -24,7 +24,6 @@ export default {
       ],
       chartOptions: {
         chart: {
-          offsetX: 0,
           toolbar: {
             show: false,
           },
@@ -33,6 +32,9 @@ export default {
           width: "100%",
           sparkline: {
             enabled: true,
+          },
+          animations: {
+            enabled: false,
           },
         },
         legend: {
