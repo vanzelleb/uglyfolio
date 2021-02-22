@@ -155,12 +155,6 @@ export default class Asset {
     if (date) {
       let dt = new Date(date);
       this._dateSell = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
-      // trim timeseries if needed
-      /*for (date in this.timeseries) {
-        if (date > this.dateSell) {
-          delete this.timeseries[date];
-        }
-      }*/
     } else this._dateSell = null;
   }
 
@@ -184,6 +178,13 @@ export default class Asset {
 
   get timeseries() {
     let ts = this._timeseries;
+    // trim timeseries
+    if (this.dateSell)
+      for (let date in ts) {
+        if (date > this.dateSell) {
+          delete ts[date];
+        }
+      }
     // update the timeseries with the buy and sell prices
     if (this.buyPrice) ts[this.dateBuy] = this.buyPrice;
     if (this.sellPrice && this.dateSell) ts[this.dateSell] = this.sellPrice;

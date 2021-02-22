@@ -1,24 +1,15 @@
 <template>
   <details>
-    <summary>🏆 <span class="link">Portfolio Stats</span></summary>
+    <summary>🏆 <span class="link">Portfolio Performance</span></summary>
     <fieldset>
-      <legend>Current balance</legend>
+      <legend>KPIs</legend>
       <table>
         <tr v-for="(kpi, name) in kpis" :key="name">
           <td style="font-size: 12pt">{{ name }}:</td>
           <td style="font-size: 12pt; text-align: right">
-            {{ toLocaleNumber(kpi.value, 0) }}
+            {{ kpi.value }}
             <span style="font-size: 8pt">&nbsp;{{ kpi.unit }}</span>
           </td>
-        </tr>
-        <tr>
-          <th>Current balance:</th>
-          <th>
-            {{ toLocaleNumber(kpis["Current balance"].value, 0) }}
-            <span style="font-size: 8pt"
-              >&nbsp;{{ kpis["Current balance"].unit }}</span
-            >
-          </th>
         </tr>
       </table>
     </fieldset>
@@ -34,52 +25,55 @@ import { toLocaleNumber } from "../utils";
 export default {
   setup() {
     const kpis = reactive({
-      "Curently Invested": {
+      "Currently invested": {
         icon: "🧾",
         subtitle: "Purchase value of your assets.",
         info: "https://www.investopedia.com/terms/i/investment.asp",
-        value: usePortfolio.invested(assets.value),
+        value: toLocaleNumber(usePortfolio.invested(assets.value), 0),
         unit: store.settings.currency,
       },
-      "Day's change": {
-        subtitle: "How much you are up or down today.",
+      "Day's/Total change": {
+        subtitle: "How much you are up/down.",
         info: null,
-        value: usePortfolio.lastChange(assets.value),
+        value:
+          toLocaleNumber(usePortfolio.change(assets.value), 0) +
+          "/" +
+          toLocaleNumber(usePortfolio.lastChange(assets.value), 0),
         unit: store.settings.currency,
-      },
+      } /*,
       "Total change": {
         icon: "📈",
         subtitle: "Your assets' change in value.",
         info: "https://www.investopedia.com/terms/c/change.asp",
         value: usePortfolio.change(assets.value),
         unit: store.settings.currency,
-      },
-      "Currency exchange effects": {
+      }*/,
+      "Currency effects": {
         icon: "😢",
         subtitle: "Effect of currency exchange rate changes.",
         info: null,
-        value: usePortfolio.FXChange(assets.value),
+        value: toLocaleNumber(usePortfolio.FXChange(assets.value), 0),
         unit: store.settings.currency,
       },
       "Profit/Loss from selling": {
         icon: "💰",
         subtitle: "Gain/Loss from sold assets & dividends.",
         info: "https://www.investopedia.com/terms/r/return.asp",
-        value: usePortfolio.returns(assets.value),
+        value: toLocaleNumber(usePortfolio.returns(assets.value), 0),
         unit: store.settings.currency,
       },
       "Dividend payouts": {
         icon: "🗓️",
         subtitle: "Income from receiving dividends.",
         info: "https://www.investopedia.com/terms/d/dividend.asp",
-        value: usePortfolio.income(assets.value),
+        value: toLocaleNumber(usePortfolio.income(assets.value), 0),
         unit: store.settings.currency,
       },
       "Current balance": {
         icon: "🏦",
         subtitle: "Your assets' current value.",
         info: "https://www.investopedia.com/terms/m/marketvalue.asp",
-        value: usePortfolio.value(assets.value),
+        value: toLocaleNumber(usePortfolio.value(assets.value), 0),
         unit: store.settings.currency,
       },
       /*
@@ -124,19 +118,19 @@ export default {
         icon: "😢",
         subtitle: "Drop in value from highest point.",
         info: null,
-        value: usePortfolio.missedGain(assets.value),
+        value: toLocaleNumber(usePortfolio.missedGain(assets.value), 0),
         unit: store.settings.currency,
       },
       "Delta to target": {
         icon: "😢",
         subtitle: "Predicted change based on avg. price target.",
         info: null,
-        value: usePortfolio.diffToTargetPrice(assets.value),
+        value: toLocaleNumber(usePortfolio.diffToTargetPrice(assets.value), 0),
         unit: store.settings.currency,
       },
     });
 
-    return { kpis, toLocaleNumber };
+    return { kpis };
   },
 };
 </script>

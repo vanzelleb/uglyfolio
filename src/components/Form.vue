@@ -135,7 +135,6 @@ export default {
           // give asset a random ID
           asset.id = Math.random().toString(36).substr(2, 16);
         saveAsset(asset);
-        useAPI.updateHistory(asset);
         router.push("/");
       }
     };
