@@ -2,25 +2,23 @@ import { today, timestamp } from "../utils";
 import { store, saveAsset, persistState } from "../composables/use-store";
 
 export const netlifyFuncBaseUrl =
-  "https://pollofolio.netlify.app/.netlify/functions/";
+  "https://uglyfolio.netlify.app/.netlify/functions/";
 
 const providers = {
   finnhub: {
-    provider: "finnhub",
     baseUrl: "https://finnhub.io/api/v1/"
   },
   iex: {
-    provider: "iex",
     baseUrl: "https://cloud.iexapis.com/stable/"
   },
   exchangeratesapi: {
-    provider: "exchangeratesapi",
     baseUrl: "https://api.exchangeratesapi.io/"
   }
 };
 
 const checkTicker = (asset) => {
-  if (!asset || !asset.ticker) throw Error("User error: No ticker provided.");
+  if (!asset || !asset.ticker)
+    throw Error("App error: API call without ticker.");
 };
 
 export const resources = {
@@ -42,15 +40,13 @@ export const resources = {
       },
       handleResponse: function (json, { asset }) {
         if (!json[0]) throw Error("No data");
-        asset.buyPrice = asset.buyPrice
-          ? asset.buyPrice
-          : parseFloat(json[0]["close"]).toFixed(2);
-        this.lastChecked = today;
+        if (!asset.buyPrice)
+          asset.buyPrice = parseFloat(json[0]["close"]).toFixed(2);
         saveAsset(asset);
       }
     },
     1: {
-      provider: providers.finnhub.provider,
+      provider: "finnhub",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri = providers.finnhub.baseUrl + "stock/candle";
@@ -71,10 +67,8 @@ export const resources = {
           timeseries[date] = parseFloat(json.c[i]).toFixed(2);
         }
         asset.timeseries = timeseries;
-        asset.buyPrice = asset.buyPrice
-          ? asset.buyPrice
-          : parseFloat(json.c[0]).toFixed(2);
-        asset.lastChecked = today;
+        // if buy price was not set manually use the first value of the timeseries
+        if (!asset.buyPrice) asset.buyPrice = parseFloat(json.c[0]).toFixed(2);
         asset.currency = "USD";
         saveAsset(asset);
       }
@@ -82,7 +76,7 @@ export const resources = {
   },
   quote: {
     1: {
-      provider: providers.finnhub.provider,
+      provider: "finnhub",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri = providers.finnhub.baseUrl + "quote";
@@ -101,12 +95,11 @@ export const resources = {
       }
     },
     2: {
-      provider: providers.iex.provider,
+      provider: "iex",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri = providers.iex.baseUrl + "stock/" + asset.ticker + "/quote";
-        const params = {
-        };
+        const params = {};
         return { uri, params };
       },
       handleResponse: function (json, { asset }) {
@@ -118,13 +111,12 @@ export const resources = {
   },
   company: {
     1: {
-      provider: providers.iex.provider,
+      provider: "iex",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri =
           providers.iex.baseUrl + "stock/" + asset.ticker + "/company";
-        const params = {
-        };
+        const params = {};
         return { uri, params };
       },
       handleResponse: function (json, { asset }) {
@@ -142,7 +134,7 @@ export const resources = {
       }
     },
     2: {
-      provider: providers.finnhub.provider,
+      provider: "finnhub",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri = providers.finnhub.baseUrl + "stock/profile2";
@@ -162,13 +154,13 @@ export const resources = {
   },
   signal: {
     1: {
-      provider: providers.finnhub.provider,
+      provider: "finnhub",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri = providers.finnhub.baseUrl + "scan/technical-indicator";
         const params = {
           symbol: asset.ticker,
-          resolution: "M",
+          resolution: "M"
         };
         return { uri, params };
       },
@@ -182,12 +174,12 @@ export const resources = {
   },
   target: {
     1: {
-      provider: providers.finnhub.provider,
+      provider: "finnhub",
       getUri: function ({ asset }) {
         checkTicker(asset);
         const uri = providers.finnhub.baseUrl + "stock/price-target";
         const params = {
-          symbol: asset.ticker,
+          symbol: asset.ticker
         };
         return { uri, params };
       },
@@ -199,7 +191,7 @@ export const resources = {
   },
   news: {
     1: {
-      provider: providers.finnhub.provider,
+      provider: "finnhub",
       getUri: function ({ asset, from, to }) {
         checkTicker(asset);
         const uri = providers.finnhub.baseUrl + "company-news";

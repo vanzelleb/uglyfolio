@@ -48,7 +48,11 @@ async function requestHandler(type, requestObj) {
 }
 
 const updateCurrencies = () => {
-  useAPI.requestHandler("currencies");
+  requestHandler("currencies");
+};
+
+const updateHistory = (item) => {
+  requestHandler("history", { asset: item });
 };
 
 const updateAssets = () => {
@@ -100,5 +104,6 @@ export const useAPI = {
   requestHandler,
   updateFXRates,
   updateAssets,
-  updateCurrencies
+  updateCurrencies,
+  updateHistory
 };

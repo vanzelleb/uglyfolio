@@ -9,13 +9,11 @@
     "build:lambda": "netlify-lambda build ./functions"
   },
   "dependencies": {
-    "@ionic/core": "5.5.4",
-    "@ionic/vue": "5.5.4",
-    "apexcharts": "3.24.0",
-    "node-fetch": "2.6.1",
-    "vue": "3.0.5",
-    "vue-router": "4.0.3",
-    "vue3-apexcharts": "1.2.1"
+    "apexcharts": "^3.25.0",
+    "node-fetch": "^2.6.1",
+    "vue": "^3.0.5",
+    "vue-router": "^4.0.4",
+    "vue3-apexcharts": "^1.2.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.1.4",

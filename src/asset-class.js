@@ -19,12 +19,13 @@ export default class Asset {
     this.targetPrice = item._targetPrice;
     this.yearlyHigh = item._yearlyHigh;
     this.yearlyLow = item._yearlyLow;
+    this.lastChecked = item._lastChecked;
+    this.lastPrice = item._lastPrice;
     // values that don't need setters/getters
     this.peRatio = item.peRatio;
     this.address = item.address;
     this.industry = item.industry;
     this.description = item.description;
-    this.lastChecked = item.lastChecked;
     this.error = item.error;
     this.news = [];
     this.signal = item.signal;
@@ -48,7 +49,7 @@ export default class Asset {
   }
 
   get highPrice() {
-    let max = Math.max(...Object.values(this._timeseries));
+    let max = Math.max(...Object.values(this.timeseries));
     return max ? max : 0;
   }
 
@@ -88,20 +89,33 @@ export default class Asset {
     return this._targetPrice ? this._targetPrice : null;
   }
 
+  get lastChecked() {
+    if (this._lastChecked)
+      return this._lastChecked.toISOString().substring(0, 10);
+    else return null;
+  }
+
+  set lastChecked(date) {
+    if (date) {
+      let dt = new Date(date);
+      this._lastChecked = new Date(
+        dt.getTime() - dt.getTimezoneOffset() * 60000
+      );
+    } else this._lastChecked = null;
+  }
+
   get lastPrice() {
-    return this.prices.length > 0 ? this.prices[this.prices.length - 1] : null;
+    return this._lastPrice;
   }
 
   set lastPrice(val) {
-    if (this.lastChecked && val && !this.isSold())
-      this._timeseries[this.lastChecked] = parseFloat(val);
-    //this._lastPrice = val ? parseFloat(val) : null;
+    this._lastPrice = val ? parseFloat(val) : "";
   }
 
   get lastChangePct() {
     if (!this.isSold() && this.dates.length > 1)
       return (
-        this.lastPrice / this._timeseries[this.dates[this.dates.length - 2]] - 1
+        this.lastPrice / this.timeseries[this.dates[this.dates.length - 2]] - 1
       );
     return null;
   }
@@ -169,7 +183,13 @@ export default class Asset {
   }
 
   get timeseries() {
-    return this._timeseries;
+    let ts = this._timeseries;
+    // update the timeseries with the buy and sell prices
+    if (this.buyPrice) ts[this.dateBuy] = this.buyPrice;
+    if (this.sellPrice && this.dateSell) ts[this.dateSell] = this.sellPrice;
+    if (!this.isSold() && this.lastChecked && this.lastPrice)
+      ts[this.lastChecked] = this.lastPrice;
+    return ts;
   }
 
   set timeseries(val) {
@@ -178,18 +198,15 @@ export default class Asset {
       let dates = Object.keys(val);
       dates.sort();
       for (let date of dates) this._timeseries[date] = parseFloat(val[date]);
-      // manually set the last available info
-      if (this.lastChecked && this.lastPrice && !this.isSold())
-        this._timeseries[this.lastChecked] = this.lastPrice;
     }
   }
 
   get prices() {
-    return Object.values(this._timeseries);
+    return Object.values(this.timeseries);
   }
 
   get dates() {
-    return Object.keys(this._timeseries);
+    return Object.keys(this.timeseries);
   }
 
   get buyValue() {
@@ -218,7 +235,6 @@ export default class Asset {
 
   set buyPrice(val) {
     this._buyPrice = val ? parseFloat(val) : null;
-    this._timeseries[this.dateBuy] = this.buyPrice;
   }
 
   get buyPrice() {
@@ -227,7 +243,6 @@ export default class Asset {
 
   set sellPrice(val) {
     this._sellPrice = val ? parseFloat(val) : null;
-    this._timeseries[this.dateSell] = this.sellPrice;
   }
 
   get sellPrice() {

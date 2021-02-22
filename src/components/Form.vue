@@ -1,10 +1,7 @@
 <template>
   <form @submit.prevent="save()">
     <fieldset>
-      <legend>Transaction details</legend>
-      <div v-for="(error, id) of errors" :key="id">
-        {{ error }}
-      </div>
+      <legend>Buy transaction details</legend>
 
       <label for="dateBuy">Purchase date</label>
       <input
@@ -13,6 +10,7 @@
         required
         v-model="asset.dateBuy"
         :max="today"
+        @change="updateHistory(asset)"
       />
 
       <label for="buyValue">Invested amount (in {{ settings.currency }})</label>
@@ -46,6 +44,12 @@
         min="0"
         required
       />
+    </fieldset>
+    <div>
+      <button type="submit">Save</button>
+    </div>
+    <fieldset>
+      <legend>Sell transaction details</legend>
 
       <label for="dateSell">Sell date</label>
       <input id="dateSell" type="date" v-model="asset.dateSell" :max="today" />
@@ -69,10 +73,13 @@
         step="0.01"
         min="0"
       />
-      <div>
-        <button type="submit">Save</button>
-      </div>
     </fieldset>
+    <div v-for="(error, id) of errors" :key="id" style="color: red">
+      {{ error }}
+    </div>
+    <div>
+      <button type="submit">Save</button>
+    </div>
   </form>
 </template>
 
@@ -80,7 +87,7 @@
 import { computed, reactive, ref, watch, inject, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { useAPI } from "../composables/use-api";
-import { today, toLocaleNumber } from "../utils";
+import { today } from "../utils";
 import { store, asset, saveAsset } from "../composables/use-store";
 
 export default {
@@ -88,10 +95,13 @@ export default {
     const router = useRouter();
     const errors = ref([]);
 
-    // get latest data about the stock
+    // get latest stock price every time the stock is loaded
     useAPI.requestHandler("quote", { asset: asset });
-    useAPI.requestHandler("signal", { asset: asset });
-    useAPI.requestHandler("target", { asset: asset });
+    // update other stock info only once a day
+    if (asset.lastChecked !== today) {
+      useAPI.requestHandler("signal", { asset: asset });
+      useAPI.requestHandler("target", { asset: asset });
+    }
 
     /*const allowedDates = (val) => {
       let date = new Date(val);
@@ -108,21 +118,14 @@ export default {
     const checkForm = () => {
       errors.value = [];
 
-      if (!asset.dateBuy) {
-        errors.value.push("Buy date required.");
-      }
-
-      if (!asset.buyValue) {
-        errors.value.push("Invested amount required.");
-      }
-
-      if (!asset.amount) {
-        errors.value.push("Number of shares required.");
-      }
-
-      if (asset.dateSell && asset.dateSell < asset.dateBuy) {
-        errors.value.push("Sell date is before Purchase date.");
-      }
+      if (asset.dateSell && asset.dateSell < asset.dateBuy)
+        errors.value.push("Sell date is before purchase date.");
+      if (asset.dateSell && !asset.sellPrice)
+        errors.value.push("Sell price is missing.");
+      if (!asset.dateSell && asset.sellPrice)
+        errors.value.push("Sell date is missing.");
+      if (asset.dateSell && asset.sellPrice && !asset.sellValue)
+        errors.value.push("Sell value is missing.");
     };
 
     const save = () => {
@@ -132,27 +135,10 @@ export default {
           // give asset a random ID
           asset.id = Math.random().toString(36).substr(2, 16);
         saveAsset(asset);
+        useAPI.updateHistory(asset);
         router.push("/");
       }
     };
-
-    watch(
-      () => asset.dateBuy,
-      (dateBuy, oldDateBuy) => {
-        // gets executed when store.settings.currency changes
-        console.log("change in buy date detected");
-        useAPI.requestHandler("history", { asset: asset });
-      }
-    );
-
-    watch(
-      () => asset.dateSell,
-      (dateBuy, oldDateBuy) => {
-        // gets executed when store.settings.currency changes
-        console.log("change in sell date detected");
-        useAPI.requestHandler("history", { asset: asset });
-      }
-    );
 
     return {
       save,
@@ -160,7 +146,7 @@ export default {
       asset,
       settings: store.settings,
       errors,
-      toLocaleNumber,
+      ...useAPI,
     };
   },
 };
