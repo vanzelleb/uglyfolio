@@ -1,78 +1,38 @@
 <template>
-  <fieldset v-for="(item, id) of assets" :key="id" @click="showDetails(item)">
-    <legend>{{ item.name }}</legend>
-    <h3 v-if="!item.dateSell" style="display: inline-block">
-      {{ change([item]) >= 0 ? "Up " : "Down " }}
-      {{ toLocaleNumber(change([item]), 0) }}
-    </h3>
-    <h3 v-else style="display: inline-block">
-      {{ returns([item]) >= 0 ? "You made " : "You lost " }}
-      {{ toLocaleNumber(returns([item]), 0) }}
-    </h3>
-    <h5 style="display: inline-block">&nbsp;{{ settings.currency }}</h5>
-    <Chart :prices="item.prices" :dates="item.dates" height="60" />
-  </fieldset>
-
-  <!--<template v-if="assets.length > 0">
-                <v-row class="mx-1">
-                  <v-col
-                    class="anim2 py-0 px-0"
-                    cols="12"
-                    sm="6"
-                    md="4"
-                    v-for="(item, idx) of assets"
-                    :key="`asset-${idx}`"
-                  >
-                    <v-card
-                      light
-                      outlined
-                      ripple
-                      :disabled="item.id === assetID"
-                      class="mx-2 mb-2"
-                      v-on:click="showDetails(item)"
-                    >
-                      <v-list-item class="pr-2 px-3">
-                        <v-list-item-content class="font-weight-regular py-2">
-                          {{ item.name }}
-                          <div class="numberFont" :class="numberColor(item)">
-                            {{ toLocaleNumber(item[kpi.key], 0) }}
-                            <span class="caption">&nbsp;{{ unit }}</span>
-                            <span v-if="item.hasAlarm()" class="ml-2">⏰</span>
-                            <span v-if="item.forexChange" class="ml-2">💵</span>
-                  <span v-if="item.return" class="ml-2">💰</span>
-                  <span
-                    v-if="item.signal && item.signal.toUpperCase().includes('BUY')"
-                    class="ml-2"
-                  >👍</span>
-                  <span
-                    v-if="item.signal && item.signal.toUpperCase().includes('SELL')"
-                    class="ml-2"
-                      >👎</span>
-                          </div>
-                        </v-list-item-content>
-                        <v-list-item-action class="ma-0">
-                          <v-btn small icon>
-                            <v-icon>mdi-dots-vertical</v-icon>
-                          </v-btn>
-                        </v-list-item-action>
-                      </v-list-item>
-                      <div
-                        v-if="expanded && item.prices.length > 1"
-                        class="hidden-sm-and-up"
-                        style="height: 55px"
-                      >
-                        <Sparkline
-                          :values="item.prices"
-                          height="50"
-                          :kpi="item.change"
-                        />
-                      </div>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </template>-->
-  <!-- </ion-content>
-  </div>-->
+  <div class="container">
+    <div class="grid-row">
+      <div class="grid-item" v-for="(item, id) of assets" :key="id">
+        <fieldset @click="showDetails(item)">
+          <legend>
+            {{ item.name }}
+            <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
+          <span v-if="item.forexChange" class="ml-2">💵</span>
+          <span v-if="item.return" class="ml-2">💰</span>
+          <span
+            v-if="item.signal && item.signal.toUpperCase().includes('BUY')"
+            class="ml-2"
+            >👍</span
+          >
+          <span
+            v-if="item.signal && item.signal.toUpperCase().includes('SELL')"
+            class="ml-2"
+            >👎</span
+          >-->
+          </legend>
+          <h4 v-if="!item.dateSell" style="display: inline-block">
+            {{ change([item]) >= 0 ? "Up " : "Down " }}
+            {{ toLocaleNumber(change([item]), 0) }}
+          </h4>
+          <h4 v-else style="display: inline-block">
+            {{ returns([item]) >= 0 ? "You made " : "You lost " }}
+            {{ toLocaleNumber(returns([item]), 0) }}
+          </h4>
+          <h5 style="display: inline-block">&nbsp;{{ settings.currency }}</h5>
+          <Chart :prices="item.prices" :dates="item.dates" height="60" />
+        </fieldset>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

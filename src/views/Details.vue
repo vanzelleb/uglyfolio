@@ -3,6 +3,7 @@
     <h2>{{ asset.name }}</h2>
     <button @click="goHome()">Back</button>
     <button v-if="asset.id" @click="remove(asset)">Delete</button>
+    <br />
     <Info />
     <Form />
   </main>

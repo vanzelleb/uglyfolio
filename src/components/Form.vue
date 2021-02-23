@@ -45,9 +45,7 @@
         required
       />
     </fieldset>
-    <div>
-      <button type="submit">Save</button>
-    </div>
+    <br />
     <fieldset>
       <legend>Sell transaction details</legend>
 

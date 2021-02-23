@@ -18,8 +18,10 @@
     <div>
       <small>
         Each stock has a unique identifier, called ticker. You can search
-        tickers
-        <a target="_blank" href="https://finance.yahoo.com">here</a>.
+        tickers, e.g. on
+        <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
+          >Yahoo Finance</a
+        >.
       </small>
     </div>
   </fieldset>
