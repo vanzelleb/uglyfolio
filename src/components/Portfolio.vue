@@ -43,7 +43,6 @@ import Chart from "../components/Chart.vue";
 import SearchAsset from "../components/SearchAsset.vue";
 import { usePortfolio } from "../composables/use-portfolio";
 import { computed } from "vue";
-import { useRouter } from "vue-router";
 import { toLocaleNumber } from "../utils";
 import { store, asset, assets, setAsset } from "../composables/use-store";
 
@@ -53,8 +52,6 @@ export default {
     Chart,
   },
   setup() {
-    const router = useRouter();
-
     /*const filteredAssets = computed(() => {
       let filtered = [];
       assets.value.forEach((asset) => {
@@ -64,12 +61,6 @@ export default {
     });*/
 
     const hasAssets = computed(() => store.assetList.length > 0);
-
-    const showDetails = (item) => {
-      // create and copy a new object to avoid copying a reference to the original asset
-      setAsset(item);
-      router.push("/details");
-    };
 
     return {
       hasAssets,

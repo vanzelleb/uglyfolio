@@ -83,14 +83,12 @@
 
 <script>
 import { computed, reactive, ref, watch, inject, toRefs } from "vue";
-import { useRouter } from "vue-router";
 import { useAPI } from "../composables/use-api";
 import { today } from "../utils";
 import { store, asset, saveAsset } from "../composables/use-store";
 
 export default {
   setup(props) {
-    const router = useRouter();
     const errors = ref([]);
 
     // get latest stock price every time the stock is loaded
@@ -133,7 +131,6 @@ export default {
           // give asset a random ID
           asset.id = Math.random().toString(36).substr(2, 16);
         saveAsset(asset);
-        router.push("/");
       }
     };
 

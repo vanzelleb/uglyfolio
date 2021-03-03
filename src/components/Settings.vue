@@ -90,7 +90,6 @@
 
 <script>
 import { onMounted, watch, toRefs } from "vue";
-import { useRouter } from "vue-router";
 import {
   store,
   assets,
@@ -103,8 +102,6 @@ import { today } from "../utils";
 
 export default {
   setup() {
-    const router = useRouter();
-
     const benchmarksList = [
       { text: "S&P500", value: "SPY" },
       { text: "NASDAQ", value: "QQQ" },
@@ -138,7 +135,6 @@ export default {
 
     return {
       benchmarksList,
-      router,
       ...toRefs(store),
       assets,
     };
