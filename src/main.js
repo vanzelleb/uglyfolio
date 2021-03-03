@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import router from "./router.js";
 import VueApexCharts from "vue3-apexcharts";
 
-const app = createApp(App).use(router).use(VueApexCharts);
+const app = createApp(App).use(VueApexCharts);
 app.mount("#app");

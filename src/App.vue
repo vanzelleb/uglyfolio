@@ -1,28 +1,54 @@
 <template>
   <div v-cloak class="noselect">
     <header>
-      <h1 class="handFont" @click="$router.push('/')">Uglyfolio</h1>
+      <h1 class="handFont">Uglyfolio</h1>
       <Settings />
     </header>
-    <router-view />
+    <main>
+      <div v-if="asset.name">
+        <h2>{{ asset.name }}</h2>
+        <button @click="setAsset()">Close</button>
+        <button v-if="asset.id" @click="remove(asset)">Delete</button>
+        <Info />
+        <Form />
+      </div>
+      <div v-else>
+        <KPIs />
+        <SearchAsset />
+        <Portfolio />
+      </div>
+    </main>
   </div>
 </template>
 
 
 <script>
 import { useAPI } from "./composables/use-api";
-import { store, assets, initState } from "./composables/use-store";
+import {
+  store,
+  asset,
+  assets,
+  setAsset,
+  removeAsset,
+  initState,
+} from "./composables/use-store";
 import { onMounted, ref, reactive, provide, readonly } from "vue";
 import { today } from "./utils";
-import SearchAsset from "./components/SearchAsset.vue";
 import Settings from "./components/Settings.vue";
 import KPIs from "./components/KPIs.vue";
+import SearchAsset from "./components/SearchAsset.vue";
+import Portfolio from "./components/Portfolio.vue";
+import Form from "./components/Form.vue";
+import Info from "./components/Info.vue";
 
 export default {
   components: {
-    SearchAsset,
-    Settings,
     KPIs,
+    Portfolio,
+    SearchAsset,
+    Info,
+    Form,
+    Settings,
   },
   setup() {
     initState();
@@ -41,6 +67,18 @@ export default {
   }
 }*/
     });
+
+    const remove = (asset) => {
+      if (confirm("Are you sure you want delete it?")) {
+        removeAsset(asset);
+      }
+    };
+
+    return {
+      remove,
+      asset,
+      setAsset,
+    };
   },
 };
 </script>

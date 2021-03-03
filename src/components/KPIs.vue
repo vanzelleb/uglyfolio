@@ -36,9 +36,9 @@ export default {
         subtitle: "How much you are up/down.",
         info: null,
         value:
-          toLocaleNumber(usePortfolio.change(assets.value), 0) +
+          toLocaleNumber(usePortfolio.lastChange(assets.value), 0) +
           "/" +
-          toLocaleNumber(usePortfolio.lastChange(assets.value), 0),
+          toLocaleNumber(usePortfolio.change(assets.value), 0),
         unit: store.settings.currency,
       } /*,
       "Total change": {
@@ -116,7 +116,7 @@ export default {
     unit: this.$store.store.settings.currency
   },*/ "Missed Profit": {
         icon: "😢",
-        subtitle: "Drop in value from highest point.",
+        subtitle: "Drop in value from highest price.",
         info: null,
         value: toLocaleNumber(usePortfolio.missedGain(assets.value), 0),
         unit: store.settings.currency,

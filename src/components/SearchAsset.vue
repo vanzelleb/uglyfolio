@@ -9,7 +9,7 @@
       maxLength="10"
       placeholder="Asset ticker/symbol"
     />
-    <button @click="getCompanyInfo()">🔍</button>
+    <button @click="getCompanyInfo()">🔍 Search</button>
     <small>
       <p v-if="ticker && error" style="color: red">
         {{ error }}
@@ -34,9 +34,7 @@
       </h5>
       <p>Do you want to add this asset to your portfolio?</p>
       <button type="button" value="cancel" @click="cancel()">Cancel</button>
-      <button type="button" value="yes" @click="$router.push('/details')">
-        Yes
-      </button>
+      <button type="button" value="yes" @click="confirm()">Yes</button>
     </form>
   </dialog>
 </template>
@@ -44,11 +42,13 @@
 <script>
 import { watch, ref, reactive, onMounted } from "vue";
 import { useAPI } from "../composables/use-api";
-import { asset, setAsset } from "../composables/use-store";
+import { setAsset } from "../composables/use-store";
+import Asset from "../asset-class";
 
 export default {
   setup() {
     const ticker = ref("");
+    const asset = reactive(new Asset());
     let modal = null;
 
     onMounted(() => {
@@ -73,13 +73,19 @@ export default {
     };
 
     const cancel = () => {
-      // reset the variables
+      // reset the ticker field
       ticker.value = "";
-      setAsset();
+      modal.close();
+    };
+
+    const confirm = () => {
+      // reset the variables
+      setAsset(asset);
       modal.close();
     };
 
     return {
+      modal,
       asset,
       ticker,
       confirm,

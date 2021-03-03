@@ -2,7 +2,7 @@
   <div class="container">
     <div class="flexbox">
       <fieldset
-        @click="showDetails(item)"
+        @click="setAsset(item)"
         class="col"
         v-for="(item, id) of assets"
         :key="id"
@@ -77,6 +77,7 @@ export default {
       showDetails,
       settings: store.settings,
       asset,
+      setAsset,
       assets,
       ...usePortfolio,
     };

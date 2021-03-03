@@ -1,10 +1,20 @@
 <template>
   <main>
-    <KPIs />
-    <br />
-    <SearchAsset />
-    <br />
-    <Portfolio />
+    <div v-if="asset.name">
+      <h2>{{ asset.name }}</h2>
+      <button @click="setAsset()">Close</button>
+      <button v-if="asset.id" @click="remove(asset)">Delete</button>
+      <br />
+      <Info />
+      <Form />
+    </div>
+    <div v-else>
+      <KPIs />
+      <br />
+      <SearchAsset />
+      <br />
+      <Portfolio />
+    </div>
   </main>
 </template>
 
@@ -12,17 +22,30 @@
 import KPIs from "../components/KPIs.vue";
 import SearchAsset from "../components/SearchAsset.vue";
 import Portfolio from "../components/Portfolio.vue";
-import { setAsset } from "../composables/use-store";
+import Form from "../components/Form.vue";
+import Info from "../components/Info.vue";
+import { asset, setAsset, removeAsset } from "../composables/use-store";
 
 export default {
   components: {
     KPIs,
     Portfolio,
     SearchAsset,
+    Info,
+    Form,
   },
   setup() {
-    // reset the asset object every time we return to the home screen
-    setAsset();
+    const remove = (asset) => {
+      if (confirm("Are you sure you want delete it?")) {
+        removeAsset(asset);
+      }
+    };
+
+    return {
+      remove,
+      asset,
+      setAsset,
+    };
   },
 };
 </script>
