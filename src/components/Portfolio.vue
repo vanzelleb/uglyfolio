@@ -65,7 +65,6 @@ export default {
     return {
       hasAssets,
       toLocaleNumber,
-      showDetails,
       settings: store.settings,
       asset,
       setAsset,

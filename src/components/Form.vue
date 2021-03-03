@@ -85,7 +85,7 @@
 import { computed, reactive, ref, watch, inject, toRefs } from "vue";
 import { useAPI } from "../composables/use-api";
 import { today } from "../utils";
-import { store, asset, saveAsset } from "../composables/use-store";
+import { store, asset, saveAsset, setAsset } from "../composables/use-store";
 
 export default {
   setup(props) {
@@ -131,6 +131,8 @@ export default {
           // give asset a random ID
           asset.id = Math.random().toString(36).substr(2, 16);
         saveAsset(asset);
+        // clear global asset variable in order to return to home screen
+        setAsset();
       }
     };
 
