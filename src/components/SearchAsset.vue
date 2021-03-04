@@ -64,7 +64,6 @@ export default {
     );
 
     const getCompanyInfo = async () => {
-      useAPI.error.value = "";
       if (ticker.value) {
         asset.ticker = ticker.value;
         await useAPI.requestHandler("company", { asset: asset });

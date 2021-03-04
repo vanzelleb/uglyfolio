@@ -1,8 +1,8 @@
 const fetch = require("node-fetch");
 
-const allowedOrigins = ["https://pollofolio.netlify.app"];
+const allowedOrigins = ["https://uglyfolio.netlify.app"];
 
-exports.callApi = function (uri, params, origin) {
+exports.callApi = function (url, params, origin) {
   return new Promise(async function (resolve) {
     let responseText = null;
     let headers = {};
@@ -13,11 +13,11 @@ exports.callApi = function (uri, params, origin) {
     //}
 
     try {
-      uri = new URL(uri);
+      url = new URL(url);
       Object.keys(params).forEach((key) =>
-        uri.searchParams.append(key, params[key])
+        url.searchParams.append(key, params[key])
       );
-      res = await fetch(uri);
+      res = await fetch(url);
       responseText = await res.text();
       if (responseText === "{}") responseText = "No data found.";
       resolve({

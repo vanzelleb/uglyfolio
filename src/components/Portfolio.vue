@@ -1,14 +1,9 @@
 <template>
   <div class="container">
     <div class="flexbox">
-      <fieldset
-        @click="setAsset(item)"
-        class="col"
-        v-for="(item, id) of assets"
-        :key="id"
-      >
+      <fieldset class="col" v-for="(item, id) of assets" :key="id">
         <legend>
-          {{ item.name }}
+          <span class="link" @click="setAsset(item)">{{ item.name }}</span>
           <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
           <span v-if="item.forexChange" class="ml-2">💵</span>
           <span v-if="item.return" class="ml-2">💰</span>

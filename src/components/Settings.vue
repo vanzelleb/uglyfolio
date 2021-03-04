@@ -27,7 +27,7 @@
           id="currency"
           :value="settings.currency"
           interface="popover"
-          @ionChange="settings.currency = $event.target.value"
+          @change="settings.currency = $event.target.value"
         >
           <option v-for="item of currencies" :value="item" :key="item">
             {{ item }}
@@ -108,11 +108,44 @@ export default {
       { text: "DOW JONES", value: "DIA" },
     ];
 
+    const updateFXRates = () => {
+      const FXbase = store.settings.currency;
+      // retrieve latest exchange rates for all currency combinations
+      for (const item of assets.value) {
+        if (item.currency && item.currency !== FXbase) {
+          let hasFXForBuyDate = false;
+          let hasLatestFX = false;
+          const hasCurrencyPair = store.exchangeRates[FXbase].hasOwnProperty(
+            item.currency
+          );
+
+          if (!hasCurrencyPair) store.exchangeRates[FXbase][item.currency] = {};
+          let currencyPair = store.exchangeRates[FXbase][item.currency];
+
+          hasFXForBuyDate = currencyPair.hasOwnProperty(item.dateBuy);
+          hasLatestFX = currencyPair.hasOwnProperty(today);
+
+          if (!hasFXForBuyDate)
+            useAPI.requestHandler("forexByDate", {
+              currency: item.currency,
+              date: item.dateBuy,
+            });
+
+          if (!hasLatestFX)
+            useAPI.requestHandler("forexByDate", {
+              currency: item.currency,
+              date: today,
+            });
+        }
+      }
+    };
+
     onMounted(() => {
       // add more currencies to the default one
       if (store.currencies.length === 1) {
-        useAPI.updateCurrencies();
+        useAPI.requestHandler("currencies");
       }
+      updateFXRates();
     });
 
     watch(
@@ -122,14 +155,14 @@ export default {
         console.log("change in currency detected");
         const base = currency;
         // check if exchange rates have been initialized for this base
-        if (!store.exchangeRates.hasOwnProperty(base)) {
-          console.log("Set up new currency base");
-          // reset to current base currency
-          store.exchangeRates = {};
-          store.exchangeRates[base] = {};
-        }
+        //if (!store.exchangeRates.hasOwnProperty(base)) {
+        //console.log("Set up new currency base");
+        // reset to current base currency
+        //store.exchangeRates = {};
+        store.exchangeRates[base] = {};
+        //}
         persistState();
-        useAPI.updateFXRates();
+        updateFXRates();
       }
     );
 

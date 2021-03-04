@@ -1,25 +1,135 @@
 import { ref } from "vue";
-import { resources, netlifyFuncBaseUrl } from "../api/config";
 import { today } from "../utils";
 import { store, assets } from "../composables/use-store";
+import { finnhubAPI } from "../composables/use-finnhub-api";
+import { iexAPI } from "../composables/use-iex-api";
+import { exchangeratesAPI } from "../composables/use-exchangerates-api";
 
 const error = ref("");
 
-async function getResponse(option, requestObj) {
+const resources = {
+  history: {
+    2: {
+      getUri: function ({ asset }) {
+        return iexAPI.historyURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        iexAPI.historyResponse(json, asset);
+      }
+    },
+    1: {
+      getUri: function ({ asset }) {
+        return finnhubAPI.historyURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        finnhubAPI.historyResponse(json, asset);
+      }
+    }
+  },
+  quote: {
+    1: {
+      getUri: function ({ asset }) {
+        return finnhubAPI.quoteURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        finnhubAPI.quoteResponse(json, asset);
+      }
+    },
+    2: {
+      getUri: function ({ asset }) {
+        return iexAPI.quoteURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        iexAPI.quoteResponse(json, asset);
+      }
+    }
+  },
+  company: {
+    1: {
+      getUri: function ({ asset }) {
+        return iexAPI.companyURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        iexAPI.companyResponse(json, asset);
+      }
+    },
+    2: {
+      getUri: function ({ asset }) {
+        return finnhubAPI.companyURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        finnhubAPI.companyResponse(json, asset);
+      }
+    }
+  },
+  signal: {
+    1: {
+      getUri: function ({ asset }) {
+        return finnhubAPI.signalURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        finnhubAPI.signalResponse(json, asset);
+      }
+    }
+  },
+  target: {
+    1: {
+      getUri: function ({ asset }) {
+        return finnhubAPI.targetURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        finnhubAPI.targetResponse(json, asset);
+      }
+    }
+  },
+  news: {
+    1: {
+      getUri: function ({ asset, from, to }) {
+        return finnhubAPI.newsURI(asset);
+      },
+      handleResponse: function (json, { asset }) {
+        finnhubAPI.newsResponse(json, asset);
+      }
+    }
+  },
+  forexByDate: {
+    1: {
+      getUri: function ({ currency, date }) {
+        return exchangeratesAPI.forexByDateURI({ currency, date });
+      },
+      handleResponse: function (json, { currency, date }) {
+        exchangeratesAPI.forexByDateResponse(json, { currency, date });
+      }
+    }
+  },
+  currencies: {
+    1: {
+      getUri: function () {
+        return exchangeratesAPI.currencyURI();
+      },
+      handleResponse: function (json) {
+        exchangeratesAPI.currencyResponse(json);
+      }
+    }
+  }
+};
+
+async function queryBackend(option, requestObj) {
   let resString = null;
+  const backendURL = "https://uglyfolio.netlify.app/.netlify/functions/";
 
   try {
     // generate the the address to call the API with
-    let { uri, params } = option.getUri(requestObj);
-    const res = await fetch(netlifyFuncBaseUrl + option.provider, {
+    let { provider, url, params } = option.getUri(requestObj);
+    let string = JSON.stringify({ url, params });
+    const res = await fetch(backendURL + provider, {
       method: "POST",
       headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ uri, params })
+      body: string
     });
     resString = await res.text();
     console.log("API return string: ", resString);
-    const json = JSON.parse(resString);
-    option.handleResponse(json, requestObj);
+    option.handleResponse(JSON.parse(resString), requestObj);
   } catch (e) {
     if (e instanceof SyntaxError) throw Error(resString);
     else throw Error(e.message);
@@ -30,13 +140,13 @@ async function getResponse(option, requestObj) {
 async function requestHandler(type, requestObj) {
   let options = Object.keys(resources[type]).length;
   let i = 1;
+  // reset error variable
   error.value = "";
 
   while (i <= options) {
     try {
-      // call the netlify function/backend to trigger the API call
-      await getResponse(resources[type][i], requestObj);
-      // set i so that while loop will end
+      // call the netlify functions that trigger the API calls
+      await queryBackend(resources[type][i], requestObj);
       i = options + 1;
     } catch (e) {
       // catch API errors and try the next option
@@ -47,63 +157,7 @@ async function requestHandler(type, requestObj) {
   }
 }
 
-const updateCurrencies = () => {
-  requestHandler("currencies");
-};
-
-const updateHistory = (item) => {
-  requestHandler("history", { asset: item });
-};
-
-const updateAssets = () => {
-  for (const item of assets.value) {
-    if (!item.isUpdated()) {
-      requestHandler("history", { asset: item });
-      if (!item.isSold()) {
-        requestHandler("quote", { asset: item });
-        requestHandler("signal", { asset: item });
-        requestHandler("target", { asset: item });
-      }
-    }
-  }
-};
-
-const updateFXRates = () => {
-  const FXbase = store.settings.currency;
-
-  for (const item of assets.value) {
-    // retrieve latest exchange rates for all currency combinations
-    if (item.currency && item.currency !== FXbase) {
-      let hasFXForBuyDate = false;
-      let hasLatestFX = false;
-      const hasCurrencyPair = store.exchangeRates[FXbase].hasOwnProperty(
-        item.currency
-      );
-
-      if (!hasCurrencyPair) store.exchangeRates[FXbase][item.currency] = {};
-      else
-        hasFXForBuyDate = store.exchangeRates[FXbase][
-          item.currency
-        ].hasOwnProperty(item.dateBuy);
-      if (!hasFXForBuyDate)
-        useAPI.requestHandler("forexByDate", {
-          currency: item.currency,
-          date: item.dateBuy
-        });
-      if (!hasLatestFX)
-        useAPI.requestHandler("forexByDate", {
-          currency: item.currency,
-          date: today
-        });
-    }
-  }
-};
-
 export const useAPI = {
   error,
-  requestHandler,
-  updateFXRates,
-  updateAssets,
-  updateCurrencies,
-  updateHistory
+  requestHandler
 };
