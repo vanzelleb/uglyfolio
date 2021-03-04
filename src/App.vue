@@ -55,8 +55,16 @@ export default {
 
     onMounted(() => {
       // do all the updates once the application is mounted
-      useAPI.updateAssets();
-      useAPI.updateFXRates();
+      for (const item of assets.value) {
+        if (!item.isUpdated()) {
+          useAPI.requestHandler("history", { asset: item });
+          if (!item.isSold()) {
+            useAPI.requestHandler("quote", { asset: item });
+            useAPI.requestHandler("signal", { asset: item });
+            useAPI.requestHandler("target", { asset: item });
+          }
+        }
+      }
 
       /*async function fetchBenchmarkPrices() {
   store.state.settings.benchmark.dateBuy = store.getters.firstPortfolioDate;

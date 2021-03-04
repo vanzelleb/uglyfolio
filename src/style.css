@@ -3,6 +3,7 @@
 }
 
 .link {
+  cursor: pointer;
   text-decoration: underline;
   color: blue;
 }
@@ -81,7 +82,6 @@ legend {
 
 details,
 summary {
-  cursor: pointer;
   margin: 0.8rem 0;
 }
 

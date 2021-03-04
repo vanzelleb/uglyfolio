@@ -9,11 +9,6 @@ export function toLocaleNumber(value, digits) {
 
 export const today = new Date().toISOString().substring(0, 10);
 
-export const timestamp = (date) => {
-  date = date ? new Date(date) : new Date();
-  return (date.getTime() / 1000) | 0;
-};
-
 // green color
 export const posColor = "#1B998B";
 // red color
