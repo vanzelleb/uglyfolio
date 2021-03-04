@@ -10,7 +10,7 @@
         required
         v-model="asset.dateBuy"
         :max="today"
-        @change="requestHandler('history', { asset: item })"
+        @change="requestHandler('history', { asset: asset })"
       />
 
       <label for="buyValue">Invested amount (in {{ settings.currency }})</label>
