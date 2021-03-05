@@ -2,19 +2,22 @@
   <div v-cloak class="noselect">
     <header>
       <h1 class="handFont">Uglyfolio</h1>
-      <Settings />
     </header>
     <main>
       <div v-if="asset.name">
-        <h2>{{ asset.name }}</h2>
-        <button @click="setAsset()">Close</button>
-        <button v-if="asset.id" @click="remove(asset)">Delete</button>
+        <h3>{{ asset.name }}</h3>
+        <div>
+          <button @click="setAsset()">❌ Close</button>
+          <button v-if="asset.id" @click="remove(asset)">🗑️ Delete</button>
+        </div>
         <Info />
         <Form />
       </div>
       <div v-else>
+        <Settings />
         <KPIs />
         <SearchAsset />
+
         <Portfolio />
       </div>
     </main>

@@ -1,82 +1,92 @@
 <template>
   <form @submit.prevent="save()">
-    <fieldset>
-      <legend>Buy transaction details</legend>
+    <div class="container">
+      <div class="flexbox">
+        <fieldset>
+          <legend>Buy transaction details</legend>
 
-      <label for="dateBuy">Purchase date</label>
-      <input
-        id="dateBuy"
-        type="date"
-        required
-        v-model="asset.dateBuy"
-        :max="today"
-        @change="requestHandler('history', { asset: asset })"
-      />
+          <label for="dateBuy">Purchase date</label>
+          <input
+            id="dateBuy"
+            type="date"
+            required
+            v-model="asset.dateBuy"
+            :max="today"
+            @change="requestHandler('history', { asset: asset })"
+          />
 
-      <label for="buyValue">Invested amount (in {{ settings.currency }})</label>
-      <input
-        id="buyValue"
-        v-model.number="asset.buyValue"
-        type="number"
-        step="0.01"
-        min="0"
-        required
-      />
+          <label for="buyValue"
+            >Invested amount (in {{ settings.currency }})</label
+          >
+          <input
+            id="buyValue"
+            v-model.number="asset.buyValue"
+            type="number"
+            step="0.01"
+            min="0"
+            required
+          />
 
-      <label for="amount">Number of shares</label>
-      <input
-        id="amount"
-        required
-        v-model.number="asset.amount"
-        type="number"
-        step="0.01"
-        min="0"
-      />
+          <label for="amount">Number of shares</label>
+          <input
+            id="amount"
+            required
+            v-model.number="asset.amount"
+            type="number"
+            step="0.01"
+            min="0"
+          />
 
-      <label for="buyPrice"
-        >Buy price per share (in {{ asset.currency }})</label
-      >
-      <input
-        id="buyPrice"
-        v-model.number="asset.buyPrice"
-        type="number"
-        step="0.01"
-        min="0"
-        required
-      />
-    </fieldset>
-    <br />
-    <fieldset>
-      <legend>Sell transaction details</legend>
+          <label for="buyPrice"
+            >Buy price per share (in {{ asset.currency }})</label
+          >
+          <input
+            id="buyPrice"
+            v-model.number="asset.buyPrice"
+            type="number"
+            step="0.01"
+            min="0"
+            required
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Sell transaction details</legend>
 
-      <label for="dateSell">Sell date</label>
-      <input id="dateSell" type="date" v-model="asset.dateSell" :max="today" />
+          <label for="dateSell">Sell date</label>
+          <input
+            id="dateSell"
+            type="date"
+            v-model="asset.dateSell"
+            :max="today"
+          />
 
-      <label for="sellValue">Sell value (in {{ settings.currency }})</label>
-      <input
-        id="sellValue"
-        v-model.number="asset.sellValue"
-        type="number"
-        step="0.01"
-        min="0"
-      />
+          <label for="sellValue">Sell value (in {{ settings.currency }})</label>
+          <input
+            id="sellValue"
+            v-model.number="asset.sellValue"
+            type="number"
+            step="0.01"
+            min="0"
+          />
 
-      <label for="sellPrice"
-        >Sell price per share (in {{ asset.currency }})</label
-      >
-      <input
-        id="sellPrice"
-        v-model.number="asset.sellPrice"
-        type="number"
-        step="0.01"
-        min="0"
-      />
-    </fieldset>
+          <label for="sellPrice"
+            >Sell price per share (in {{ asset.currency }})</label
+          >
+          <input
+            id="sellPrice"
+            v-model.number="asset.sellPrice"
+            type="number"
+            step="0.01"
+            min="0"
+          />
+        </fieldset>
+      </div>
+    </div>
     <div v-for="(error, id) of errors" :key="id" style="color: red">
       {{ error }}
     </div>
     <div>
-      <button type="submit">Save</button>
+      <button type="submit">✔️ Save</button>
     </div>
   </form>
 </template>

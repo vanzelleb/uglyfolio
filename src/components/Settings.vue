@@ -3,15 +3,15 @@
     <summary>⚙️ <span class="link">Settings</span></summary>
     <div>
       <fieldset>
-        <legend>Backup & Restore</legend>
+        <legend>Backup & Restore Portfolio</legend>
         <button
           id="export"
           @click="exportData()"
           :disabled="assets.length === 0"
         >
-          Backup portfolio
+          💾 Backup
         </button>
-        <button id="import" @click="uploader()">Restore portfolio</button>
+        <button id="import" @click="uploader()">📄 Restore</button>
         <input
           type="file"
           @change="importData($event)"

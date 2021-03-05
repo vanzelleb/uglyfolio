@@ -8,7 +8,7 @@
           <td style="font-size: 12pt">{{ name }}:</td>
           <td style="font-size: 12pt; text-align: right">
             {{ kpi.value }}
-            <span style="font-size: 8pt">&nbsp;{{ kpi.unit }}</span>
+            <span style="font-size: 10pt">&nbsp;{{ kpi.unit }}</span>
           </td>
         </tr>
       </table>

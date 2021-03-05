@@ -90,7 +90,8 @@ button {
   text-decoration: none;
   display: inline-block;
   cursor: pointer;
-  margin: 4px 2px;
+  margin: 0.4rem 0.4rem;
+  height: 1.7rem;
 }
 
 dialog {
