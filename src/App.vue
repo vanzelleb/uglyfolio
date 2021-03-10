@@ -1,15 +1,8 @@
 <template>
   <div v-cloak class="noselect">
-    <header>
-      <h1 class="handFont">Uglyfolio</h1>
-    </header>
+    <Header />
     <main>
       <div v-if="asset.name">
-        <h3>{{ asset.name }}</h3>
-        <div>
-          <button @click="setAsset()">❌ Close</button>
-          <button v-if="asset.id" @click="remove(asset)">🗑️ Delete</button>
-        </div>
         <Info />
         <Form />
       </div>
@@ -17,7 +10,6 @@
         <Settings />
         <KPIs />
         <SearchAsset />
-
         <Portfolio />
       </div>
     </main>
@@ -27,15 +19,8 @@
 
 <script>
 import { useAPI } from "./composables/use-api";
-import {
-  store,
-  asset,
-  assets,
-  setAsset,
-  removeAsset,
-  initState,
-} from "./composables/use-store";
-import { onMounted, ref, reactive, provide, readonly } from "vue";
+import { store, asset, initState } from "./composables/use-store";
+import { onMounted, watch, computed } from "vue";
 import { today } from "./utils";
 import Settings from "./components/Settings.vue";
 import KPIs from "./components/KPIs.vue";
@@ -43,6 +28,8 @@ import SearchAsset from "./components/SearchAsset.vue";
 import Portfolio from "./components/Portfolio.vue";
 import Form from "./components/Form.vue";
 import Info from "./components/Info.vue";
+import Header from "./components/Header.vue";
+import Asset from "./asset-class";
 
 export default {
   components: {
@@ -52,9 +39,15 @@ export default {
     Info,
     Form,
     Settings,
+    Header,
   },
   setup() {
     initState();
+
+    const assets = computed(() =>
+      // convert items into Asset class before using them
+      store.assetList.map((item) => new Asset(item))
+    );
 
     onMounted(() => {
       // do all the updates once the application is mounted
@@ -79,16 +72,15 @@ export default {
 }*/
     });
 
-    const remove = (asset) => {
-      if (confirm("Are you sure you want delete it?")) {
-        removeAsset(asset);
+    watch(
+      () => asset.name,
+      (name, prevName) => {
+        window.scrollTo(0, 0);
       }
-    };
+    );
 
     return {
-      remove,
       asset,
-      setAsset,
     };
   },
 };
@@ -96,5 +88,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+main {
+  margin: 8px 8px;
+}
 </style>
 

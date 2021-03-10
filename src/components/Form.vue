@@ -85,17 +85,22 @@
     <div v-for="(error, id) of errors" :key="id" style="color: red">
       {{ error }}
     </div>
-    <div>
-      <button type="submit">✔️ Save</button>
-    </div>
+    <button type="submit">✔️ SAVE</button>
   </form>
+  <button v-if="asset.id" @click="remove(asset)">🗑️ DELETE</button>
 </template>
 
 <script>
 import { computed, reactive, ref, watch, inject, toRefs } from "vue";
 import { useAPI } from "../composables/use-api";
 import { today } from "../utils";
-import { store, asset, saveAsset, setAsset } from "../composables/use-store";
+import {
+  store,
+  asset,
+  saveAsset,
+  setAsset,
+  removeAsset,
+} from "../composables/use-store";
 
 export default {
   setup(props) {
@@ -146,7 +151,16 @@ export default {
       }
     };
 
+    const remove = (asset) => {
+      if (confirm("Are you sure you want delete it?")) {
+        removeAsset(asset);
+        // reset the global asset variable to hide the form component
+        setAsset();
+      }
+    };
+
     return {
+      remove,
       save,
       today,
       asset,

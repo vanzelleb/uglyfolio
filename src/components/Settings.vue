@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { onMounted, watch, toRefs } from "vue";
+import { onMounted, watch, toRefs, computed } from "vue";
 import {
   store,
   assets,

@@ -40,6 +40,7 @@ import { usePortfolio } from "../composables/use-portfolio";
 import { computed } from "vue";
 import { toLocaleNumber } from "../utils";
 import { store, asset, assets, setAsset } from "../composables/use-store";
+import Asset from "../asset-class";
 
 export default {
   components: {
@@ -54,11 +55,9 @@ export default {
       });
       return filtered;
     });*/
-
     const hasAssets = computed(() => store.assetList.length > 0);
 
     return {
-      hasAssets,
       toLocaleNumber,
       settings: store.settings,
       asset,

@@ -18,7 +18,7 @@
 
 <script>
 import { usePortfolio } from "../composables/use-portfolio";
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import { store, assets } from "../composables/use-store";
 import { toLocaleNumber } from "../utils";
 

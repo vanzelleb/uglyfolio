@@ -1,6 +1,4 @@
 import { ref } from "vue";
-import { today } from "../utils";
-import { store, assets } from "../composables/use-store";
 import { finnhubAPI } from "../composables/use-finnhub-api";
 import { iexAPI } from "../composables/use-iex-api";
 import { exchangeratesAPI } from "../composables/use-exchangerates-api";

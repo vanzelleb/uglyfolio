@@ -1,4 +1,4 @@
-import { reactive, computed } from "vue";
+import { ref, reactive, computed, watch, watchEffect } from "vue";
 import Asset from "../asset-class";
 
 export const store = reactive({
@@ -50,6 +50,7 @@ export const initState = () => {
     // copy store from local storage
     Object.assign(store, JSON.parse(localStorage.store));
     store.settings.benchmark = new Asset(store.settings.benchmark);
+    //assets.value = store.assetList.map((item) => new Asset(item));
   }
 };
 

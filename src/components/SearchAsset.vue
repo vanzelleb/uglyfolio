@@ -1,7 +1,6 @@
 <template>
   <fieldset class="col">
     <legend>Add new asset</legend>
-    <label for="ticker" style="display: none">Asset ticker</label>
     <input
       id="ticker"
       checked
@@ -10,6 +9,7 @@
       maxLength="10"
       placeholder="Asset ticker/symbol"
       style="height: 1.3rem"
+      aria-label="Asset ticker/symbol"
     />
     <button @click="getCompanyInfo()">🔍 Search</button>
     <small>
