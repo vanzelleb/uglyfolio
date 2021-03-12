@@ -13,6 +13,24 @@
         <Portfolio />
       </div>
     </main>
+    <footer>
+      <small style="text-align: center">
+        <div class="caption mb-5 px-2">
+          An experimental app for tracking the performance of a stock portfolio.
+          Data provided by
+          <a href="https://iexcloud.io">IEX Cloud</a>
+          and
+          <a href="https://finnhub.io/">Finnhub.io</a>
+          <p />
+          <div>
+            Made by
+            <a href="https://twitter.com/VanZelleb" target="_blank"
+              >vanzelleb</a
+            >
+          </div>
+        </div>
+      </small>
+    </footer>
   </div>
 </template>
 
@@ -72,6 +90,7 @@ export default {
 }*/
     });
 
+    // scroll to the top of the page when the detail screen is opened or closed
     watch(
       () => asset.name,
       (name, prevName) => {
@@ -88,7 +107,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-main {
+main,
+footer {
   margin: 8px 8px;
 }
 </style>

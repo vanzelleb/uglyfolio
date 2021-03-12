@@ -53,33 +53,30 @@ function change(items) {
   return sum(result);
 }
 
-function FXChange(items) {
-  // calculate exchange rate effects
-  const result = items.map((item) => {
-    if (!store.exchangeRates.hasOwnProperty(store.settings.currency))
-      return null;
+// calculate exchange rate effects
+const FXChange = (items) => {
+  const appCurrency = store.settings.currency;
+  const FXBase = store.exchangeRates[appCurrency];
+  if (!FXBase) return null;
 
-    const hasCurrencyPair = store.exchangeRates[
-      store.settings.currency
-    ].hasOwnProperty(item.currency);
-
+  const calculateFXChange = (item) => {
+    const hasCurrencyPair = !!FXBase[item.currency];
     if (hasCurrencyPair) {
-      let lastRate =
-        store.exchangeRates[store.settings.currency][item.currency][today];
-      let buyRate =
-        store.exchangeRates[store.settings.currency][item.currency][
-          item.dateBuy
-        ];
-      let changeRatio = buyRate / lastRate;
-      return (
-        (item.lastPrice / item.buyPrice) * item.buyValue * changeRatio -
-        (item.lastPrice / item.buyPrice) * item.buyValue
-      );
-    }
-    return null;
+      const lastRate = FXBase[item.currency][today];
+      const buyRate = FXBase[item.currency][item.dateBuy];
+      const changeRatio = buyRate / lastRate;
+      const assetValue = (item.lastPrice / item.buyPrice) * item.buyValue;
+      const FXChange = assetValue * changeRatio - assetValue;
+      return FXChange;
+    } else return null;
+  };
+
+  const result = items.map((item) => {
+    return calculateFXChange(item);
   });
+
   return sum(result);
-}
+};
 
 function invested(items) {
   const result = items.map((asset) => {

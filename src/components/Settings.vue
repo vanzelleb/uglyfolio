@@ -23,21 +23,15 @@
       <fieldset>
         <legend>Customize</legend>
         <label for="currency">Display currency</label>
-        <select
-          id="currency"
-          :value="settings.currency"
-          interface="popover"
-          @change="settings.currency = $event.target.value"
-        >
-          <option v-for="item of currencies" :value="item" :key="item">
+        <select id="currency" v-model="settings.currency">
+          <option v-for="item of currencies" :key="item">
             {{ item }}
           </option>
         </select>
         <label for="benchmark">Benchmark</label>
         <select
           id="benchmark"
-          interface="popover"
-          v-model="settings.benchmark._ticker"
+          @change="settings.benchmark.ticker = $event.target.value"
         >
           <option
             v-for="item in benchmarksList"
@@ -59,32 +53,6 @@
         />
       </fieldset>
     </div>
-    <!--
-
-      <v-subheader>About</v-subheader>
-      <div class="caption mb-5 px-2">
-        A not-so-serious prototype for tracking the performance of your stock
-        portfolio.
-        <a
-          href="https://iexcloud.io"
-        >Data provided by IEX Cloud</a>
-        and
-        <a href="https://finnhub.io/">Finnhub.io</a>
-        <P/>
-        <div class="font-weight-medium">
-          Made by
-          <a href="https://twitter.com/VanZelleb" target="_blank">VanZelleb</a>
-          &nbsp;
-          <v-icon>mdi-twitter</v-icon>
-        </div>
-        <div>Follow design evolution
-          <v-btn icon href="https://www.instagram.com/pollofolio" target="_blank">
-            <v-icon>mdi-instagram</v-icon>
-          </v-btn>
-        </div>
-      </div>
-    </v-list>
-  </v-navigation-drawer>-->
   </details>
 </template>
 
@@ -108,34 +76,32 @@ export default {
       { text: "DOW JONES", value: "DIA" },
     ];
 
+    const getFXRate = (cur, date) => {
+      useAPI.requestHandler("forexByDate", {
+        currency: cur,
+        date: date,
+      });
+    };
+
     const updateFXRates = () => {
-      const FXbase = store.settings.currency;
+      const appCurrency = store.settings.currency;
+      const FXBase = store.exchangeRates[appCurrency];
+      if (!FXBase) FXBase = {};
       // retrieve latest exchange rates for all currency combinations
       for (const item of assets.value) {
-        if (item.currency && item.currency !== FXbase) {
-          let hasFXForBuyDate = false;
-          let hasLatestFX = false;
-          const hasCurrencyPair = store.exchangeRates[FXbase].hasOwnProperty(
-            item.currency
-          );
+        if (item.currency !== appCurrency) {
+          const hasFXPair = !!FXBase[item.currency];
+          // reset the exchange rates for the currency pair
+          if (!hasFXPair) {
+            FXBase[item.currency] = {};
+          } else {
+            let FXPair = FXBase[item.currency];
+            var hasFXForBuyDate = !!FXPair[item.dateBuy];
+            var hasLatestFX = !!FXPair[today];
+          }
 
-          if (!hasCurrencyPair) store.exchangeRates[FXbase][item.currency] = {};
-          let currencyPair = store.exchangeRates[FXbase][item.currency];
-
-          hasFXForBuyDate = currencyPair.hasOwnProperty(item.dateBuy);
-          hasLatestFX = currencyPair.hasOwnProperty(today);
-
-          if (!hasFXForBuyDate)
-            useAPI.requestHandler("forexByDate", {
-              currency: item.currency,
-              date: item.dateBuy,
-            });
-
-          if (!hasLatestFX)
-            useAPI.requestHandler("forexByDate", {
-              currency: item.currency,
-              date: today,
-            });
+          if (!hasFXForBuyDate) getFXRate(item.currency, item.dateBuy);
+          if (!hasLatestFX) getFXRate(item.currency, today);
         }
       }
     };
@@ -148,21 +114,29 @@ export default {
       updateFXRates();
     });
 
+    // gets executed when currency changes
     watch(
       () => store.settings.currency,
       (currency, prevCurrency) => {
-        // gets executed when store.settings.currency changes
-        console.log("change in currency detected");
-        const base = currency;
-        // check if exchange rates have been initialized for this base
-        //if (!store.exchangeRates.hasOwnProperty(base)) {
-        //console.log("Set up new currency base");
-        // reset to current base currency
-        //store.exchangeRates = {};
-        store.exchangeRates[base] = {};
-        //}
+        store.exchangeRates[currency] = {};
         persistState();
         updateFXRates();
+      }
+    );
+
+    // gets executed when stop loss changes
+    watch(
+      () => store.settings.stopLoss.pct,
+      (stopLoss, prevStopLoss) => {
+        persistState();
+      }
+    );
+
+    // gets executed when benchmark changes
+    watch(
+      () => store.settings.benchmark.ticker,
+      (benchmark, prevBenchmark) => {
+        persistState();
       }
     );
 
@@ -172,23 +146,11 @@ export default {
       assets,
     };
   },
-  watch: {
-    "store.settings.stopLoss.pct": function () {
-      // commit required in order to save the new stop loss limit to the browser storage
-      persistState();
-    },
-    "store.settings.currency": function () {
-      persistState();
-    },
-    "store.settings.taxes": function () {},
-    "store.settings.benchmark._ticker": function () {
-      persistState();
-    },
-  },
   methods: {
     exportData: function () {
-      const rows = assets.map(function (item) {
-        item._timeseries = {};
+      const rows = assets.value.map((item) => {
+        // remove timeseries data for better readability
+        item.timeseries = null;
         return JSON.stringify(item);
       });
       let string = rows.join("\r\n");
@@ -215,14 +177,17 @@ export default {
             allTextLines.forEach(function (line) {
               try {
                 const json = JSON.parse(line);
-                const asset = new Asset(json);
-                if (asset.name) saveAsset(asset);
+                const item = new Asset(json);
+                useAPI.requestHandler("history", { asset: item });
+                if (!item.isSold()) {
+                  useAPI.requestHandler("quote", { asset: item });
+                  useAPI.requestHandler("signal", { asset: item });
+                  useAPI.requestHandler("target", { asset: item });
+                }
               } catch (error) {
                 alert("The data is not in the correct format");
               }
             });
-
-            useAPI.updateAssets();
           } else alert("The file is empty, my friend.");
         };
         reader.readAsText(file);
