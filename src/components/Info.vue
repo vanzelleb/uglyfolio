@@ -1,25 +1,23 @@
 <template>
   <fieldset>
-    <legend>
-      <h2>{{ asset.name }}</h2>
-    </legend>
-    <h4>Industry:</h4>
-    <small
-      ><i v-if="asset.industry">{{ asset.industry }}</i></small
-    >
-    <h4>Description:</h4>
-    <small
-      ><i>
+    <legend>Asset info</legend>
+    Industry:
+    <div>
+      <i v-if="asset.industry">{{ asset.industry }}</i>
+    </div>
+    Description:
+    <div>
+      <i>
         <template v-if="asset.description">
           {{ asset.description }}
         </template>
         <template v-else> None </template>
       </i>
-    </small>
-    <h4>Address:</h4>
-    <small
-      ><address v-if="asset.address">{{ asset.address }}</address></small
-    >
+    </div>
+    Address:
+    <div>
+      <address v-if="asset.address">{{ asset.address }}</address>
+    </div>
   </fieldset>
 </template>
 
@@ -40,5 +38,10 @@ export default {
 h2,
 h4 {
   margin: 0.8rem 0 0.3rem 0;
+}
+
+div {
+  font-size: 10pt;
+  margin: 0 0 10px 0;
 }
 </style>

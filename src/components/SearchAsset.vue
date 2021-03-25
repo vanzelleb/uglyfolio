@@ -1,6 +1,15 @@
 <template>
-  <fieldset class="col">
-    <legend>Add new asset</legend>
+  <div class="searchArea">
+    <h3>Add new asset</h3>
+    <div>
+      <small>
+        Each stock has a unique identifier, called ticker. You can search
+        tickers, e.g. on
+        <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
+          >Yahoo Finance</a
+        >.
+      </small>
+    </div>
     <input
       id="ticker"
       checked
@@ -11,22 +20,16 @@
       style="height: 1.3rem"
       aria-label="Asset ticker/symbol"
     />
-    <button @click="getCompanyInfo()">🔍 Search</button>
+    <button @click="getCompanyInfo()">
+      <span v-if="searching">Searching...</span>
+      <span v-else>🔍 Search</span>
+    </button>
     <small>
       <p v-if="ticker && error" style="color: red">
         {{ error }}
       </p>
     </small>
-    <div>
-      <small>
-        Each stock has a unique identifier, called ticker. You can search
-        tickers, e.g. on
-        <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
-          >Yahoo Finance</a
-        >.
-      </small>
-    </div>
-  </fieldset>
+  </div>
 
   <dialog id="dialog">
     <form method="dialog">
@@ -34,9 +37,10 @@
       <h5>
         {{ asset.industry }}
       </h5>
+      <br />
       <p>Do you want to add this asset to your portfolio?</p>
-      <button type="button" value="cancel" @click="cancel()">Cancel</button>
-      <button type="button" value="yes" @click="confirm()">Yes</button>
+      <button type="button" value="cancel" @click="cancel()">Nope</button>
+      <button type="button" value="yes" @click="confirm()">Ok, Add it.</button>
     </form>
   </dialog>
 </template>
@@ -51,6 +55,8 @@ export default {
   setup() {
     const ticker = ref("");
     const asset = reactive(new Asset());
+    const searching = ref(false);
+
     let modal = null;
 
     onMounted(() => {
@@ -67,8 +73,10 @@ export default {
 
     const getCompanyInfo = async () => {
       if (ticker.value) {
+        searching.value = true;
         asset.ticker = ticker.value;
         await useAPI.requestHandler("company", { asset: asset });
+        searching.value = false;
         if (asset.name) modal.showModal();
       }
     };
@@ -86,6 +94,7 @@ export default {
     };
 
     return {
+      searching,
       modal,
       asset,
       ticker,
@@ -100,4 +109,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.searchArea {
+  margin: 25px 0;
+}
+
+p {
+  margin: 0 0 10px 0;
+}
 </style>

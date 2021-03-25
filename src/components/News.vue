@@ -1,119 +1,102 @@
 <template>
-  <v-expansion-panel ripple>
-    <v-expansion-panel-header class="d-flex justify-space-between">
-      <span>
-        <span class="title pr-3">📰</span>
-        <span class="font-weight-medium">News</span>
-      </span>
-    </v-expansion-panel-header>
-    <v-expansion-panel-content>
-      <div class="body-2 my-2">
-        You can specify a date range to narrow down the search.
+  <fieldset>
+    <legend>News search</legend>
+    <p>
+      You can specify a date range to narrow down the search for news articles.
+    </p>
+    <div class="flexbox">
+      <div class="col">
+        <label for="startRange">
+          <code> From {{ asset.dates[range[0]] }} </code>
+        </label>
+        <input
+          type="range"
+          min="0"
+          :max="range[1]"
+          v-model="range[0]"
+          class="slider"
+          id="startRange"
+        />
       </div>
-      <div class="text-center d-flex justify-space-between mt-4 mb-2">
-        <span class="font-weight-medium">{{ asset.dates[this.range[0]] }}</span>
-        <span class="grey--text text--darken-2">until</span>
-        <span class="font-weight-medium">{{ asset.dates[this.range[1]] }}</span>
+      <div class="col">
+        <label class="col" for="endRange"
+          ><code>To {{ asset.dates[range[1]] }}</code></label
+        >
+        <input
+          type="range"
+          :min="range[0]"
+          :max="asset.dates.length - 1"
+          v-model="range[1]"
+          class="slider"
+          id="endRange"
+        />
       </div>
-      <v-range-slider
-        color="grey"
-        v-model="range"
-        :max="max"
-        :min="min"
-        hide-details
-        class="align-center my-5 px-0"
-      ></v-range-slider>
-      <v-btn
-        rounded
-        :loading="searching"
-        block
-        class="white--text"
-        :class="{ shake: shake }"
-        color="deep-purple accent-4"
-        @click="getNews()"
-        >Search News</v-btn
-      >
-      <v-list dense two-line v-if="uniqueNews.length > 0" class="mt-3">
-        <template v-for="(item, idx) of uniqueNews" :key="idx">
-          <v-list-item class="px-0" :href="item.url" target="_blank">
-            <v-list-item-content>
-              <v-list-item-subtitle class="text-truncate overline">{{
-                convertDate(item.datetime)
-              }}</v-list-item-subtitle>
-              <v-list-item-subtitle
-                v-text="item.headline"
-                class="black--text body-2 font-weight-medium mb-2"
-              ></v-list-item-subtitle>
-              <div class="caption">{{ item.summary }}</div>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider
-            v-if="idx + 1 < uniqueNews.length"
-            :key="'div-' + idx"
-          ></v-divider>
-        </template>
-      </v-list>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+    </div>
+    <button :class="{ shake: shake }" @click="getNews()">
+      <span v-if="searching">Searching...</span>
+      <span v-else>Check</span>
+    </button>
+    <template v-if="asset.news.length > 0">
+      <br />
+      <article v-for="(item, idx) of asset.news" :key="idx">
+        <div>{{ item.datetime }}</div>
+        <a :href="item.url" target="_blank">{{ item.headline }}</a>
+        <div>{{ item.summary }}</div>
+        <hr v-if="idx + 1 < asset.news.length" :key="'hr-' + idx" />
+      </article>
+    </template>
+  </fieldset>
 </template>
 
 <script>
-import { useAPI } from "./composables/use-api";
+import { useAPI } from "../composables/use-api";
+import { asset } from "../composables/use-store";
+import { ref, computed, onMounted } from "vue";
 
 export default {
-  props: {
-    data: {
-      type: Object,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      asset: this.data,
-      min: 0,
-      max: this.data.dates.length - 1,
-      range: [0, this.data.dates.length - 1],
-      searching: false,
-      shake: false,
-    };
-  },
-  created: function () {},
-  mounted: function () {},
-  computed: {
-    uniqueNews() {
-      const headlines = this.asset.news.map((item) => item.headline);
-      const IDs = headlines.map((headline, i) => headlines.indexOf(headline));
-      const uniqueIDs = [...new Set(IDs)];
-      return uniqueIDs.map((id) => this.asset.news[id]);
-    },
-  },
-  watch: {},
-  methods: {
-    convertDate(date) {
-      return new Date(date * 1000).toISOString().substring(0, 10);
-    },
-    async getNews() {
-      this.shake = false;
-      this.searching = true;
-      const from = this.asset.dates[this.range[0]];
-      const to = this.asset.dates[this.range[1]];
+  setup() {
+    const range = ref([0, asset.dates.length - 1]);
+    const shake = ref(false);
+    const searching = ref(false);
+
+    const getNews = async () => {
+      shake.value = false;
+      searching.value = true;
+      const from = asset.dates[range.value[0]];
+      const to = asset.dates[range.value[1]];
       await useAPI.requestHandler("news", {
-        asset: this.asset,
+        asset: asset,
         from: from,
         to: to,
       });
-      this.searching = false;
-      if (this.asset.news.length === 0) this.shake = true;
-    },
+      searching.value = false;
+      // animate the search button to indicate that no news were found
+      if (asset.news.length === 0) shake.value = true;
+    };
+
+    return {
+      asset,
+      range,
+      getNews,
+      searching,
+      shake,
+    };
   },
 };
 </script>
 
 <!-- Add "scoped" keyibute to limit CSS to this component only -->
 <style scoped>
+article,
+label {
+  font-size: 10pt;
+}
+
+hr {
+  margin: 5px 0 10px 0;
+}
+
 .shake {
-  -webkit-animation: shake-horizontal 0.8s
-    cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
   animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
 }
 
@@ -129,59 +112,26 @@ export default {
  * animation shake-horizontal
  * ----------------------------------------
  */
-@-webkit-keyframes shake-horizontal {
-  0%,
-  100% {
-    -webkit-transform: translateX(0);
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70% {
-    -webkit-transform: translateX(-10px);
-    transform: translateX(-10px);
-  }
-  20%,
-  40%,
-  60% {
-    -webkit-transform: translateX(10px);
-    transform: translateX(10px);
-  }
-  80% {
-    -webkit-transform: translateX(8px);
-    transform: translateX(8px);
-  }
-  90% {
-    -webkit-transform: translateX(-8px);
-    transform: translateX(-8px);
-  }
-}
 @keyframes shake-horizontal {
   0%,
   100% {
-    -webkit-transform: translateX(0);
     transform: translateX(0);
   }
   10%,
   30%,
   50%,
   70% {
-    -webkit-transform: translateX(-10px);
     transform: translateX(-10px);
   }
   20%,
   40%,
   60% {
-    -webkit-transform: translateX(10px);
     transform: translateX(10px);
   }
   80% {
-    -webkit-transform: translateX(8px);
     transform: translateX(8px);
   }
   90% {
-    -webkit-transform: translateX(-8px);
     transform: translateX(-8px);
   }
 }

@@ -6,7 +6,7 @@
       <table>
         <tr v-for="(kpi, name) in kpis" :key="name">
           <td style="font-size: 12pt">{{ name }}:</td>
-          <td style="font-size: 12pt; text-align: right">
+          <td class="number" style="font-size: 12pt; text-align: right">
             {{ kpi.value }}
             <span style="font-size: 10pt">&nbsp;{{ kpi.unit }}</span>
           </td>

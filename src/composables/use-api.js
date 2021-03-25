@@ -83,7 +83,7 @@ const resources = {
   news: {
     1: {
       getUri: function ({ asset, from, to }) {
-        return finnhubAPI.newsURI(asset);
+        return finnhubAPI.newsURI(asset, from, to);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.newsResponse(json, asset);

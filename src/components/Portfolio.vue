@@ -1,10 +1,9 @@
 <template>
-  <div class="container">
-    <div class="flexbox">
-      <fieldset class="col" v-for="(item, id) of assets" :key="id">
-        <legend>
-          <span class="link" @click="setAsset(item)">{{ item.name }}</span>
-          <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
+  <div class="flexbox">
+    <fieldset class="col" v-for="(item, id) of assets" :key="id">
+      <legend>
+        <span class="link" @click="setAsset(item)">{{ item.name }}</span>
+        <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
           <span v-if="item.forexChange" class="ml-2">💵</span>
           <span v-if="item.return" class="ml-2">💰</span>
           <span
@@ -17,19 +16,18 @@
             class="ml-2"
             >👎</span
           >-->
-        </legend>
-        <h4 v-if="!item.dateSell" style="display: inline-block">
-          {{ change([item]) >= 0 ? "Up " : "Down " }}
-          {{ toLocaleNumber(change([item]), 0) }}
-        </h4>
-        <h4 v-else style="display: inline-block">
-          {{ returns([item]) >= 0 ? "You made " : "You lost " }}
-          {{ toLocaleNumber(returns([item]), 0) }}
-        </h4>
-        <h5 style="display: inline-block">&nbsp;{{ settings.currency }}</h5>
-        <Chart :prices="item.prices" :dates="item.dates" height="60" />
-      </fieldset>
-    </div>
+      </legend>
+      <h4 v-if="!item.dateSell" class="number">
+        {{ change([item]) >= 0 ? "Up " : "Down " }}
+        {{ toLocaleNumber(change([item]), 0) }}
+      </h4>
+      <h4 v-else class="number">
+        {{ returns([item]) >= 0 ? "You made " : "You lost " }}
+        {{ toLocaleNumber(returns([item]), 0) }}
+      </h4>
+      <h5 style="display: inline-block">&nbsp;{{ settings.currency }}</h5>
+      <Chart :prices="item.prices" :dates="item.dates" height="60" />
+    </fieldset>
   </div>
 </template>
 

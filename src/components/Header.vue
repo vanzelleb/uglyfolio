@@ -1,7 +1,7 @@
 <template>
-  <header :class="{ scroll: scrolled }">
-    <span class="handFont">Uglyfolio</span>
-    <button v-if="asset.name" @click="setAsset()">❌ CLOSE</button>
+  <header class="handFont" :class="{ scroll: scrolled }">
+    <div v-if="asset.name">{{ asset.name }}</div>
+    <div v-else>Uglyfolio</div>
   </header>
 </template>
 
@@ -33,14 +33,14 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
 .handFont {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: bold;
 }
 
 header {
   padding: 12px 8px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   position: -webkit-sticky;
   position: sticky;
   top: 0;

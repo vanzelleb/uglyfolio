@@ -91,7 +91,7 @@ function targetResponse(json, asset) {
   saveAsset(asset);
 }
 
-function newsURI({ asset, from, to }) {
+function newsURI(asset, from, to) {
   const url = baseURL + "company-news";
   const params = {
     symbol: asset.ticker,
@@ -102,13 +102,25 @@ function newsURI({ asset, from, to }) {
 }
 
 function newsResponse(json, asset) {
-  asset.news = json;
+  const headlines = json.map((item) => item.headline);
+  const IDs = headlines.map((headline, i) => headlines.indexOf(headline));
+  const uniqueIDs = [...new Set(IDs)];
+  const uniqueNews = uniqueIDs.map((id) => json[id]);
+  uniqueNews.map((item) => {
+    item.datetime = convertNewsDate(item.datetime);
+    return item;
+  });
+  asset.news = uniqueNews;
   saveAsset(asset);
 }
 
 function timestamp(date) {
   date = date ? new Date(date) : new Date();
   return (date.getTime() / 1000) | 0;
+}
+
+function convertNewsDate(date) {
+  return new Date(date * 1000).toISOString().substring(0, 10);
 }
 
 export const finnhubAPI = {

@@ -19,7 +19,6 @@
           style="display: none"
         />
       </fieldset>
-      <br />
       <fieldset>
         <legend>Customize</legend>
         <label for="currency">Display currency</label>

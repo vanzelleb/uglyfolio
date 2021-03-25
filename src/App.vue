@@ -1,9 +1,10 @@
 <template>
-  <div v-cloak class="noselect">
-    <Header />
-    <main>
+  <Header />
+  <main>
+    <div class="container">
       <div v-if="asset.name">
-        <Info />
+        <Info v-if="asset.id" />
+        <News v-if="asset.id" />
         <Form />
       </div>
       <div v-else>
@@ -12,26 +13,26 @@
         <SearchAsset />
         <Portfolio />
       </div>
-    </main>
-    <footer>
+    </div>
+  </main>
+  <footer>
+    <div>
       <small style="text-align: center">
-        <div class="caption mb-5 px-2">
+        <p>
           An experimental app for tracking the performance of a stock portfolio.
           Data provided by
           <a href="https://iexcloud.io">IEX Cloud</a>
           and
           <a href="https://finnhub.io/">Finnhub.io</a>
-          <p />
-          <div>
-            Made by
-            <a href="https://twitter.com/VanZelleb" target="_blank"
-              >vanzelleb</a
-            >
-          </div>
-        </div>
+        </p>
+        <br />
+        <p>
+          Made by
+          <a href="https://twitter.com/VanZelleb" target="_blank">vanzelleb</a>
+        </p>
       </small>
-    </footer>
-  </div>
+    </div>
+  </footer>
 </template>
 
 
@@ -44,6 +45,7 @@ import Settings from "./components/Settings.vue";
 import KPIs from "./components/KPIs.vue";
 import SearchAsset from "./components/SearchAsset.vue";
 import Portfolio from "./components/Portfolio.vue";
+import News from "./components/News.vue";
 import Form from "./components/Form.vue";
 import Info from "./components/Info.vue";
 import Header from "./components/Header.vue";
@@ -56,6 +58,7 @@ export default {
     SearchAsset,
     Info,
     Form,
+    News,
     Settings,
     Header,
   },
@@ -109,7 +112,11 @@ export default {
 <style scoped>
 main,
 footer {
-  margin: 8px 8px;
+  padding: 8px 8px;
+}
+
+footer {
+  margin: 20px 0;
 }
 </style>
 
