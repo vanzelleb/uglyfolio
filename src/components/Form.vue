@@ -82,11 +82,11 @@
     <div v-for="(error, id) of errors" :key="id" style="color: red">
       {{ error }}
     </div>
-    <button type="submit">✔️ SAVE</button>
+    <button type="submit">✔️ Save</button>
   </form>
   <div style="display: flex; justify-content: space-between">
-    <button v-if="asset.id" @click="remove(asset)">❌ DELETE</button>
-    <button @click="close()">🏠 HOME</button>
+    <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
+    <button @click="close()">🏠 Home</button>
   </div>
 </template>
 

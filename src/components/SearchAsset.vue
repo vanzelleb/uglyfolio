@@ -1,6 +1,6 @@
 <template>
   <div class="searchArea">
-    <h3>Add new asset</h3>
+    <h3>Add a new asset</h3>
     <div>
       <small>
         Each stock has a unique identifier, called ticker. You can search
@@ -11,13 +11,13 @@
       </small>
     </div>
     <input
+      autofocus
       id="ticker"
-      checked
       v-model="ticker"
       type="text"
+      size="15"
       maxLength="10"
       placeholder="Asset ticker/symbol"
-      style="height: 1.3rem"
       aria-label="Asset ticker/symbol"
     />
     <button @click="getCompanyInfo()">

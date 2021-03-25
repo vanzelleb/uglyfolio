@@ -110,13 +110,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-main,
-footer {
+main {
   padding: 8px 8px;
 }
 
 footer {
-  margin: 20px 0;
+  padding: 20px 8px;
 }
 </style>
 
