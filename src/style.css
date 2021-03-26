@@ -75,7 +75,7 @@ input,
 select,
 fieldset {
   margin: 0.4rem 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 fieldset {
@@ -95,9 +95,12 @@ summary {
 button {
   text-decoration: none;
   cursor: pointer;
-  padding: 0.2em 1em;
+  padding: 0.3em 1em;
   margin: 0.3em;
   font-size: 0.9rem;
+  background-color: #dddddd;
+  border: 0.1em solid #ffffff;
+  border-radius: 0.3em;
 }
 
 dialog {

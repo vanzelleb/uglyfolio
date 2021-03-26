@@ -1,35 +1,38 @@
 <template>
-  <div class="searchArea">
-    <h3>Add a new asset</h3>
-    <div>
+  <details>
+    <summary>🔍 <span class="link">Search</span></summary>
+    <fieldset>
+      <legend>Add a new asset</legend>
+      <div>
+        <small>
+          Each stock has a unique identifier, called ticker. You can find
+          tickers, e.g. on
+          <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
+            >Yahoo Finance</a
+          >.
+        </small>
+      </div>
+      <input
+        autofocus
+        id="ticker"
+        v-model="ticker"
+        type="text"
+        size="10"
+        maxLength="10"
+        placeholder="Asset ticker"
+        aria-label="Asset ticker"
+      />
+      <button @click="getCompanyInfo()">
+        <span v-if="searching">Searching...</span>
+        <span v-else>Add</span>
+      </button>
       <small>
-        Each stock has a unique identifier, called ticker. You can search
-        tickers, e.g. on
-        <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
-          >Yahoo Finance</a
-        >.
+        <p v-if="ticker && error" style="color: red">
+          {{ error }}
+        </p>
       </small>
-    </div>
-    <input
-      autofocus
-      id="ticker"
-      v-model="ticker"
-      type="text"
-      size="15"
-      maxLength="10"
-      placeholder="Asset ticker/symbol"
-      aria-label="Asset ticker/symbol"
-    />
-    <button @click="getCompanyInfo()">
-      <span v-if="searching">Searching...</span>
-      <span v-else>🔍 Search</span>
-    </button>
-    <small>
-      <p v-if="ticker && error" style="color: red">
-        {{ error }}
-      </p>
-    </small>
-  </div>
+    </fieldset>
+  </details>
 
   <dialog id="dialog">
     <form method="dialog">
@@ -109,10 +112,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.searchArea {
-  margin: 25px 0;
-}
-
 p {
   margin: 0 0 10px 0;
 }

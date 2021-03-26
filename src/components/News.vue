@@ -34,7 +34,7 @@
     </div>
     <button :class="{ shake: shake }" @click="getNews()">
       <span v-if="searching">Searching...</span>
-      <span v-else>Check</span>
+      <span v-else>🔍 Check</span>
     </button>
     <template v-if="asset.news.length > 0">
       <br />
