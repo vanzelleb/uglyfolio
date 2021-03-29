@@ -16,7 +16,7 @@
   </fieldset>
   <fieldset>
     <legend>Sell transactions</legend>
-    You sold {{ asset.totalSharesBought() }} shares.
+    You sold {{ asset.totalSharesSold() }} shares.
     <br />
     <details v-for="(trx, id) of asset.sells()" :key="`sell-${id}`">
       <summary class="link">
