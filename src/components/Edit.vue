@@ -14,7 +14,7 @@
       <Buy :trx="newTrx()" />
     </details>
   </fieldset>
-  <fieldset>
+  <fieldset v-if="asset.buys().length > 0">
     <legend>Sell transactions</legend>
     You sold {{ asset.totalSharesSold() }} shares.
     <br />

@@ -22,9 +22,10 @@ export const store = reactive({
 export const asset = reactive(new Asset());
 
 export const saveAsset = (asset) => {
-  if (asset.id) {
+  if (asset._id) {
+    // make sure every ticker is only saved once
     const IDs = store.assetList.map((item) => item._id);
-    const idx = IDs.indexOf(asset.ticker);
+    const idx = IDs.indexOf(asset._id);
     if (idx === -1) store.assetList.push(new Asset(asset));
     else store.assetList[idx] = new Asset(asset);
     persistState();

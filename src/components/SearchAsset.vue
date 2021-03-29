@@ -73,7 +73,7 @@ export default {
       () => ticker.value,
       (ticker, prevTicker) => {
         // reset errors when the ticker is reset
-        if (!ticker.value) useAPI.error.value = "";
+        if (!ticker.value) error.value = "";
       }
     );
 

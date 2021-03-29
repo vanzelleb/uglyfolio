@@ -10,7 +10,8 @@ import { asset } from "../composables/use-store";
 export default {
   setup() {
     const getColor = () => {
-      if (asset.prices[0] <= asset.prices[asset.prices.length - 1])
+      const prices = asset.prices();
+      if (prices[0] <= prices[prices.length - 1])
         // green gradient
         return posColor;
       // red gradient
@@ -21,7 +22,7 @@ export default {
       series: [
         {
           name: "Price",
-          data: asset.prices,
+          data: asset.prices(),
         },
       ],
       chart: {
@@ -41,7 +42,7 @@ export default {
       grid: {
         show: false,
         padding: {
-          left: 0,
+          left: -16,
           right: 0,
           bottom: 0,
           top: 0,
@@ -81,7 +82,7 @@ export default {
         crosshairs: {
           show: false,
         },
-        categories: asset.dates,
+        categories: asset.dates(),
       },
       tooltip: {
         enabled: true,

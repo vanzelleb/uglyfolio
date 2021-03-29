@@ -18,8 +18,7 @@
   </main>
   <footer style="text-align: center">
     <p>
-      An experimental app for tracking the performance of a stock portfolio.
-      Data provided by
+      An experimental app for tracking of a stock portfolio. Data provided by
       <a href="https://iexcloud.io">IEX Cloud</a>
       and
       <a href="https://finnhub.io/">Finnhub.io</a>

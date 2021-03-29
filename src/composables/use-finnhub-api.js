@@ -53,7 +53,7 @@ const companyURI = (asset) => {
 const companyResponse = (json, asset) => {
   asset.name = json.name;
   asset.currency = json.currency;
-  asset.industry = json.finnhubIndustry;
+  asset.dataload.industry = json.finnhubIndustry;
   saveAsset(asset);
 };
 
@@ -67,7 +67,7 @@ function signalURI(asset) {
 }
 
 function signalResponse(json, asset) {
-  asset.signal = json;
+  Object.assign(asset.dataload, json);
   saveAsset(asset);
 }
 

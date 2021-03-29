@@ -11,27 +11,16 @@ import { requestHandler } from "../composables/use-api";
 export default {
   props: ["asset"],
   setup(props) {
-    const getColor = () => {
-      if (
-        props.asset.prices[0] <=
-        props.asset.prices[props.asset.prices.length - 1]
-      )
-        // green gradient
-        return posColor;
-      // red gradient
-      else return negColor;
-    };
-
     const options = {
       series: [
         {
           name: "Price",
-          data: props.asset.prices,
+          data: props.asset.prices(),
         },
       ],
       chart: {
         type: "area",
-        height: 60,
+        height: 70,
         width: "100%",
         sparkline: {
           enabled: true,
@@ -39,6 +28,9 @@ export default {
         animations: {
           enabled: false,
         },
+      },
+      xaxis: {
+        categories: props.asset.dates(),
       },
       stroke: {
         curve: "smooth",
@@ -82,12 +74,12 @@ export default {
             chart.updateSeries([
               {
                 name: "Price",
-                data: props.asset.prices,
+                data: props.asset.prices(),
               },
             ]);
             chart.updateOptions({
               xaxis: {
-                categories: props.asset.dates,
+                categories: props.asset.dates(),
               },
             });
           });

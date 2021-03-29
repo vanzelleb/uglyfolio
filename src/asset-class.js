@@ -17,11 +17,7 @@ export default class Asset {
     this.lastPrice = obj._lastPrice;
     // values that don't have setters/getters
     this.trxns = obj._trxns;
-    this.address = obj.address;
-    this.industry = obj.industry;
-    this.description = obj.description;
-    this.error = obj.error;
-    this.signal = obj.signal;
+    this.dataload = obj._dataload;
   }
 
   get id() {
@@ -40,6 +36,14 @@ export default class Asset {
     this._trxns = val ? val : [];
   }
 
+  get dataload() {
+    return this._dataload;
+  }
+
+  set dataload(val) {
+    this._dataload = val ? val : {};
+  }
+
   get currency() {
     return this._currency;
   }
@@ -49,32 +53,8 @@ export default class Asset {
   }
 
   get highPrice() {
-    let max = Math.max(...Object.values(this.timeseries));
+    let max = Math.max(...this.prices());
     return max ? max : 0;
-  }
-
-  set yearlyHigh(val) {
-    this._yearlyHigh = val ? parseFloat(val) : null;
-  }
-
-  get yearlyHigh() {
-    return this._yearlyHigh ? this._yearlyHigh : null;
-  }
-
-  set yearlyLow(val) {
-    this._yearlyLow = val ? parseFloat(val) : null;
-  }
-
-  get yearlyLow() {
-    return this._yearlyLow ? this._yearlyLow : null;
-  }
-
-  set targetPrice(val) {
-    this._targetPrice = val ? parseFloat(val) : null;
-  }
-
-  get targetPrice() {
-    return this._targetPrice ? this._targetPrice : null;
   }
 
   get lastChecked() {
@@ -167,14 +147,6 @@ export default class Asset {
     }*/
   }
 
-  get prices() {
-    return Object.values(this.timeseries);
-  }
-
-  get dates() {
-    return Object.keys(this.timeseries);
-  }
-
   get payouts() {
     if (!this._payouts) return {};
     return Object.entries(this._payouts);
@@ -189,14 +161,9 @@ export default class Asset {
     else if (val) this._payouts = val;
   }
 
-  getYear() {
-    if (this.isSold()) return this._dateSell.getFullYear();
-    else return this._dateBuy.getFullYear();
-  }
-
   isUpdated() {
     const hasNoPrice = !this.lastPrice;
-    const hasNoChart = this.dates.length === 0;
+    const hasNoChart = this.dates().length === 0;
     // flag to prevent repeated API calls per day for assets with unknown tickers
     const checkedToday = this.lastChecked === today;
     if (hasNoPrice || hasNoChart || !checkedToday) return false;
@@ -242,6 +209,14 @@ export default class Asset {
 
   sells() {
     return this.trxns.filter((trx) => trx.type === "sell");
+  }
+
+  prices() {
+    return Object.values(this.timeseries);
+  }
+
+  dates() {
+    return Object.keys(this.timeseries);
   }
 
   buyDates() {

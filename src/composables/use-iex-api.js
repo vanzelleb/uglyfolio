@@ -43,15 +43,15 @@ function companyURI(asset) {
 
 function companyResponse(json, asset) {
   asset.name = json.companyName;
-  asset.address = [
+  asset.dataload.address = [
     json.address,
     json.zip,
     json.city,
     json.state,
     json.country
   ].join(", ");
-  asset.industry = json.industry;
-  asset.description = json.description;
+  asset.dataload.industry = json.industry;
+  asset.dataload.description = json.description;
   saveAsset(asset);
 }
 

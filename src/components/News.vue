@@ -4,6 +4,7 @@
     <p>
       You can specify a date range to narrow down the search for news articles.
     </p>
+    <br />
     <div class="flexbox">
       <div class="col">
         <label for="startRange">
@@ -89,6 +90,10 @@ export default {
 
 <!-- Add "scoped" keyibute to limit CSS to this component only -->
 <style scoped>
+button {
+  margin: 10px 0;
+}
+
 article,
 label {
   font-size: 10pt;
