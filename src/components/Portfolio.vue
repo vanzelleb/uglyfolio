@@ -72,4 +72,8 @@ export default {
   font-family: "Lato", sans-serif;
   font-size: 1rem;
 }
+
+fieldset {
+  margin: 0.4rem 0;
+}
 </style>

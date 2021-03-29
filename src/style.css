@@ -68,20 +68,20 @@ summary {
 
 label {
   display: block;
-  margin: 0.4rem 0 0.1rem 0;
 }
 
 input {
   font-size: 0.9rem;
 }
 
+label,
 input,
-select,
-fieldset {
-  margin: 0.4rem 0;
+select {
+  margin: 0.4rem 0 0.1rem 0;
 }
 
 fieldset {
+  margin: 0.8rem 0;
   vertical-align: top;
   background-color: #fbfbfb;
 }
@@ -98,7 +98,7 @@ summary {
 button {
   text-decoration: none;
   cursor: pointer;
-  padding: 0.35em 1em;
+  padding: 0.45em 0.8em;
   margin: 0.3em;
   font-size: 0.9rem;
   background-color: #dddddd;

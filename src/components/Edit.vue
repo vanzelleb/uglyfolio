@@ -9,7 +9,7 @@
       </summary>
       <Buy :trx="trx" :id="id" />
     </details>
-    <details>
+    <details :open="trxAdded">
       <summary class="link">Add new buy transactions</summary>
       <Buy :trx="newTrx()" />
     </details>
@@ -55,6 +55,7 @@ export default {
   },
   setup() {
     const errors = ref([]);
+    const trxAdded = ref(null);
 
     function Trx() {
       this.type = null;
@@ -97,7 +98,17 @@ export default {
       selectAsset();
     };
 
+    const trxCount = computed(() => asset.trxns.length);
+
+    watch(
+      () => trxCount.value,
+      (count, prevCount) => {
+        trxAdded.value = false;
+      }
+    );
+
     return {
+      trxAdded,
       newTrx,
       remove,
       close,
