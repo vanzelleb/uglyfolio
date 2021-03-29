@@ -1,5 +1,7 @@
 import { today } from "../utils";
 import { store } from "../composables/use-store";
+import { computed } from "vue";
+import Asset from "../asset-class";
 
 const sum = (array) => {
   const method = (acc, cur) => acc + cur;
@@ -22,6 +24,12 @@ const lastDiff = (array) => {
   return array[array.length - 1] - array[array.length - 2];
 };
 
+// convert items into Asset class before using them
+export const assets = computed(() =>
+  // convert items into Asset class before using them
+  store.assetList.map((item) => new Asset(item))
+);
+
 function relativeChange(items, benchmark) {
   return items.map((asset) => {
     // calculate annulaized relative return/alpha in comparison to the benchmark
@@ -42,15 +50,8 @@ function relativeChange(items, benchmark) {
 }
 
 function change(items) {
-  const result = items.map((asset) => {
-    if (asset.isSold()) return 0;
-    if (asset.lastPrice)
-      return (
-        (asset.lastPrice / asset.buyPrice) * asset.buyValue - asset.buyValue
-      );
-    return null;
-  });
-  return sum(result);
+  const results = items.map((asset) => asset.change());
+  return sum(results);
 }
 
 // calculate exchange rate effects
@@ -88,13 +89,10 @@ function invested(items) {
 
 function returns(items) {
   const result = items.map((asset) => {
-    let sanitizedIncome = asset.income ? asset.income : 0;
-    if (asset.isSold())
-      asset._return = asset.sellValue - asset.buyValue + sanitizedIncome;
-    else asset._return = sanitizedIncome;
-    return asset._return;
+    if (asset.isSold()) return asset.totalSellValue() - asset.totalBuyValue();
+    else return 0;
   });
-  return sum(result);
+  return sum(result) + income(items);
 }
 
 function diffToTargetPrice(items) {
@@ -124,13 +122,7 @@ function lastChange(items) {
 }*/
 
 function value(items) {
-  return (
-    invested(items) +
-    change(items) +
-    returns(items) +
-    income(items) +
-    FXChange(items)
-  );
+  return invested(items) + change(items) + returns(items) + FXChange(items);
 }
 
 function missedGain(items) {
@@ -155,28 +147,7 @@ function income(items) {
   return sum(result);
 }
 
-/*
-soldAssets(state, getters) {
-  return state.assets.filter((asset) => asset._dateSell);
-},
-holdAssets(state, getters) {
-  return state.assets.filter((asset) => !asset._dateSell);
-},
-firstPortfolioDate(state, getters) {
-  let dates = state.assets.map((item) => new Date(item._dateBuy));
-  return new Date(Math.min(...dates));
-},
-lastPortfolioDate(state, getters) {
-  if (getters.holdAssets.length > 0) return new Date();
-  let dates = state.assets.map((item) => new Date(item._dateSell));
-  return new Date(Math.max(...dates));
-}
-    assetIDs(state) {
-      return state.assets.map((item) => item._id);
-    },
-*/
-
-export const usePortfolio = {
+export const useKPI = {
   change,
   value,
   income,

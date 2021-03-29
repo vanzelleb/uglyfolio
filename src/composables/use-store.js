@@ -1,4 +1,4 @@
-import { reactive, computed } from "vue";
+import { reactive } from "vue";
 import Asset from "../asset-class";
 
 export const store = reactive({
@@ -21,15 +21,10 @@ export const store = reactive({
 
 export const asset = reactive(new Asset());
 
-export const assets = computed(() =>
-  // convert items into Asset class before using them
-  store.assetList.map((item) => new Asset(item))
-);
-
 export const saveAsset = (asset) => {
   if (asset.id) {
-    const IDs = assets.value.map((item) => item.id);
-    const idx = IDs.indexOf(asset.id);
+    const IDs = store.assetList.map((item) => item._id);
+    const idx = IDs.indexOf(asset.ticker);
     if (idx === -1) store.assetList.push(new Asset(asset));
     else store.assetList[idx] = new Asset(asset);
     persistState();
@@ -37,11 +32,13 @@ export const saveAsset = (asset) => {
 };
 
 export const removeAsset = (asset) => {
-  store.assetList = store.assetList.filter((item) => item.id !== asset.id);
+  store.assetList = store.assetList.filter(
+    (item) => item._ticker !== asset._ticker
+  );
   persistState();
 };
 
-export const setAsset = (item) => {
+export const selectAsset = (item) => {
   Object.assign(asset, new Asset(item));
 };
 
@@ -50,7 +47,6 @@ export const initState = () => {
     // copy store from local storage
     Object.assign(store, JSON.parse(localStorage.store));
     store.settings.benchmark = new Asset(store.settings.benchmark);
-    //assets.value = store.assetList.map((item) => new Asset(item));
   }
 };
 

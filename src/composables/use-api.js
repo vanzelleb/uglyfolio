@@ -3,21 +3,21 @@ import { finnhubAPI } from "../composables/use-finnhub-api";
 import { iexAPI } from "../composables/use-iex-api";
 import { exchangeratesAPI } from "../composables/use-exchangerates-api";
 
-const error = ref("");
+export const error = ref("");
 
 const resources = {
   history: {
     2: {
-      getUri: function ({ asset }) {
-        return iexAPI.historyURI(asset);
+      getUri: function ({ asset, start, end }) {
+        return iexAPI.historyURI(asset, start, end);
       },
       handleResponse: function (json, { asset }) {
         iexAPI.historyResponse(json, asset);
       }
     },
     1: {
-      getUri: function ({ asset }) {
-        return finnhubAPI.historyURI(asset);
+      getUri: function ({ asset, start, end }) {
+        return finnhubAPI.historyURI(asset, start, end);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.historyResponse(json, asset);
@@ -67,16 +67,6 @@ const resources = {
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.signalResponse(json, asset);
-      }
-    }
-  },
-  target: {
-    1: {
-      getUri: function ({ asset }) {
-        return finnhubAPI.targetURI(asset);
-      },
-      handleResponse: function (json, { asset }) {
-        finnhubAPI.targetResponse(json, asset);
       }
     }
   },
@@ -135,7 +125,7 @@ async function queryBackend(option, requestObj) {
 }
 
 // handles requests that have a fallback API provider, e.g. when request limit is reached or when symbol is unknown
-async function requestHandler(type, requestObj) {
+export async function requestHandler(type, requestObj) {
   let options = Object.keys(resources[type]).length;
   let i = 1;
   // reset error variable
@@ -154,8 +144,3 @@ async function requestHandler(type, requestObj) {
     }
   }
 }
-
-export const useAPI = {
-  error,
-  requestHandler
-};

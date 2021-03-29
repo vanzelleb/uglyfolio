@@ -4,13 +4,13 @@ import { saveAsset } from "./use-store";
 const baseURL = "https://cloud.iexapis.com/stable/";
 const provider = "iex";
 
-function historyURI(asset) {
+function historyURI(asset, start, end) {
   const url =
     baseURL +
     "stock/" +
     asset.ticker +
     "/chart/date/" +
-    asset.dateBuy.replace(/-/g, "");
+    start.toISOString().substring(0, 10).replace(/-/g, "");
   const params = {
     chartByDay: true
   };
