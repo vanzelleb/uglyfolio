@@ -2,7 +2,9 @@
   <div class="flexbox">
     <fieldset class="col" v-for="(item, id) of assets" :key="id">
       <legend>
-        <span class="link" @click="setAsset(item)">{{ item.name }}</span>
+        <div class="link" @click="selectAsset(item)">
+          {{ item.name }} ({{ item.ticker }})
+        </div>
         <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
           <span v-if="item.forexChange" class="ml-2">💵</span>
           <span v-if="item.return" class="ml-2">💰</span>
@@ -17,33 +19,31 @@
             >👎</span
           >-->
       </legend>
-      <h4 v-if="!item.dateSell" class="number">
-        {{ change([item]) >= 0 ? "Up " : "Down " }}
+      <h4 v-if="!item.isSold()" class="number">
+        {{ change([item]) >= 0 ? "You're up " : "down " }}
         {{ toLocaleNumber(change([item]), 0) }}
       </h4>
-      <h4 v-else class="number">
+      <h4 v-else :class="{ posColor: returns([item]) >= 0 }" class="number">
         {{ returns([item]) >= 0 ? "You made " : "You lost " }}
         {{ toLocaleNumber(returns([item]), 0) }}
       </h4>
       <h5 style="display: inline-block">&nbsp;{{ settings.currency }}</h5>
-      <Chart :prices="item.prices" :dates="item.dates" height="60" />
+      <Sparkline :asset="item" />
     </fieldset>
   </div>
 </template>
 
 <script>
-import Chart from "../components/Chart.vue";
-import SearchAsset from "../components/SearchAsset.vue";
-import { usePortfolio } from "../composables/use-portfolio";
+import Sparkline from "../components/Sparkline.vue";
+import { assets, useKPI } from "../composables/use-portfolio";
 import { computed } from "vue";
 import { toLocaleNumber } from "../utils";
-import { store, asset, assets, setAsset } from "../composables/use-store";
+import { store, asset, selectAsset } from "../composables/use-store";
 import Asset from "../asset-class";
 
 export default {
   components: {
-    SearchAsset,
-    Chart,
+    Sparkline,
   },
   setup() {
     /*const filteredAssets = computed(() => {
@@ -53,15 +53,14 @@ export default {
       });
       return filtered;
     });*/
-    const hasAssets = computed(() => store.assetList.length > 0);
 
     return {
       toLocaleNumber,
       settings: store.settings,
       asset,
-      setAsset,
+      selectAsset,
       assets,
-      ...usePortfolio,
+      ...useKPI,
     };
   },
 };
@@ -71,6 +70,6 @@ export default {
 <style scoped>
 .numberFont {
   font-family: "Lato", sans-serif;
-  font-size: 12pt;
+  font-size: 1rem;
 }
 </style>

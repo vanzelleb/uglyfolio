@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { asset, setAsset } from "../composables/use-store";
+import { asset } from "../composables/use-store";
 import { onMounted, ref } from "vue";
 
 export default {
@@ -24,7 +24,6 @@ export default {
     return {
       scrolled,
       asset,
-      setAsset,
     };
   },
 };
@@ -46,6 +45,12 @@ header {
   top: 0;
   background-color: white;
   z-index: 1;
+}
+
+div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .scroll {

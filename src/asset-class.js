@@ -1,34 +1,27 @@
 import { today } from "./utils";
 
 export default class Asset {
-  constructor(item) {
-    item = item ? item : {};
-    this.id = item._id;
-    this.currency = item._currency;
-    this.name = item._name;
-    this.ticker = item._ticker;
-    this.amount = item._amount;
-    this.buyValue = item._buyValue;
-    this.sellValue = item._sellValue;
-    this.dateBuy = item._dateBuy;
-    this.dateSell = item._dateSell;
-    this.timeseries = item._timeseries;
-    this.payouts = item._payouts;
-    this.buyPrice = item._buyPrice;
-    this.sellPrice = item._sellPrice;
-    this.targetPrice = item._targetPrice;
-    this.yearlyHigh = item._yearlyHigh;
-    this.yearlyLow = item._yearlyLow;
-    this.lastChecked = item._lastChecked;
-    this.lastPrice = item._lastPrice;
-    // values that don't need setters/getters
-    this.peRatio = item.peRatio;
-    this.address = item.address;
-    this.industry = item.industry;
-    this.description = item.description;
-    this.error = item.error;
-    this.news = [];
-    this.signal = item.signal;
+  constructor(obj) {
+    obj = obj ? obj : {};
+    this.id = obj._id;
+    this.currency = "USD";
+    this.name = obj._name;
+    this.ticker = obj._ticker;
+    this.timeseries = obj._timeseries;
+    this.payouts = obj._payouts;
+    this.targetPrice = obj._targetPrice;
+    this.yearlyHigh = obj._yearlyHigh;
+    this.yearlyLow = obj._yearlyLow;
+    this.lastChecked = obj._lastChecked;
+    // current price quote from API
+    this.lastPrice = obj._lastPrice;
+    // values that don't have setters/getters
+    this.trxns = obj._trxns;
+    this.address = obj.address;
+    this.industry = obj.industry;
+    this.description = obj.description;
+    this.error = obj.error;
+    this.signal = obj.signal;
   }
 
   get id() {
@@ -36,8 +29,15 @@ export default class Asset {
   }
 
   set id(val) {
-    if (!val) this._id = null;
-    else this._id = val;
+    this._id = val ? val : null;
+  }
+
+  get trxns() {
+    return this._trxns;
+  }
+
+  set trxns(val) {
+    this._trxns = val ? val : [];
   }
 
   get currency() {
@@ -51,18 +51,6 @@ export default class Asset {
   get highPrice() {
     let max = Math.max(...Object.values(this.timeseries));
     return max ? max : 0;
-  }
-
-  get dateBuy() {
-    if (this._dateBuy) return this._dateBuy.toISOString().substring(0, 10);
-    else return null;
-  }
-
-  set dateBuy(date) {
-    if (date) {
-      let dt = new Date(date);
-      this._dateBuy = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
-    } else this._dateBuy = null;
   }
 
   set yearlyHigh(val) {
@@ -121,12 +109,10 @@ export default class Asset {
   }
 
   get holdingPeriod() {
-    if (!this._dateBuy) return null;
-    return parseInt(
-      ((this.isSold() ? this._dateSell : new Date()) - this._dateBuy) /
-        (1000 * 60 * 60 * 24),
-      10
-    );
+    let diff = null;
+    if (!this.isSold()) diff = new Date() - this.firstTrxDate();
+    else diff = this.lastTrxDate() - this.firstTrxDate();
+    return parseInt(diff / (1000 * 60 * 60 * 24), 10);
   }
 
   get roi() {
@@ -144,18 +130,6 @@ export default class Asset {
     // any investment that does not have a track record of at least 365 days cannot "ratchet up" its performance to be annualized
     // https://www.investopedia.com/terms/a/annualized--return.asp
     else return (this.return / this.buyValue) * 100;
-  }
-
-  get dateSell() {
-    if (this._dateSell) return this._dateSell.toISOString().substring(0, 10);
-    else return "";
-  }
-
-  set dateSell(date) {
-    if (date) {
-      let dt = new Date(date);
-      this._dateSell = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
-    } else this._dateSell = null;
   }
 
   get name() {
@@ -177,29 +151,20 @@ export default class Asset {
   }
 
   get timeseries() {
-    let ts = this._timeseries;
-    // trim timeseries
-    if (this.dateSell)
-      for (let date in ts) {
-        if (date > this.dateSell) {
-          delete ts[date];
-        }
-      }
-    // update the timeseries with the buy and sell prices
-    if (this.buyPrice) ts[this.dateBuy] = this.buyPrice;
-    if (this.sellPrice && this.dateSell) ts[this.dateSell] = this.sellPrice;
-    if (!this.isSold() && this.lastChecked && this.lastPrice)
-      ts[this.lastChecked] = this.lastPrice;
-    return ts;
+    // update the timeseries with the current price
+    if (this.lastChecked && this.lastPrice)
+      this._timeseries[this.lastChecked] = this.lastPrice;
+    return this._timeseries;
   }
 
   set timeseries(val) {
-    this._timeseries = {};
+    this._timeseries = val ? val : {};
+    /*this._timeseries = {};
     if (val) {
       let dates = Object.keys(val);
       dates.sort();
       for (let date of dates) this._timeseries[date] = parseFloat(val[date]);
-    }
+    }*/
   }
 
   get prices() {
@@ -208,46 +173,6 @@ export default class Asset {
 
   get dates() {
     return Object.keys(this.timeseries);
-  }
-
-  get buyValue() {
-    return this._buyValue;
-  }
-
-  set buyValue(val) {
-    this._buyValue = val ? parseFloat(val) : "";
-  }
-
-  get sellValue() {
-    return this._sellValue;
-  }
-
-  set sellValue(val) {
-    this._sellValue = val ? parseFloat(val) : "";
-  }
-
-  get amount() {
-    return this._amount;
-  }
-
-  set amount(val) {
-    this._amount = val ? parseFloat(val) : "";
-  }
-
-  set buyPrice(val) {
-    this._buyPrice = val ? parseFloat(val) : null;
-  }
-
-  get buyPrice() {
-    return this._buyPrice;
-  }
-
-  set sellPrice(val) {
-    this._sellPrice = val ? parseFloat(val) : null;
-  }
-
-  get sellPrice() {
-    return this._sellPrice;
   }
 
   get payouts() {
@@ -270,21 +195,93 @@ export default class Asset {
   }
 
   isUpdated() {
-    const hasNoTicker = !this.ticker;
-    const hasNoPrice = !this.lastPrice && !this.isSold();
-    const hasNoChart = this.dates.length === 0 && this.isSold();
+    const hasNoPrice = !this.lastPrice;
+    const hasNoChart = this.dates.length === 0;
     // flag to prevent repeated API calls per day for assets with unknown tickers
     const checkedToday = this.lastChecked === today;
-    if (hasNoTicker || hasNoPrice || hasNoChart || !checkedToday) return false;
+    if (hasNoPrice || hasNoChart || !checkedToday) return false;
     return true;
   }
 
+  totalSharesBought() {
+    const count = this.buys().reduce((acc, cur) => {
+      return acc + cur.amount;
+    }, 0);
+    return count;
+  }
+
+  totalSharesSold() {
+    const count = this.sells().reduce((acc, cur) => {
+      return acc + cur.amount;
+    }, 0);
+    return count;
+  }
+
   isSold() {
-    if (this._dateSell) return true;
+    if (this.totalSharesSold() === this.totalSharesBought()) return true;
     else return false;
   }
 
   hasAlarm() {
     return this.stopLoss > this.lastPrice;
+  }
+
+  firstTrxDate() {
+    const dates = this.trxns.map((trx) => trx.date);
+    return new Date(dates.sort()[0]);
+  }
+
+  lastTrxDate() {
+    const dates = this.trxns.map((trx) => trx.date);
+    return new Date(dates.sort()[dates.length - 1]);
+  }
+
+  buys() {
+    return this.trxns.filter((trx) => trx.type === "buy");
+  }
+
+  sells() {
+    return this.trxns.filter((trx) => trx.type === "sell");
+  }
+
+  buyDates() {
+    return this.buys().map((trx) => trx.date);
+  }
+
+  sellDates() {
+    return this.sells().map((trx) => trx.date);
+  }
+
+  avgBuyPrice() {
+    let sum = 0;
+    for (const trx of this.buys()) {
+      sum += trx.price * trx.amount;
+    }
+    const price = sum / this.totalSharesBought();
+    return price;
+  }
+
+  totalBuyValue() {
+    const value = this.buys().reduce((acc, cur) => {
+      return acc + cur.value;
+    }, 0);
+    return value;
+  }
+
+  totalSellValue() {
+    const value = this.sells().reduce((acc, cur) => {
+      return acc + cur.value;
+    }, 0);
+    return value;
+  }
+
+  change() {
+    if (this.isSold()) return 0;
+    if (this.lastPrice)
+      return (
+        (this.lastPrice / this.avgBuyPrice()) * this.totalBuyValue() -
+        this.totalBuyValue()
+      );
+    return 0;
   }
 }

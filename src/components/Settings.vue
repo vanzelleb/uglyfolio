@@ -59,11 +59,11 @@
 import { onMounted, watch, toRefs, computed } from "vue";
 import {
   store,
-  assets,
   saveAsset,
   persistState,
 } from "../composables/use-store";
-import { useAPI } from "../composables/use-api";
+import { requestHandler } from "../composables/use-api";
+import { assets } from "../composables/use-portfolio";
 import Asset from "../asset-class";
 import { today } from "../utils";
 
@@ -76,7 +76,7 @@ export default {
     ];
 
     const getFXRate = (cur, date) => {
-      useAPI.requestHandler("forexByDate", {
+      requestHandler("forexByDate", {
         currency: cur,
         date: date,
       });
@@ -84,7 +84,7 @@ export default {
 
     const updateFXRates = () => {
       const appCurrency = store.settings.currency;
-      const FXBase = store.exchangeRates[appCurrency];
+      let FXBase = store.exchangeRates[appCurrency];
       if (!FXBase) FXBase = {};
       // retrieve latest exchange rates for all currency combinations
       for (const item of assets.value) {
@@ -108,9 +108,9 @@ export default {
     onMounted(() => {
       // add more currencies to the default one
       if (store.currencies.length === 1) {
-        useAPI.requestHandler("currencies");
+        requestHandler("currencies");
       }
-      updateFXRates();
+      //updateFXRates();
     });
 
     // gets executed when currency changes

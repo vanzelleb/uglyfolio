@@ -38,6 +38,7 @@
     </button>
     <template v-if="asset.news.length > 0">
       <br />
+      <br />
       <article v-for="(item, idx) of asset.news" :key="idx">
         <div>{{ item.datetime }}</div>
         <a :href="item.url" target="_blank">{{ item.headline }}</a>
@@ -49,7 +50,7 @@
 </template>
 
 <script>
-import { useAPI } from "../composables/use-api";
+import { requestHandler } from "../composables/use-api";
 import { asset } from "../composables/use-store";
 import { ref, computed, onMounted } from "vue";
 
@@ -58,13 +59,14 @@ export default {
     const range = ref([0, asset.dates.length - 1]);
     const shake = ref(false);
     const searching = ref(false);
+    asset.news = [];
 
     const getNews = async () => {
       shake.value = false;
       searching.value = true;
       const from = asset.dates[range.value[0]];
       const to = asset.dates[range.value[1]];
-      await useAPI.requestHandler("news", {
+      await requestHandler("news", {
         asset: asset,
         from: from,
         to: to,

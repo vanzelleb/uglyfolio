@@ -1,6 +1,5 @@
 import { createApp } from "vue";
-import App from "./App.vue";
-import VueApexCharts from "vue3-apexcharts";
+import App from "./components/App.vue";
 
-const app = createApp(App).use(VueApexCharts);
+const app = createApp(App);
 app.mount("#app");

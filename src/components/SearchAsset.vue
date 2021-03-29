@@ -1,5 +1,5 @@
 <template>
-  <details>
+  <details :open="assets.length === 0">
     <summary>🔍 <span class="link">Search</span></summary>
     <fieldset>
       <legend>Add a new asset</legend>
@@ -21,13 +21,14 @@
         maxLength="10"
         placeholder="Asset ticker"
         aria-label="Asset ticker"
+        @keyup.enter="getCompanyInfo()"
       />
       <button @click="getCompanyInfo()">
         <span v-if="searching">Searching...</span>
         <span v-else>Add</span>
       </button>
       <small>
-        <p v-if="ticker && error" style="color: red">
+        <p class="errors" v-if="ticker && error">
           {{ error }}
         </p>
       </small>
@@ -42,16 +43,19 @@
       </h5>
       <br />
       <p>Do you want to add this asset to your portfolio?</p>
-      <button type="button" value="cancel" @click="cancel()">Nope</button>
-      <button type="button" value="yes" @click="confirm()">Ok, Add it.</button>
+      <button type="button" value="cancel" @click="close()">Nope</button>
+      <button type="button" value="yes" @click="confirm()" autofocus>
+        Ok, Add it.
+      </button>
     </form>
   </dialog>
 </template>
 
 <script>
-import { watch, ref, reactive, onMounted } from "vue";
-import { useAPI } from "../composables/use-api";
-import { setAsset } from "../composables/use-store";
+import { watch, ref, reactive, onMounted, computed } from "vue";
+import { requestHandler, error } from "../composables/use-api";
+import { assets } from "../composables/use-portfolio";
+import { saveAsset } from "../composables/use-store";
 import Asset from "../asset-class";
 
 export default {
@@ -59,7 +63,6 @@ export default {
     const ticker = ref("");
     const asset = reactive(new Asset());
     const searching = ref(false);
-
     let modal = null;
 
     onMounted(() => {
@@ -76,35 +79,42 @@ export default {
 
     const getCompanyInfo = async () => {
       if (ticker.value) {
-        searching.value = true;
-        asset.ticker = ticker.value;
-        await useAPI.requestHandler("company", { asset: asset });
-        searching.value = false;
-        if (asset.name) modal.showModal();
+        // check is the asset is already part of the portfolio
+        if (
+          assets.value.find((item) => item.ticker === ticker.value) ===
+          undefined
+        ) {
+          searching.value = true;
+          asset.ticker = ticker.value;
+          await requestHandler("company", { asset: asset });
+          searching.value = false;
+          if (asset.name) modal.showModal();
+        } else alert("Asset already added.");
       }
     };
 
-    const cancel = () => {
+    const close = () => {
       // reset the ticker field
       ticker.value = "";
       modal.close();
     };
 
     const confirm = () => {
-      // reset the variables
-      setAsset(asset);
-      modal.close();
+      asset.id = asset.ticker;
+      saveAsset(asset);
+      close();
     };
 
     return {
+      assets,
       searching,
       modal,
       asset,
       ticker,
       confirm,
-      cancel,
+      close,
       getCompanyInfo,
-      error: useAPI.error,
+      error,
     };
   },
 };
@@ -112,7 +122,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-p {
+.errors {
   margin: 0 0 10px 0;
+  color: red;
 }
 </style>

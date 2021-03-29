@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import { usePortfolio } from "../composables/use-portfolio";
+import { assets, useKPI } from "../composables/use-portfolio";
 import { reactive, computed, watch } from "vue";
-import { store, assets } from "../composables/use-store";
+import { store } from "../composables/use-store";
 import { toLocaleNumber } from "../utils";
 
 export default {
@@ -37,48 +37,44 @@ export default {
         icon: "🧾",
         subtitle: "Purchase value of your assets.",
         info: "https://www.investopedia.com/terms/i/investment.asp",
-        value: toLocaleNumber(usePortfolio.invested(assets.value), 0),
+        value: toLocaleNumber(useKPI.invested(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
       "Day's/Total change": {
         subtitle: "How much you are up/down.",
         info: null,
         value:
-          toLocaleNumber(usePortfolio.lastChange(assets.value), 0) +
+          toLocaleNumber(useKPI.lastChange(assets.value), 0) +
           "/" +
-          toLocaleNumber(usePortfolio.change(assets.value), 0),
+          toLocaleNumber(useKPI.change(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
       "Currency effects": {
         icon: "😢",
         subtitle: "Effect of currency exchange rate changes.",
         info: null,
-        value: computed(() =>
-          toLocaleNumber(usePortfolio.FXChange(assets.value), 0)
-        ),
+        value: computed(() => toLocaleNumber(useKPI.FXChange(assets.value), 0)),
         unit: computed(() => store.settings.currency),
       },
       "Profit/Loss from selling": {
         icon: "💰",
         subtitle: "Gain/Loss from sold assets & dividends.",
         info: "https://www.investopedia.com/terms/r/return.asp",
-        value: toLocaleNumber(usePortfolio.returns(assets.value), 0),
+        value: toLocaleNumber(useKPI.returns(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
       "Dividend payouts": {
         icon: "🗓️",
         subtitle: "Income from receiving dividends.",
         info: "https://www.investopedia.com/terms/d/dividend.asp",
-        value: toLocaleNumber(usePortfolio.income(assets.value), 0),
+        value: toLocaleNumber(useKPI.income(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
       "Current balance": {
         icon: "🏦",
         subtitle: "Your assets' current value.",
         info: "https://www.investopedia.com/terms/m/marketvalue.asp",
-        value: computed(() =>
-          toLocaleNumber(usePortfolio.value(assets.value), 0)
-        ),
+        value: computed(() => toLocaleNumber(useKPI.value(assets.value), 0)),
         unit: computed(() => store.settings.currency),
       },
       /*
@@ -112,14 +108,14 @@ export default {
         icon: "😢",
         subtitle: "Drop in value from highest price.",
         info: null,
-        value: toLocaleNumber(usePortfolio.missedGain(assets.value), 0),
+        value: toLocaleNumber(useKPI.missedGain(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
       "Delta to target": {
         icon: "😢",
         subtitle: "Predicted change based on avg. price target.",
         info: null,
-        value: toLocaleNumber(usePortfolio.diffToTargetPrice(assets.value), 0),
+        value: toLocaleNumber(useKPI.diffToTargetPrice(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
     });
