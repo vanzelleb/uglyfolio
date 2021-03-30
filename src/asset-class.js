@@ -4,19 +4,17 @@ export default class Asset {
   constructor(obj) {
     obj = obj ? obj : {};
     this.id = obj._id;
+    // by default all stocks from the APIs are in USD
     this.currency = "USD";
     this.name = obj._name;
     this.ticker = obj._ticker;
     this.timeseries = obj._timeseries;
     this.payouts = obj._payouts;
-    this.targetPrice = obj._targetPrice;
-    this.yearlyHigh = obj._yearlyHigh;
-    this.yearlyLow = obj._yearlyLow;
     this.lastChecked = obj._lastChecked;
     // current price quote from API
     this.lastPrice = obj._lastPrice;
-    // values that don't have setters/getters
     this.trxns = obj._trxns;
+    // miscellaneous information that does not need transformation
     this.dataload = obj._dataload;
   }
 
@@ -52,11 +50,6 @@ export default class Asset {
     this._currency = val ? val : null;
   }
 
-  get highPrice() {
-    let max = Math.max(...this.prices());
-    return max ? max : 0;
-  }
-
   get lastChecked() {
     if (this._lastChecked)
       return this._lastChecked.toISOString().substring(0, 10);
@@ -78,38 +71,6 @@ export default class Asset {
 
   set lastPrice(val) {
     this._lastPrice = val ? parseFloat(val) : "";
-  }
-
-  get lastChangePct() {
-    if (!this.isSold() && this.dates.length > 1)
-      return (
-        this.lastPrice / this.timeseries[this.dates[this.dates.length - 2]] - 1
-      );
-    return null;
-  }
-
-  get holdingPeriod() {
-    let diff = null;
-    if (!this.isSold()) diff = new Date() - this.firstTrxDate();
-    else diff = this.lastTrxDate() - this.firstTrxDate();
-    return parseInt(diff / (1000 * 60 * 60 * 24), 10);
-  }
-
-  get roi() {
-    // calculate the annualized return on investment
-    if (this.holdingPeriod > 365) {
-      return (
-        (Math.pow(
-          1 + this.return / this.buyValue,
-          1 / (this.holdingPeriod / 365)
-        ) -
-          1) *
-        100
-      );
-    }
-    // any investment that does not have a track record of at least 365 days cannot "ratchet up" its performance to be annualized
-    // https://www.investopedia.com/terms/a/annualized--return.asp
-    else return (this.return / this.buyValue) * 100;
   }
 
   get name() {
@@ -159,6 +120,45 @@ export default class Asset {
       for (let payout of val)
         this._payouts[payout.year] = { value: payout.value };
     else if (val) this._payouts = val;
+  }
+
+  lastChangePct() {
+    if (!this.isSold() && this.dates().length > 1)
+      return (
+        this.lastPrice /
+          this.timeseries[this.dates()[this.dates().length - 2]] -
+        1
+      );
+    return null;
+  }
+
+  highPrice() {
+    let max = Math.max(...this.prices());
+    return max ? max : 0;
+  }
+
+  holdingPeriod() {
+    let diff = null;
+    if (!this.isSold()) diff = new Date() - this.firstTrxDate();
+    else diff = this.lastTrxDate() - this.firstTrxDate();
+    return parseInt(diff / (1000 * 60 * 60 * 24), 10);
+  }
+
+  roi() {
+    // calculate the annualized return on investment
+    if (this.holdingPeriod() > 365) {
+      return (
+        (Math.pow(
+          1 + this.return() / this.totalBuyValue(),
+          1 / (this.holdingPeriod() / 365)
+        ) -
+          1) *
+        100
+      );
+    }
+    // any investment that does not have a track record of at least 365 days cannot "ratchet up" its performance to be annualized
+    // https://www.investopedia.com/terms/a/annualized--return.asp
+    else return (this.return() / this.totalBuyValue()) * 100;
   }
 
   isUpdated() {
@@ -258,5 +258,10 @@ export default class Asset {
         this.totalBuyValue()
       );
     return 0;
+  }
+
+  return() {
+    if (this.isSold()) return this.totalSellValue() - this.totalBuyValue();
+    else return 0;
   }
 }

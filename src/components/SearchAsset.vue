@@ -39,7 +39,7 @@
     <form method="dialog">
       <h3>Found {{ asset.name }}</h3>
       <h5>
-        {{ asset.industry }}
+        {{ asset.dataload.industry }}
       </h5>
       <br />
       <p>Do you want to add this asset to your portfolio?</p>
@@ -94,7 +94,7 @@ export default {
     };
 
     const close = () => {
-      // reset the ticker field
+      // reset the asset object
       ticker.value = "";
       modal.close();
     };

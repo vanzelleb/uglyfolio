@@ -1,19 +1,19 @@
 <template>
   <div class="flexbox">
-    <fieldset class="col" v-for="(item, id) of assets" :key="id">
+    <fieldset class="col number" v-for="(item, id) of assets" :key="id">
       <legend class="link" @click="selectAsset(item)">
         {{ item.name }} ({{ item.ticker }})
       </legend>
       <div v-if="item.buys().length > 0" class="summary">
-        <h4 v-if="!item.isSold()" class="number">
+        <h4 v-if="!item.isSold()">
           You're {{ change([item]) >= 0 ? "up " : "down " }}
           {{ toLocaleNumber(change([item]), 0) }}
         </h4>
-        <h4 v-else :class="{ posColor: returns([item]) >= 0 }" class="number">
+        <h4 v-else :class="{ posColor: returns([item]) >= 0 }">
           You {{ returns([item]) >= 0 ? "made " : "lost " }}
           {{ toLocaleNumber(returns([item]), 0) }}
         </h4>
-        <h6 class="number">&nbsp;{{ appCurrency }}</h6>
+        <h6>&nbsp;{{ appCurrency }}</h6>
       </div>
       <div class="summary">
         <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
@@ -27,6 +27,7 @@
           >👎</span
         >
       </div>
+      <h5 v-if="item.dataload.trend?.trending" class="summary">Trending: ✔️</h5>
       <Sparkline :asset="item" />
     </fieldset>
   </div>

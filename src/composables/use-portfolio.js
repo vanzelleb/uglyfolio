@@ -89,8 +89,7 @@ function invested(items) {
 
 function returns(items) {
   const result = items.map((asset) => {
-    if (asset.isSold()) return asset.totalSellValue() - asset.totalBuyValue();
-    else return 0;
+    return asset.return();
   });
   return sum(result) + income(items);
 }
