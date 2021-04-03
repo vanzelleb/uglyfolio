@@ -1,6 +1,9 @@
-import { today } from "./utils";
+import { store, persistState } from "./use-store";
+import { reactive } from "vue";
+import { Trx } from "./use-transactions";
+import { today } from "../utils";
 
-export default class Asset {
+class Asset {
   constructor(obj) {
     obj = obj ? obj : {};
     this.id = obj._id;
@@ -31,7 +34,7 @@ export default class Asset {
   }
 
   set trxns(val) {
-    this._trxns = val ? val : [];
+    this._trxns = val ? val.map((trx) => new Trx(trx)) : [];
   }
 
   get dataload() {
@@ -71,15 +74,6 @@ export default class Asset {
 
   set lastPrice(val) {
     this._lastPrice = val ? parseFloat(val) : "";
-  }
-
-  get name() {
-    return this._name;
-  }
-
-  set name(name) {
-    if (name) this._name = name.toString();
-    else this._name = "";
   }
 
   get ticker() {
@@ -265,3 +259,29 @@ export default class Asset {
     else return 0;
   }
 }
+
+const asset = reactive(new Asset());
+
+const saveAsset = (asset) => {
+  if (asset._id) {
+    // make sure every ticker is only saved once
+    const IDs = store.assetList.map((item) => item._id);
+    const idx = IDs.indexOf(asset._id);
+    if (idx === -1) store.assetList.push(new Asset(asset));
+    else store.assetList[idx] = new Asset(asset);
+    persistState();
+  }
+};
+
+const removeAsset = (asset) => {
+  store.assetList = store.assetList.filter(
+    (item) => item._ticker !== asset._ticker
+  );
+  persistState();
+};
+
+const selectAsset = (item) => {
+  Object.assign(asset, new Asset(item));
+};
+
+export { Asset, asset, saveAsset, removeAsset, selectAsset };

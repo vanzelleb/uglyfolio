@@ -28,17 +28,6 @@ main {
   color: blue;
 }
 
-.flexbox {
-  display: flex;
-  overflow: hidden;
-  flex-flow: row wrap;
-  gap: 0px 10px;
-}
-
-.flexbox .col {
-  flex-grow: 0;
-}
-
 summary {
   outline: none;
 }
@@ -85,6 +74,7 @@ select {
 
 fieldset {
   margin: 0.8rem 0;
+  padding: 0.8rem;
   vertical-align: top;
   background-color: #fbfbfb;
 }
@@ -117,6 +107,10 @@ dialog {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.25);
   max-width: 300px;
   margin: auto;
+}
+
+p {
+  margin: 10px 0;
 }
 
 @media all and (max-width: 30em) {
