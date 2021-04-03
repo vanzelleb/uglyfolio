@@ -24,10 +24,8 @@ export class Trx {
 
 export function saveTrx(trx, id) {
   if (!Number.isInteger(id)) {
-    // save a copy of the object
-    let copy = new Trx(trx);
-    asset.trxns.push(copy);
-  }
+    asset.trxns.push(trx);
+  } else asset.trxns[id] = trx;
   saveAsset(asset);
 }
 

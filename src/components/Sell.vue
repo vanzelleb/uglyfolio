@@ -54,14 +54,16 @@ export default {
   props: ["trx", "id"],
   setup(props) {
     let trx = reactive(new Trx());
-    if (props.id !== undefined)
-      Object.assign(trx, new Trx(asset.trxns[props.id]));
+    if (props.id !== undefined) Object.assign(trx, asset.trxns[props.id]);
 
     const save = () => {
-      trx.type = "sell";
-      saveTrx(trx, props.id);
-      // reset transaction object after saving
-      Object.assign(trx, new Trx());
+      if (trx.type) saveTrx(new Trx(trx), props.id);
+      else {
+        trx.type = "sell";
+        saveTrx(new Trx(trx), props.id);
+        // reset add new share form after saving
+        Object.assign(trx, new Trx());
+      }
     };
 
     return {
