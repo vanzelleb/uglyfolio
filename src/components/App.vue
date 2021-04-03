@@ -2,11 +2,15 @@
   <Header />
   <main>
     <div class="container">
-      <div v-if="asset.name">
+      <div v-if="asset.dataload.name">
         <Chart />
+        <Edit />
         <Info />
         <News />
-        <Edit />
+        <div class="space-between">
+          <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
+          <button @click="close()">🏠 Home</button>
+        </div>
       </div>
       <div v-else>
         <Settings />
@@ -33,7 +37,8 @@
 
 
 <script>
-import { store, asset, initState } from "../composables/use-store";
+import { initState } from "../composables/use-store";
+import { asset, removeAsset, selectAsset } from "../composables/use-asset";
 import { onMounted, watch, computed } from "vue";
 import { today } from "../utils";
 import Chart from "./Chart.vue";
@@ -63,14 +68,28 @@ export default {
 
     // scroll to the top of the page when the detail screen is opened or closed
     watch(
-      () => asset.name,
+      () => asset.dataload.name,
       (name, prevName) => {
         window.scrollTo(0, 0);
       }
     );
 
+    const remove = (asset) => {
+      if (confirm("Are you sure you want delete this asset?")) {
+        removeAsset(asset);
+        close();
+      }
+    };
+
+    const close = () => {
+      // clear global asset variable in order to return to home screen
+      selectAsset();
+    };
+
     return {
       asset,
+      close,
+      remove,
     };
   },
 };
@@ -85,6 +104,11 @@ main {
 footer {
   padding: 20px 8px;
   font-size: 0.8rem;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
 

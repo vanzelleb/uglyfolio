@@ -2,7 +2,7 @@
   <div class="flexbox">
     <fieldset class="col number" v-for="(item, id) of assets" :key="id">
       <legend class="link" @click="selectAsset(item)">
-        {{ item.name }} ({{ item.ticker }})
+        {{ item.dataload.name }} ({{ item.ticker }})
       </legend>
       <div v-if="item.buys().length > 0" class="summary">
         <h4 v-if="!item.isSold()">
@@ -19,15 +19,17 @@
         <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
           <span v-if="item.forexChange" class="ml-2">💵</span>
           <span v-if="item.return" class="ml-2">💰</span>-->
+        Analyst Rating:
         <span v-if="item.dataload.technicalAnalysis?.signal === 'buy'">👍</span>
-        <h5 v-if="item.dataload.technicalAnalysis?.signal === 'neutral'">
-          Analyst Rating: 😐
-        </h5>
+        <span v-if="item.dataload.technicalAnalysis?.signal === 'neutral'">
+          😐
+        </span>
         <span v-if="item.dataload.technicalAnalysis?.signal === 'sell'"
           >👎</span
         >
+
+        <span v-if="item.dataload.trend?.trending"> / Trending: ✔️</span>
       </div>
-      <h5 v-if="item.dataload.trend?.trending" class="summary">Trending: ✔️</h5>
       <Sparkline :asset="item" />
     </fieldset>
   </div>
@@ -38,8 +40,8 @@ import Sparkline from "../components/Sparkline.vue";
 import { assets, useKPI } from "../composables/use-portfolio";
 import { computed } from "vue";
 import { toLocaleNumber } from "../utils";
-import { store, asset, selectAsset } from "../composables/use-store";
-import Asset from "../asset-class";
+import { store } from "../composables/use-store";
+import { asset, removeAsset, selectAsset } from "../composables/use-asset";
 
 export default {
   components: {
@@ -68,6 +70,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.flexbox {
+  display: flex;
+  overflow: hidden;
+  flex-flow: row wrap;
+  gap: 0px 10px;
+}
+
+.flexbox .col {
+  flex-direction: row;
+  flex-grow: 0;
+}
+
 h4,
 h5,
 h6 {

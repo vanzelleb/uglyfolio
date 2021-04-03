@@ -3,71 +3,64 @@
     <summary>🔍 <span class="link">Search</span></summary>
     <fieldset>
       <legend>Add a new asset</legend>
-      <div>
+      <template v-if="asset.dataload.name">
+        Found:
+        <h3>{{ asset.dataload.name }}</h3>
+        <h5>
+          {{ asset.dataload.industry }}
+        </h5>
+        <p>Do you want to add this asset to your portfolio?</p>
+        <button type="button" value="cancel" @click="close()">Nope</button>
+        <button type="button" value="yes" @click="confirm()" autofocus>
+          Ok, Add it.
+        </button>
+      </template>
+      <template v-else>
+        <div>
+          <small>
+            Each stock has a unique identifier, called ticker. You can find
+            tickers, e.g. on
+            <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
+              >Yahoo Finance</a
+            >.
+          </small>
+        </div>
+        <input
+          autofocus
+          id="ticker"
+          v-model="ticker"
+          type="text"
+          size="10"
+          maxLength="10"
+          placeholder="Asset ticker"
+          aria-label="Asset ticker"
+          @keyup.enter="getCompanyInfo()"
+        />
+        <button @click="getCompanyInfo()">
+          <span v-if="searching">Searching...</span>
+          <span v-else>Add</span>
+        </button>
         <small>
-          Each stock has a unique identifier, called ticker. You can find
-          tickers, e.g. on
-          <a target="_blank" href="https://finance.yahoo.com" rel="noreferrer"
-            >Yahoo Finance</a
-          >.
+          <p class="errors" v-if="ticker && error">
+            {{ error }}
+          </p>
         </small>
-      </div>
-      <input
-        autofocus
-        id="ticker"
-        v-model="ticker"
-        type="text"
-        size="10"
-        maxLength="10"
-        placeholder="Asset ticker"
-        aria-label="Asset ticker"
-        @keyup.enter="getCompanyInfo()"
-      />
-      <button @click="getCompanyInfo()">
-        <span v-if="searching">Searching...</span>
-        <span v-else>Add</span>
-      </button>
-      <small>
-        <p class="errors" v-if="ticker && error">
-          {{ error }}
-        </p>
-      </small>
+      </template>
     </fieldset>
   </details>
-
-  <dialog id="dialog">
-    <form method="dialog">
-      <h3>Found {{ asset.name }}</h3>
-      <h5>
-        {{ asset.dataload.industry }}
-      </h5>
-      <br />
-      <p>Do you want to add this asset to your portfolio?</p>
-      <button type="button" value="cancel" @click="close()">Nope</button>
-      <button type="button" value="yes" @click="confirm()" autofocus>
-        Ok, Add it.
-      </button>
-    </form>
-  </dialog>
 </template>
 
 <script>
 import { watch, ref, reactive, onMounted, computed } from "vue";
 import { requestHandler, error } from "../composables/use-api";
 import { assets } from "../composables/use-portfolio";
-import { saveAsset } from "../composables/use-store";
-import Asset from "../asset-class";
+import { Asset, saveAsset, selectAsset } from "../composables/use-asset";
 
 export default {
   setup() {
     const ticker = ref("");
     const asset = reactive(new Asset());
     const searching = ref(false);
-    let modal = null;
-
-    onMounted(() => {
-      modal = document.getElementById("dialog");
-    });
 
     watch(
       () => ticker.value,
@@ -88,7 +81,6 @@ export default {
           asset.ticker = ticker.value;
           await requestHandler("company", { asset: asset });
           searching.value = false;
-          if (asset.name) modal.showModal();
         } else alert("Asset already added.");
       }
     };
@@ -96,7 +88,7 @@ export default {
     const close = () => {
       // reset the asset object
       ticker.value = "";
-      modal.close();
+      Object.assign(asset, new Asset());
     };
 
     const confirm = () => {
@@ -108,7 +100,6 @@ export default {
     return {
       assets,
       searching,
-      modal,
       asset,
       ticker,
       confirm,
@@ -123,7 +114,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .errors {
-  margin: 0 0 10px 0;
   color: red;
+}
+
+h3,
+h5 {
+  margin: 10px 0 0 10px;
 }
 </style>

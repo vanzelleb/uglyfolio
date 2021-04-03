@@ -1,12 +1,12 @@
 <template>
   <header class="handFont" :class="{ scroll: scrolled }">
-    <div v-if="asset.name">{{ asset.name }}</div>
+    <div v-if="asset.dataload.name">{{ asset.dataload.name }}</div>
     <div v-else>Uglyfolio</div>
   </header>
 </template>
 
 <script>
-import { asset } from "../composables/use-store";
+import { asset } from "../composables/use-asset";
 import { onMounted, ref } from "vue";
 
 export default {

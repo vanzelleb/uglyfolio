@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="saveTrx()">
+  <form @submit.prevent="save()">
     <label for="dateBuy">Purchase date</label>
     <input id="dateBuy" type="date" required v-model="trx.date" :max="today" />
 
@@ -32,10 +32,6 @@
       min="0"
       required
     />
-
-    <div v-for="(error, id) of errors" :key="id" class="error">
-      {{ error }}
-    </div>
     <div>
       <button type="submit">✔️ Save</button>
       <button v-if="id >= 0" @click.prevent="removeTrx(id)">❌ Delete</button>
@@ -44,56 +40,34 @@
 </template>
 
 <script>
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch, toRefs } from "vue";
 import { requestHandler } from "../composables/use-api";
 import { today } from "../utils";
-import { store, asset, saveAsset } from "../composables/use-store";
+import { store } from "../composables/use-store";
+import { asset, removeAsset, selectAsset } from "../composables/use-asset";
+import { Trx, saveTrx, removeTrx } from "../composables/use-transactions";
 
 export default {
-  props: ["trx", "id"],
+  props: ["id"],
   setup(props) {
-    const errors = ref([]);
+    let trx = reactive(new Trx());
+    if (props.id !== undefined)
+      Object.assign(trx, new Trx(asset.trxns[props.id]));
 
-    const validated = () => {
-      errors.value = [];
-      // rules go here
-      if (errors.value.length === 0) return true;
-      else return false;
-    };
-
-    const saveTrx = () => {
-      if (validated()) {
-        props.trx.type = "buy";
-        asset.trxns.push(props.trx);
-        saveAsset(asset);
-        updateHistory();
-      }
-    };
-
-    const updateHistory = () => {
-      const startDate = props.trx.date ? new Date(props.trx.date) : new Date();
-      // get 3 months of data before the transaction date for context
-      startDate.setMonth(startDate.getMonth() - 3);
-      const endDate = new Date();
-      requestHandler("history", {
-        asset: asset,
-        start: startDate,
-        end: endDate,
-      });
-    };
-
-    const removeTrx = (id) => {
-      asset.trxns.splice(id, 1);
-      saveAsset(asset);
+    const save = () => {
+      trx.type = "buy";
+      saveTrx(trx, props.id);
+      // reset transaction object after saving
+      Object.assign(trx, new Trx());
     };
 
     return {
-      saveTrx,
+      trx,
+      save,
       removeTrx,
       today,
       asset,
       appCurrency: store.settings.currency,
-      errors,
     };
   },
 };

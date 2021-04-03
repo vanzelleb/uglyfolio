@@ -1,24 +1,25 @@
 <template>
   <fieldset>
     <legend>Asset info</legend>
-    Industry:
-    <div v-if="asset.industry">{{ asset.industry }}</div>
-    Description:
-    <div>
-      <template v-if="asset.description">
-        {{ asset.description }}
-      </template>
-      <template v-else> None </template>
-    </div>
-    Address:
-    <div>
-      <address v-if="asset.address">{{ asset.address }}</address>
-    </div>
+    <template v-if="asset.dataload.industry">
+      <h4>Industry:</h4>
+      <div>{{ asset.dataload.industry }}</div>
+    </template>
+    <template v-if="asset.dataload.description">
+      <h4>Description:</h4>
+      <div>
+        {{ asset.dataload.description }}
+      </div>
+    </template>
+    <template v-if="asset.dataload.address">
+      <h4>Country:</h4>
+      <div>{{ asset.dataload.address }}</div>
+    </template>
   </fieldset>
 </template>
 
 <script>
-import { asset } from "../composables/use-store";
+import { asset } from "../composables/use-asset";
 
 export default {
   setup() {

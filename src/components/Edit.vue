@@ -1,39 +1,36 @@
 <template>
   <fieldset>
-    <legend>Buy transactions</legend>
-    You own {{ asset.totalSharesBought() }} shares.
+    <legend>Shares owned</legend>
+    You bought {{ asset.totalSharesBought() }} shares for
+    {{ toLocaleNumber(asset.totalBuyValue(), 2) }} {{ appCurrency }}
     <br />
-    <details v-for="(trx, id) of asset.buys()" :key="`buy-${id}`">
+    <details v-for="(buy, id) of buys" :key="`buy-${id}`">
       <summary class="link">
-        {{ trx.date }}: {{ toLocaleNumber(trx.value, 2) }} {{ appCurrency }}
+        {{ buy.date }}: {{ toLocaleNumber(buy.value, 2) }} {{ appCurrency }}
       </summary>
-      <Buy :trx="trx" :id="id" />
+      <Buy :id="id" />
     </details>
-    <details :open="trxAdded">
-      <summary class="link">Add new buy transactions</summary>
-      <Buy :trx="newTrx()" />
+    <details :open="!trxListChange">
+      <summary class="link">Add shares</summary>
+      <Buy />
     </details>
   </fieldset>
-  <fieldset v-if="asset.buys().length > 0">
-    <legend>Sell transactions</legend>
-    You sold {{ asset.totalSharesSold() }} shares.
+  <fieldset v-if="buys.length > 0">
+    <legend>Shares sold</legend>
+    You sold {{ asset.totalSharesSold() }} shares for
+    {{ toLocaleNumber(asset.totalSellValue(), 2) }} {{ appCurrency }}
     <br />
-    <details v-for="(trx, id) of asset.sells()" :key="`sell-${id}`">
+    <details v-for="(sell, id) of sells" :key="`sell-${id}`">
       <summary class="link">
-        {{ trx.date }}: {{ toLocaleNumber(trx.value, 2) }} {{ appCurrency }}
+        {{ sell.date }}: {{ toLocaleNumber(sell.value, 2) }} {{ appCurrency }}
       </summary>
-      <Sell :trx="trx" :id="id" />
+      <Sell :id="id" />
     </details>
-    <details>
-      <summary class="link">Add new sell transactions</summary>
-      <Sell :trx="newTrx()" />
+    <details :open="!trxListChange">
+      <summary class="link">Sell shares</summary>
+      <Sell />
     </details>
   </fieldset>
-
-  <div style="display: flex; justify-content: space-between">
-    <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
-    <button @click="close()">🏠 Home</button>
-  </div>
 </template>
 
 <script>
@@ -41,12 +38,8 @@ import { computed, reactive, ref, watch } from "vue";
 import Buy from "./Buy.vue";
 import Sell from "./Sell.vue";
 import { toLocaleNumber } from "../utils";
-import {
-  store,
-  asset,
-  selectAsset,
-  removeAsset,
-} from "../composables/use-store";
+import { store } from "../composables/use-store";
+import { asset } from "../composables/use-asset";
 
 export default {
   components: {
@@ -54,64 +47,23 @@ export default {
     Sell,
   },
   setup() {
-    const errors = ref([]);
-    const trxAdded = ref(null);
-
-    function Trx() {
-      this.type = null;
-      this.value = null;
-      this.amount = null;
-      this.price = null;
-    }
-
-    const newTrx = () => {
-      let trx = new Trx();
-      trx = {
-        ...trx,
-        // add getter and setter for date to offset timezone differences
-        get date() {
-          if (this._date) return this._date.toISOString().substring(0, 10);
-          else return null;
-        },
-
-        set date(date) {
-          if (date) {
-            let dt = new Date(date);
-            this._date = new Date(
-              dt.getTime() - dt.getTimezoneOffset() * 60000
-            );
-          } else this._date = null;
-        },
-      };
-      return trx;
-    };
-
-    const remove = (asset) => {
-      if (confirm("Are you sure you want delete this asset?")) {
-        removeAsset(asset);
-        close();
-      }
-    };
-
-    const close = () => {
-      // clear global asset variable in order to return to home screen
-      selectAsset();
-    };
-
+    const trxListChange = ref(null);
     const trxCount = computed(() => asset.trxns.length);
+    const buys = computed(() => asset.buys());
+    const sells = computed(() => asset.sells());
 
     watch(
       () => trxCount.value,
       (count, prevCount) => {
-        trxAdded.value = false;
+        console.log("Transaction count changed");
+        trxListChange.value = true;
       }
     );
 
     return {
-      trxAdded,
-      newTrx,
-      remove,
-      close,
+      buys,
+      sells,
+      trxListChange,
       asset,
       toLocaleNumber,
       appCurrency: store.settings.currency,

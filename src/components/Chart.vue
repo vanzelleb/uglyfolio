@@ -5,18 +5,15 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import ApexCharts from "apexcharts";
-import { asset } from "../composables/use-store";
+import { asset } from "../composables/use-asset";
+import { requestHandler } from "../composables/use-api";
 
 export default {
   setup() {
-    const getColor = () => {
-      const prices = asset.prices();
-      if (prices[0] <= prices[prices.length - 1])
-        // green gradient
-        return posColor;
-      // red gradient
-      else return negColor;
-    };
+    let element = null;
+    let annotationList = [];
+    let chart = null;
+    const trxCount = computed(() => asset.trxns.length);
 
     const options = {
       series: [
@@ -104,9 +101,6 @@ export default {
       },
     };
 
-    let annotationList = [];
-    let chart = null;
-
     function BuyAnnotation(date) {
       this.x = new Date(date).getTime();
       this.borderColor = "#999";
@@ -152,7 +146,7 @@ export default {
     };
 
     onMounted(() => {
-      const element = document.querySelector("#chart" + asset.ticker);
+      element = document.querySelector("#chart" + asset.ticker);
       if (element) {
         chart = new ApexCharts(element, options);
         // initial render of the chart
@@ -161,12 +155,34 @@ export default {
       }
     });
 
-    const trxCount = computed(() => asset.trxns.length);
-
     watch(
       () => trxCount.value,
       (count, prevCount) => {
         updateAnnotations();
+        element = document.querySelector("#chart" + asset.ticker);
+        const startDate =
+          asset.trxns.length > 0 ? asset.firstTrxDate() : new Date();
+        // get 3 months of data before the transaction date for context
+        startDate.setMonth(startDate.getMonth() - 3);
+        const endDate = new Date();
+        // refresh chart data if necessary
+        requestHandler("history", {
+          asset: asset,
+          start: startDate,
+          end: endDate,
+        }).then(function () {
+          chart.updateSeries([
+            {
+              name: "Price",
+              data: asset.prices(),
+            },
+          ]);
+          chart.updateOptions({
+            xaxis: {
+              categories: asset.dates(),
+            },
+          });
+        });
       }
     );
 

@@ -57,14 +57,10 @@
 
 <script>
 import { onMounted, watch, toRefs, computed } from "vue";
-import {
-  store,
-  saveAsset,
-  persistState,
-} from "../composables/use-store";
+import { store, persistState } from "../composables/use-store";
+import { Asset } from "../composables/use-asset";
 import { requestHandler } from "../composables/use-api";
 import { assets } from "../composables/use-portfolio";
-import Asset from "../asset-class";
 import { today } from "../utils";
 
 export default {
@@ -177,11 +173,11 @@ export default {
               try {
                 const json = JSON.parse(line);
                 const item = new Asset(json);
-                useAPI.requestHandler("history", { asset: item });
+                requestHandler("history", { asset: item });
                 if (!item.isSold()) {
-                  useAPI.requestHandler("quote", { asset: item });
-                  useAPI.requestHandler("signal", { asset: item });
-                  useAPI.requestHandler("target", { asset: item });
+                  requestHandler("quote", { asset: item });
+                  requestHandler("signal", { asset: item });
+                  requestHandler("target", { asset: item });
                 }
               } catch (error) {
                 alert("The data is not in the correct format");

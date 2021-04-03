@@ -1,5 +1,5 @@
 import { today } from "../utils";
-import { saveAsset } from "./use-store";
+import { saveAsset } from "./use-asset";
 
 const baseURL = "https://cloud.iexapis.com/stable/";
 const provider = "iex";
@@ -42,14 +42,8 @@ function companyURI(asset) {
 }
 
 function companyResponse(json, asset) {
-  asset.name = json.companyName;
-  asset.dataload.address = [
-    json.address,
-    json.zip,
-    json.city,
-    json.state,
-    json.country
-  ].join(", ");
+  asset.dataload.name = json.companyName;
+  asset.dataload.address = json.country;
   asset.dataload.industry = json.industry;
   asset.dataload.description = json.description;
   saveAsset(asset);

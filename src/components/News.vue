@@ -52,7 +52,7 @@
 
 <script>
 import { requestHandler } from "../composables/use-api";
-import { asset } from "../composables/use-store";
+import { asset } from "../composables/use-asset";
 import { ref, computed, onMounted } from "vue";
 
 export default {

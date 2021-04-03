@@ -1,5 +1,5 @@
 import { today } from "../utils";
-import { saveAsset } from "./use-store";
+import { saveAsset } from "./use-asset";
 
 const baseURL = "https://finnhub.io/api/v1/";
 const provider = "finnhub";

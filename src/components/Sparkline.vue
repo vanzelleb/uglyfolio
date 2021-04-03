@@ -21,7 +21,7 @@ export default {
       chart: {
         type: "area",
         height: 70,
-        width: "100%",
+        width: 300,
         sparkline: {
           enabled: true,
         },

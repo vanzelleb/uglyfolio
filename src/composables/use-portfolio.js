@@ -1,7 +1,7 @@
 import { today } from "../utils";
 import { store } from "../composables/use-store";
 import { computed } from "vue";
-import Asset from "../asset-class";
+import { Asset } from "../composables/use-asset";
 
 const sum = (array) => {
   const method = (acc, cur) => acc + cur;
