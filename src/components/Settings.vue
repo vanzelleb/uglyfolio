@@ -1,58 +1,55 @@
 <template>
-  <details>
+  <!--<details>
     <summary>⚙️ <span class="link">Settings</span></summary>
-    <div>
-      <fieldset>
-        <legend>Backup & Restore Portfolio</legend>
-        <button
-          id="export"
-          @click="exportData()"
-          :disabled="assets.length === 0"
-        >
-          💾 Backup
-        </button>
-        <button id="import" @click="uploader()">📄 Restore</button>
-        <input
-          type="file"
-          @change="importData($event)"
-          ref="uploader"
-          style="display: none"
-        />
-      </fieldset>
-      <fieldset>
-        <legend>Customize</legend>
-        <label for="currency">Display currency</label>
-        <select id="currency" v-model="settings.currency">
-          <option v-for="item of currencies" :key="item">
-            {{ item }}
-          </option>
-        </select>
-        <label for="benchmark">Benchmark</label>
-        <select
-          id="benchmark"
-          @change="settings.benchmark.ticker = $event.target.value"
-        >
-          <option
-            v-for="item in benchmarksList"
-            :value="item.value"
-            :key="item.value"
-          >
-            {{ item.text }}
-          </option>
-        </select>
+    <div>-->
+  <fieldset>
+    <legend>Backup & Restore Portfolio</legend>
+    <button id="export" @click="exportData()" :disabled="assets.length === 0">
+      💾 Backup
+    </button>
+    <button id="import" @click="uploader()">📄 Restore</button>
+    <input
+      type="file"
+      @change="importData($event)"
+      ref="uploader"
+      style="display: none"
+    />
+  </fieldset>
+  <fieldset>
+    <legend>Customize</legend>
+    <label for="currency">Display currency</label>
+    <select id="currency" v-model="settings.currency">
+      <option v-for="item of currencies" :key="item">
+        {{ item }}
+      </option>
+    </select>
+    <label for="benchmark">Benchmark</label>
+    <select
+      id="benchmark"
+      @change="settings.benchmark.ticker = $event.target.value"
+    >
+      <option
+        v-for="item in benchmarksList"
+        :value="item.value"
+        :key="item.value"
+      >
+        {{ item.text }}
+      </option>
+    </select>
 
-        <label for="stoploss">Stop Loss warning (in %)</label>
-        <input
-          id="stoploss"
-          type="number"
-          min="0"
-          max="99"
-          v-model="settings.stopLoss.pct"
-          placeholder="e.g. warn when 20% down"
-        />
-      </fieldset>
+    <label for="stoploss">Stop Loss warning (in %)</label>
+    <input
+      id="stoploss"
+      type="number"
+      min="0"
+      max="99"
+      v-model="settings.stopLoss.pct"
+      placeholder="e.g. warn when 20% down"
+    />
+  </fieldset>
+  <!--
     </div>
-  </details>
+  </details>-->
 </template>
 
 <script>

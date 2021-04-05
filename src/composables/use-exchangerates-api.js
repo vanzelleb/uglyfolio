@@ -1,6 +1,6 @@
 import { store, persistState } from "./use-store";
 
-const baseURL = "https://api.exchangeratesapi.io/";
+const baseURL = "http://api.exchangeratesapi.io/";
 const provider = "exchangeratesapi";
 
 function forexByDateURI({ currency, date }) {

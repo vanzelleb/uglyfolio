@@ -32,11 +32,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
-h2,
-h4 {
-  margin: 0.8rem 0 0.3rem 0;
-}
-
 div {
   font-size: 10pt;
   margin: 0 0 10px 0;

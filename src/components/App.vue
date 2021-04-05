@@ -5,7 +5,7 @@
       <div v-if="asset.dataload.name">
         <Chart />
         <Edit />
-        <Info />
+        <!--<Info />-->
         <News />
         <div class="space-between">
           <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div v-else>
-        <Settings />
+        <!--<Settings />-->
         <KPIs />
         <SearchAsset />
         <Portfolio />

@@ -9,6 +9,7 @@ html {
 body {
   min-block-size: 100%;
   font-family: system-ui, sans-serif;
+  user-select: none;
 }
 
 main {
@@ -34,11 +35,6 @@ summary {
 
 .number {
   font-family: "Lato", sans-serif;
-  display: inline-block;
-}
-
-.noselect {
-  user-select: none;
 }
 
 .posColor {
@@ -97,16 +93,6 @@ button {
   background-color: #dddddd;
   border: 0.15em solid blue;
   border-radius: 0.3em;
-}
-
-dialog {
-  text-align: center;
-  border: none;
-  padding: 1rem;
-  border-radius: 6px;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.25);
-  max-width: 300px;
-  margin: auto;
 }
 
 p {

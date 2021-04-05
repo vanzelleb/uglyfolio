@@ -84,7 +84,7 @@ export default {
   display: flex;
   overflow: hidden;
   flex-flow: row wrap;
-  gap: 10px 15px;
+  gap: 10px 5px;
   margin: 1.5rem 0 0 0;
 }
 
@@ -93,7 +93,7 @@ export default {
   grid-template-rows: 1fr auto;
   box-shadow: 5px 6px blue;
   border: 1px solid;
-  margin: 0 0 10px 0;
+  margin: 0 10px 10px 0;
   padding-top: 0.5rem;
   cursor: pointer;
 }
@@ -109,7 +109,6 @@ h6 {
 }
 
 .numberFont {
-  font-family: "Lato", sans-serif;
   font-size: 1rem;
 }
 </style>

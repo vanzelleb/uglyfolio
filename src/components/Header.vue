@@ -1,15 +1,29 @@
 <template>
-  <header class="handFont" :class="{ scroll: scrolled }">
-    <div v-if="asset.dataload.name">{{ asset.dataload.name }}</div>
-    <div v-else>Uglyfolio</div>
+  <header :class="{ scroll: scrolled }">
+    <div class="container">
+      <details v-if="asset.dataload.name">
+        <summary class="handFont">{{ asset.dataload.name }}</summary>
+        <Info />
+      </details>
+      <details v-else>
+        <summary class="handFont">Uglyfolio</summary>
+        <Settings />
+      </details>
+    </div>
   </header>
 </template>
 
 <script>
 import { asset } from "../composables/use-asset";
 import { onMounted, ref } from "vue";
+import Info from "./Info.vue";
+import Settings from "./Settings.vue";
 
 export default {
+  components: {
+    Info,
+    Settings,
+  },
   setup() {
     let scrolled = ref(false);
 
@@ -38,8 +52,6 @@ export default {
 
 header {
   padding: 12px 8px;
-  display: flex;
-  justify-content: center;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -47,10 +59,22 @@ header {
   z-index: 1;
 }
 
-div {
+summary {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0 0;
+}
+
+details {
+  margin: 0 0;
+}
+
+.container {
+  display: flex;
+  justify-content: start;
+  max-width: 80ch;
+  margin: 0 auto;
 }
 
 .scroll {
