@@ -47,7 +47,7 @@ export default {
     Sell,
   },
   setup() {
-    const trxListChange = ref(null);
+    const trxListChange = ref(true);
     const trxCount = computed(() => asset.trxns.length);
     const buys = computed(() => asset.buys());
     const sells = computed(() => asset.sells());

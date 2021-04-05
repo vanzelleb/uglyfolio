@@ -1,5 +1,7 @@
 <template>
-  <div :id="'sparkline' + asset.ticker"></div>
+  <div>
+    <div :id="'sparkline' + asset.ticker"></div>
+  </div>
 </template>
 
 <script>
@@ -7,6 +9,7 @@ import { posColor, negColor } from "../utils";
 import { computed, onMounted } from "vue";
 import ApexCharts from "apexcharts";
 import { requestHandler } from "../composables/use-api";
+import useChart from "../composables/use-chart";
 
 export default {
   props: ["asset"],
@@ -52,37 +55,18 @@ export default {
 
     onMounted(() => {
       const element = document.querySelector("#sparkline" + props.asset.ticker);
-      const startDate =
-        props.asset.trxns.length > 0 ? props.asset.firstTrxDate() : new Date();
-      // get 3 months of data before the transaction date for context
-      startDate.setMonth(startDate.getMonth() - 3);
-      const endDate = new Date();
 
       if (element) {
         var chart = new ApexCharts(element, options);
         // initial render of the chart
         chart.render();
         // refresh chart data if necessary
+
         if (!props.asset.isUpdated()) {
+          const { updateSeries } = useChart(chart, props.asset);
           requestHandler("quote", { asset: props.asset });
           requestHandler("signal", { asset: props.asset });
-          requestHandler("history", {
-            asset: props.asset,
-            start: startDate,
-            end: endDate,
-          }).then(function () {
-            chart.updateSeries([
-              {
-                name: "Price",
-                data: props.asset.prices(),
-              },
-            ]);
-            chart.updateOptions({
-              xaxis: {
-                categories: props.asset.dates(),
-              },
-            });
-          });
+          updateSeries();
         }
       }
     });

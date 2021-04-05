@@ -5,21 +5,21 @@ const baseURL = "https://cloud.iexapis.com/stable/";
 const provider = "iex";
 
 function historyURI(asset, start, end) {
-  const url =
-    baseURL +
-    "stock/" +
-    asset.ticker +
-    "/chart/date/" +
-    start.toISOString().substring(0, 10).replace(/-/g, "");
+  const url = baseURL + "stock/" + asset.ticker + "/chart/3m";
+  // + start.toISOString().substring(0, 10).replace(/-/g, "");
   const params = {
-    chartByDay: true
+    chartCloseOnly: true
   };
   return { provider, url, params };
 }
 
 function historyResponse(json, asset) {
-  if (!json[0]) throw Error("No data");
-  if (!asset.buyPrice) asset.buyPrice = parseFloat(json[0]["close"]).toFixed(2);
+  let timeseries = {};
+  if (json.length === 0) throw Error("No data");
+  for (let i = 0; i < json.length - 1; i++) {
+    timeseries[json[i].date] = parseFloat(parseFloat(json[i].close).toFixed(2));
+  }
+  asset.timeseries = timeseries;
   saveAsset(asset);
 }
 

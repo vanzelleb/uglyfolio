@@ -4,41 +4,33 @@
     <p>
       You can specify a date range to narrow down the search for news articles.
     </p>
-    <br />
-    <div class="flexbox">
-      <div class="col">
-        <label for="startRange">
-          <code> From {{ asset.dates[range[0]] }} </code>
-        </label>
-        <input
-          type="range"
-          min="0"
-          :max="range[1]"
-          v-model="range[0]"
-          class="slider"
-          id="startRange"
-        />
-      </div>
-      <div class="col">
-        <label class="col" for="endRange"
-          ><code>To {{ asset.dates[range[1]] }}</code></label
-        >
-        <input
-          type="range"
-          :min="range[0]"
-          :max="asset.dates.length - 1"
-          v-model="range[1]"
-          class="slider"
-          id="endRange"
-        />
-      </div>
-    </div>
+    <label for="startRange">
+      <code> From {{ from }} </code>
+    </label>
+    <input
+      type="range"
+      min="0"
+      :max="range[1]"
+      v-model="range[0]"
+      class="slider"
+      id="startRange"
+    />
+    <label class="col" for="endRange"
+      ><code>To {{ to }}</code></label
+    >
+    <input
+      type="range"
+      :min="range[0]"
+      :max="asset.dates().length - 1"
+      v-model="range[1]"
+      class="slider"
+      id="endRange"
+    />
     <button :class="{ shake: shake }" @click="getNews()">
       <span v-if="searching">Searching...</span>
       <span v-else>🔍 Check</span>
     </button>
     <template v-if="asset.news.length > 0">
-      <br />
       <br />
       <article v-for="(item, idx) of asset.news" :key="idx">
         <div>{{ item.datetime }}</div>
@@ -57,20 +49,21 @@ import { ref, computed, onMounted } from "vue";
 
 export default {
   setup() {
-    const range = ref([0, asset.dates.length - 1]);
+    const range = ref([0, asset.dates().length - 1]);
     const shake = ref(false);
     const searching = ref(false);
+    const from = computed(() => asset.dates()[range.value[0]]);
+    const to = computed(() => asset.dates()[range.value[1]]);
     asset.news = [];
 
     const getNews = async () => {
       shake.value = false;
       searching.value = true;
-      const from = asset.dates[range.value[0]];
-      const to = asset.dates[range.value[1]];
+
       await requestHandler("news", {
         asset: asset,
-        from: from,
-        to: to,
+        from: from.value,
+        to: to.value,
       });
       searching.value = false;
       // animate the search button to indicate that no news were found
@@ -80,6 +73,8 @@ export default {
     return {
       asset,
       range,
+      from,
+      to,
       getNews,
       searching,
       shake,
@@ -92,6 +87,7 @@ export default {
 <style scoped>
 button {
   margin: 10px 0;
+  display: block;
 }
 
 article,

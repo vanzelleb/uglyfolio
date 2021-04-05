@@ -1,37 +1,47 @@
 <template>
   <div class="flexbox">
-    <fieldset class="col number" v-for="(item, id) of assets" :key="id">
-      <legend class="link" @click="selectAsset(item)">
-        {{ item.dataload.name }} ({{ item.ticker }})
-      </legend>
-      <div v-if="item.buys().length > 0" class="summary">
-        <h4 v-if="!item.isSold()">
-          You're {{ change([item]) >= 0 ? "up " : "down " }}
-          {{ toLocaleNumber(change([item]), 0) }}
+    <div
+      v-for="(item, id) of assets"
+      :key="id"
+      class="card number"
+      @click="selectAsset(item)"
+    >
+      <figcaption>
+        <h4>
+          {{ item.dataload.name }} <small>({{ item.ticker }})</small>
         </h4>
-        <h4 v-else :class="{ posColor: returns([item]) >= 0 }">
-          You {{ returns([item]) >= 0 ? "made " : "lost " }}
-          {{ toLocaleNumber(returns([item]), 0) }}
-        </h4>
-        <h6>&nbsp;{{ appCurrency }}</h6>
-      </div>
-      <div class="summary">
-        <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
+        <div v-if="item.buys().length > 0">
+          <h5 v-if="!item.isSold()">
+            You're {{ change([item]) >= 0 ? "up " : "down " }}
+            {{ toLocaleNumber(change([item]), 0) }}
+          </h5>
+          <h5 v-else :class="{ posColor: returns([item]) >= 0 }">
+            You {{ returns([item]) >= 0 ? "made " : "lost " }}
+            {{ toLocaleNumber(returns([item]), 0) }}
+          </h5>
+          <h6>&nbsp;{{ appCurrency }}</h6>
+        </div>
+        <h5 v-if="item.dataload.technicalAnalysis?.signal">
+          <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
           <span v-if="item.forexChange" class="ml-2">💵</span>
           <span v-if="item.return" class="ml-2">💰</span>-->
-        Analyst Rating:
-        <span v-if="item.dataload.technicalAnalysis?.signal === 'buy'">👍</span>
-        <span v-if="item.dataload.technicalAnalysis?.signal === 'neutral'">
-          😐
-        </span>
-        <span v-if="item.dataload.technicalAnalysis?.signal === 'sell'"
-          >👎</span
-        >
-
-        <span v-if="item.dataload.trend?.trending"> / Trending: ✔️</span>
-      </div>
-      <Sparkline :asset="item" />
-    </fieldset>
+          Analyst Rating:
+          <span v-if="item.dataload.technicalAnalysis?.signal === 'buy'"
+            >👍</span
+          >
+          <span v-if="item.dataload.technicalAnalysis?.signal === 'neutral'">
+            😐
+          </span>
+          <span v-if="item.dataload.technicalAnalysis?.signal === 'sell'"
+            >👎</span
+          >
+        </h5>
+        <h5 v-if="item.dataload.trend?.trending">
+          <span> / Trending: ✔️</span>
+        </h5>
+      </figcaption>
+      <Sparkline :asset="item" class="sparkline" />
+    </div>
   </div>
 </template>
 
@@ -74,37 +84,32 @@ export default {
   display: flex;
   overflow: hidden;
   flex-flow: row wrap;
-  gap: 0px 10px;
+  gap: 10px 15px;
+  margin: 1.5rem 0 0 0;
 }
 
-.flexbox .col {
-  flex-direction: row;
-  flex-grow: 0;
+.card {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  box-shadow: 5px 6px blue;
+  border: 1px solid;
+  margin: 0 0 10px 0;
+  padding-top: 0.5rem;
+  cursor: pointer;
 }
 
-h4,
+figcaption {
+  margin: 0 0 0.4rem 0.8rem;
+}
+
 h5,
 h6 {
   display: inline-block;
-}
-
-legend {
-  margin: 0 0 0 0.8rem;
-  padding: 0 0;
-}
-
-.summary {
-  margin: 5px 0 0 0.8rem;
-  padding: 0 0;
+  color: rgb(59, 59, 59);
 }
 
 .numberFont {
   font-family: "Lato", sans-serif;
   font-size: 1rem;
-}
-
-fieldset {
-  margin: 0.4rem 0;
-  padding: 0.4rem 0 0 0;
 }
 </style>

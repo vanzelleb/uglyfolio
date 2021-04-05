@@ -24,8 +24,8 @@ export class Trx {
 
 export function saveTrx(trx, id) {
   if (!Number.isInteger(id)) {
-    asset.trxns.push(trx);
-  } else asset.trxns[id] = trx;
+    asset.trxns.push(new Trx(trx));
+  } else asset.trxns[id] = new Trx(trx);
   saveAsset(asset);
 }
 

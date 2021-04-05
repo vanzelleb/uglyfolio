@@ -7,11 +7,11 @@ import { computed, onMounted, watch } from "vue";
 import ApexCharts from "apexcharts";
 import { asset } from "../composables/use-asset";
 import { requestHandler } from "../composables/use-api";
+import useChart from "../composables/use-chart";
 
 export default {
   setup() {
     let element = null;
-    let annotationList = [];
     let chart = null;
     const trxCount = computed(() => asset.trxns.length);
 
@@ -101,56 +101,13 @@ export default {
       },
     };
 
-    function BuyAnnotation(date) {
-      this.x = new Date(date).getTime();
-      this.borderColor = "#999";
-      this.yAxisIndex = 0;
-      this.label = {
-        show: true,
-        text: "Buy",
-        style: {
-          color: "#fff",
-          background: "#775DD0",
-        },
-      };
-    }
-
-    function SellAnnotation(date) {
-      this.x = new Date(date).getTime();
-      this.borderColor = "#999";
-      this.yAxisIndex = 0;
-      this.label = {
-        show: true,
-        text: "Sell",
-        style: {
-          color: "#fff",
-          background: "#DD5770",
-        },
-      };
-    }
-
-    const updateAnnotations = () => {
-      annotationList = [];
-
-      for (const date of asset.buyDates()) {
-        annotationList.push(new BuyAnnotation(date));
-      }
-      for (const date of asset.sellDates()) {
-        annotationList.push(new SellAnnotation(date));
-      }
-      chart.updateOptions({
-        annotations: {
-          xaxis: annotationList,
-        },
-      });
-    };
-
     onMounted(() => {
       element = document.querySelector("#chart" + asset.ticker);
       if (element) {
         chart = new ApexCharts(element, options);
         // initial render of the chart
         chart.render();
+        const { updateAnnotations } = useChart(chart, asset);
         updateAnnotations();
       }
     });
@@ -158,31 +115,9 @@ export default {
     watch(
       () => trxCount.value,
       (count, prevCount) => {
+        const { updateAnnotations, updateSeries } = useChart(chart, asset);
         updateAnnotations();
-        element = document.querySelector("#chart" + asset.ticker);
-        const startDate =
-          asset.trxns.length > 0 ? asset.firstTrxDate() : new Date();
-        // get 3 months of data before the transaction date for context
-        startDate.setMonth(startDate.getMonth() - 3);
-        const endDate = new Date();
-        // refresh chart data if necessary
-        requestHandler("history", {
-          asset: asset,
-          start: startDate,
-          end: endDate,
-        }).then(function () {
-          chart.updateSeries([
-            {
-              name: "Price",
-              data: asset.prices(),
-            },
-          ]);
-          chart.updateOptions({
-            xaxis: {
-              categories: asset.dates(),
-            },
-          });
-        });
+        updateSeries();
       }
     );
 

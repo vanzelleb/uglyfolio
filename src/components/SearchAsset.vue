@@ -52,7 +52,7 @@
 
 <script>
 import { watch, ref, reactive, onMounted, computed } from "vue";
-import { requestHandler, error } from "../composables/use-api";
+import { requestHandler } from "../composables/use-api";
 import { assets } from "../composables/use-portfolio";
 import { Asset, saveAsset, selectAsset } from "../composables/use-asset";
 
@@ -61,6 +61,7 @@ export default {
     const ticker = ref("");
     const asset = reactive(new Asset());
     const searching = ref(false);
+    const error = ref("");
 
     watch(
       () => ticker.value,
@@ -81,7 +82,8 @@ export default {
           asset.ticker = ticker.value;
           await requestHandler("company", { asset: asset });
           searching.value = false;
-        } else alert("Asset already added.");
+          if (!asset.dataload.name) error.value = "Not found";
+        } else error.value = "Already added";
       }
     };
 

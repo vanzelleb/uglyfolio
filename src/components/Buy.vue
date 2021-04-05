@@ -54,11 +54,10 @@ export default {
     if (props.id !== undefined) Object.assign(trx, asset.trxns[props.id]);
 
     const save = () => {
-      if (trx.type) saveTrx(new Trx(trx), props.id);
-      else {
-        trx.type = "buy";
-        saveTrx(new Trx(trx), props.id);
-        // reset add new share form after saving
+      if (!trx.type) trx.type = "buy";
+      saveTrx(trx, props.id);
+      if (!props.id) {
+        // reset new trx form fields after saving
         Object.assign(trx, new Trx());
       }
     };
