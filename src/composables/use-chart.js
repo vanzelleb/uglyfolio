@@ -49,7 +49,7 @@ export default function useChart(chart, asset) {
     const startDate =
       asset.trxns.length > 0 ? asset.firstTrxDate() : new Date();
     // get 3 months of data before the transaction date for context
-    startDate.setMonth(startDate.getMonth() - 3);
+    startDate.setMonth(startDate.getMonth() - 12);
     const endDate = new Date();
     // refresh chart data if necessary
     requestHandler("history", {

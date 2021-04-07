@@ -1,14 +1,12 @@
 <template>
   <header :class="{ scroll: scrolled }">
     <div class="container">
-      <details v-if="asset.dataload.name">
-        <summary class="handFont">{{ asset.dataload.name }}</summary>
-        <Info />
-      </details>
-      <details v-else>
-        <summary class="handFont">Uglyfolio</summary>
-        <Settings />
-      </details>
+      <div v-if="asset.dataload.name">
+        <span class="handFont">{{ asset.dataload.name }}</span>
+      </div>
+      <div v-else>
+        <span class="handFont">Uglyfolio</span>
+      </div>
     </div>
   </header>
 </template>
@@ -16,14 +14,8 @@
 <script>
 import { asset } from "../composables/use-asset";
 import { onMounted, ref } from "vue";
-import Info from "./Info.vue";
-import Settings from "./Settings.vue";
 
 export default {
-  components: {
-    Info,
-    Settings,
-  },
   setup() {
     let scrolled = ref(false);
 
@@ -59,20 +51,16 @@ header {
   z-index: 1;
 }
 
-summary {
+span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0 0;
 }
 
-details {
-  margin: 0 0;
-}
-
 .container {
   display: flex;
-  justify-content: start;
+  justify-content: center;
   max-width: 80ch;
   margin: 0 auto;
 }

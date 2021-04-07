@@ -1,21 +1,24 @@
 <template>
-  <fieldset>
-    <legend>Asset info</legend>
-    <template v-if="asset.dataload.industry">
-      <h4>Industry:</h4>
-      <div>{{ asset.dataload.industry }}</div>
-    </template>
-    <template v-if="asset.dataload.description">
-      <h4>Description:</h4>
-      <div>
-        {{ asset.dataload.description }}
-      </div>
-    </template>
-    <template v-if="asset.dataload.address">
-      <h4>Country:</h4>
-      <div>{{ asset.dataload.address }}</div>
-    </template>
-  </fieldset>
+  <details>
+    <summary><span class="link">Asset Information</span></summary>
+    <fieldset>
+      <legend>Asset info</legend>
+      <template v-if="asset.dataload.industry">
+        <h4>Industry:</h4>
+        <div>{{ asset.dataload.industry }}</div>
+      </template>
+      <template v-if="asset.dataload.description">
+        <h4>Description:</h4>
+        <div>
+          {{ asset.dataload.description }}
+        </div>
+      </template>
+      <template v-if="asset.dataload.address">
+        <h4>Country:</h4>
+        <div>{{ asset.dataload.address }}</div>
+      </template>
+    </fieldset>
+  </details>
 </template>
 
 <script>

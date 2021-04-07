@@ -1,45 +1,49 @@
 <template>
-  <fieldset>
-    <legend>News search</legend>
-    <p>
-      You can specify a date range to narrow down the search for news articles.
-    </p>
-    <label for="startRange">
-      <code> From {{ from }} </code>
-    </label>
-    <input
-      type="range"
-      min="0"
-      :max="range[1]"
-      v-model="range[0]"
-      class="slider"
-      id="startRange"
-    />
-    <label class="col" for="endRange"
-      ><code>To {{ to }}</code></label
-    >
-    <input
-      type="range"
-      :min="range[0]"
-      :max="asset.dates().length - 1"
-      v-model="range[1]"
-      class="slider"
-      id="endRange"
-    />
-    <button :class="{ shake: shake }" @click="getNews()">
-      <span v-if="searching">Searching...</span>
-      <span v-else>🔍 Check</span>
-    </button>
-    <template v-if="asset.news.length > 0">
-      <br />
-      <article v-for="(item, idx) of asset.news" :key="idx">
-        <div>{{ item.datetime }}</div>
-        <a :href="item.url" target="_blank">{{ item.headline }}</a>
-        <div>{{ item.summary }}</div>
-        <hr v-if="idx + 1 < asset.news.length" :key="'hr-' + idx" />
-      </article>
-    </template>
-  </fieldset>
+  <details>
+    <summary><span class="link">News</span></summary>
+    <fieldset>
+      <legend>News search</legend>
+      <p>
+        You can specify a date range to narrow down the search for news
+        articles.
+      </p>
+      <label for="startRange">
+        <code> From {{ from }} </code>
+      </label>
+      <input
+        type="range"
+        min="0"
+        :max="range[1]"
+        v-model="range[0]"
+        class="slider"
+        id="startRange"
+      />
+      <label class="col" for="endRange"
+        ><code>To {{ to }}</code></label
+      >
+      <input
+        type="range"
+        :min="range[0]"
+        :max="asset.dates().length - 1"
+        v-model="range[1]"
+        class="slider"
+        id="endRange"
+      />
+      <button :class="{ shake: shake }" @click="getNews()">
+        <span v-if="searching">Searching...</span>
+        <span v-else>🔍 Check</span>
+      </button>
+      <template v-if="asset.news.length > 0">
+        <br />
+        <article v-for="(item, idx) of asset.news" :key="idx">
+          <div>{{ item.datetime }}</div>
+          <a :href="item.url" target="_blank">{{ item.headline }}</a>
+          <div>{{ item.summary }}</div>
+          <hr v-if="idx + 1 < asset.news.length" :key="'hr-' + idx" />
+        </article>
+      </template>
+    </fieldset>
+  </details>
 </template>
 
 <script>

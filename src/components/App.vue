@@ -4,8 +4,9 @@
     <div class="container">
       <div v-if="asset.dataload.name">
         <Chart />
+        <Stats />
         <Edit />
-        <!--<Info />-->
+        <Info />
         <News />
         <div class="space-between">
           <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
@@ -13,7 +14,7 @@
         </div>
       </div>
       <div v-else>
-        <!--<Settings />-->
+        <Settings />
         <KPIs />
         <SearchAsset />
         <Portfolio />
@@ -50,9 +51,11 @@ import News from "./News.vue";
 import Edit from "./Edit.vue";
 import Info from "./Info.vue";
 import Header from "./Header.vue";
+import Stats from "./Stats.vue";
 
 export default {
   components: {
+    Stats,
     Chart,
     KPIs,
     Portfolio,

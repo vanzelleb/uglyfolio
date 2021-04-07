@@ -107,8 +107,4 @@ h6 {
   display: inline-block;
   color: rgb(59, 59, 59);
 }
-
-.numberFont {
-  font-size: 1rem;
-}
 </style>

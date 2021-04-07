@@ -5,10 +5,10 @@
       <legend>KPIs</legend>
       <table>
         <tr v-for="(kpi, name) in kpis" :key="name">
-          <td style="font-size: 12pt">{{ name }}:</td>
-          <td class="number" style="font-size: 12pt; text-align: right">
-            {{ kpi.value }}
-            <span style="font-size: 10pt">&nbsp;{{ kpi.unit }}</span>
+          <td>{{ name }}:</td>
+          <td class="number">
+            <h5>{{ kpi.value }}</h5>
+            <h6>&nbsp;{{ kpi.unit }}</h6>
           </td>
         </tr>
       </table>
@@ -127,4 +127,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+h5,
+h6 {
+  display: inline-block;
+}
+
+number {
+  text-align: right;
+}
 </style>

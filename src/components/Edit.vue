@@ -1,36 +1,39 @@
 <template>
-  <fieldset>
-    <legend>Shares owned</legend>
-    You bought {{ asset.totalSharesBought() }} shares for
-    {{ toLocaleNumber(asset.totalBuyValue(), 2) }} {{ appCurrency }}
-    <br />
-    <details v-for="(buy, id) of buys" :key="`buy-${id}`">
-      <summary class="link">
-        {{ buy.date }}: {{ toLocaleNumber(buy.value, 2) }} {{ appCurrency }}
-      </summary>
-      <Buy :id="id" />
-    </details>
-    <details :open="!trxListChange">
-      <summary class="link">Add shares</summary>
-      <Buy />
-    </details>
-  </fieldset>
-  <fieldset v-if="buys.length > 0">
-    <legend>Shares sold</legend>
-    You sold {{ asset.totalSharesSold() }} shares for
-    {{ toLocaleNumber(asset.totalSellValue(), 2) }} {{ appCurrency }}
-    <br />
-    <details v-for="(sell, id) of sells" :key="`sell-${id}`">
-      <summary class="link">
-        {{ sell.date }}: {{ toLocaleNumber(sell.value, 2) }} {{ appCurrency }}
-      </summary>
-      <Sell :id="id" />
-    </details>
-    <details :open="!trxListChange">
-      <summary class="link">Sell shares</summary>
-      <Sell />
-    </details>
-  </fieldset>
+  <details>
+    <summary><span class="link">Buy & Sell</span></summary>
+    <fieldset>
+      <legend>Shares owned</legend>
+      You bought {{ asset.totalSharesBought() }} shares for
+      {{ toLocaleNumber(asset.totalBuyValue(), 2) }} {{ appCurrency }}
+      <br />
+      <details v-for="(buy, id) of buys" :key="`buy-${id}`">
+        <summary class="link">
+          {{ buy.date }}: {{ toLocaleNumber(buy.value, 2) }} {{ appCurrency }}
+        </summary>
+        <Buy :id="id" />
+      </details>
+      <details :open="!trxListChange">
+        <summary class="link">Add shares</summary>
+        <Buy />
+      </details>
+    </fieldset>
+    <fieldset v-if="buys.length > 0">
+      <legend>Shares sold</legend>
+      You sold {{ asset.totalSharesSold() }} shares for
+      {{ toLocaleNumber(asset.totalSellValue(), 2) }} {{ appCurrency }}
+      <br />
+      <details v-for="(sell, id) of sells" :key="`sell-${id}`">
+        <summary class="link">
+          {{ sell.date }}: {{ toLocaleNumber(sell.value, 2) }} {{ appCurrency }}
+        </summary>
+        <Sell :id="id" />
+      </details>
+      <details :open="!trxListChange">
+        <summary class="link">Sell shares</summary>
+        <Sell />
+      </details>
+    </fieldset>
+  </details>
 </template>
 
 <script>

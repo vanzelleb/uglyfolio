@@ -1,7 +1,6 @@
 <template>
-  <!--<details>
+  <details>
     <summary>⚙️ <span class="link">Settings</span></summary>
-    <div>-->
   <fieldset>
     <legend>Backup & Restore Portfolio</legend>
     <button id="export" @click="exportData()" :disabled="assets.length === 0">
@@ -47,9 +46,7 @@
       placeholder="e.g. warn when 20% down"
     />
   </fieldset>
-  <!--
-    </div>
-  </details>-->
+  </details>
 </template>
 
 <script>

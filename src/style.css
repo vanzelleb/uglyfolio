@@ -103,9 +103,4 @@ p {
   html {
     font-size: 1.1rem;
   }
-
-  main {
-    display: grid;
-    place-content: start;
-  }
 }
