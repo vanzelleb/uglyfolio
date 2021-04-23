@@ -9,9 +9,10 @@
     "build:lambda": "netlify-lambda build ./functions"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "3.3.0",
     "apexcharts": "^3.25.0",
-    "mathjs": "9.3.0",
     "node-fetch": "^2.6.1",
+    "simple-statistics": "7.7.0",
     "vue": "^3.0.5"
   },
   "devDependencies": {

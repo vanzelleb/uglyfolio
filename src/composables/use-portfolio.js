@@ -24,12 +24,6 @@ const lastDiff = (array) => {
   return array[array.length - 1] - array[array.length - 2];
 };
 
-// convert items into Asset class before using them
-export const assets = computed(() =>
-  // convert items into Asset class before using them
-  store.assetList.map((item) => new Asset(item))
-);
-
 function relativeChange(items, benchmark) {
   return items.map((asset) => {
     // calculate annulaized relative return/alpha in comparison to the benchmark
@@ -55,7 +49,7 @@ function change(items) {
 }
 
 // calculate exchange rate effects
-const FXChange = (items) => {
+function FXChange(items) {
   const appCurrency = store.settings.currency;
   const FXBase = store.exchangeRates[appCurrency];
   if (!FXBase) return null;
@@ -77,7 +71,7 @@ const FXChange = (items) => {
   });
 
   return sum(result);
-};
+}
 
 function invested(items) {
   const result = items.map((asset) => {
@@ -145,6 +139,12 @@ function income(items) {
   });
   return sum(result);
 }
+
+// convert items into Asset class before using them
+export const assets = computed(() =>
+  // convert items into Asset class before using them
+  store.assetList.map((item) => new Asset(item))
+);
 
 export const useKPI = {
   change,

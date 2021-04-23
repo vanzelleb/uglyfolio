@@ -5,7 +5,7 @@ const baseURL = "https://cloud.iexapis.com/stable/";
 const provider = "iex";
 
 function historyURI(asset, start, end) {
-  const url = baseURL + "stock/" + asset.ticker + "/chart/3m";
+  const url = baseURL + "stock/" + asset.ticker + "/chart/1y";
   // + start.toISOString().substring(0, 10).replace(/-/g, "");
   const params = {
     chartCloseOnly: true

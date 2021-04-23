@@ -2,6 +2,7 @@ import { store, persistState } from "./use-store";
 import { reactive } from "vue";
 import { Trx } from "./use-transactions";
 import { today } from "../utils";
+import { mean, standardDeviation } from "simple-statistics";
 
 class Asset {
   constructor(obj) {
@@ -257,6 +258,28 @@ class Asset {
   return() {
     if (this.isSold()) return this.totalSellValue() - this.totalBuyValue();
     else return 0;
+  }
+
+  dailyChangePctList() {
+    const prices = this.prices();
+    // first change percentage is always zero
+    const dailyChangePct = [0];
+    for (let i = 1; i < prices.length; i++) {
+      dailyChangePct.push(prices[i] / prices[i - 1] - 1);
+    }
+    return dailyChangePct;
+  }
+
+  predictYearlyChangePct() {
+    const avgDailyChange = mean(this.dailyChangePctList());
+    const predictedYearlyChangePct = avgDailyChange * 252;
+    return predictedYearlyChangePct;
+  }
+
+  predictYearlyVolatility() {
+    const volatility = standardDeviation(this.dailyChangePctList());
+    const predictedYearlyVolatility = volatility * Math.sqrt(252);
+    return predictedYearlyVolatility;
   }
 }
 

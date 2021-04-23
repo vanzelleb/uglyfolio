@@ -11,8 +11,7 @@ import useChart from "../composables/use-chart";
 
 export default {
   setup() {
-    let element = null;
-    let chart = null;
+    let element, chart = null;
     const trxCount = computed(() => asset.trxns.length);
 
     const options = {
@@ -115,6 +114,7 @@ export default {
     watch(
       () => trxCount.value,
       (count, prevCount) => {
+        console.log("Updating chart series...");
         const { updateAnnotations, updateSeries } = useChart(chart, asset);
         updateAnnotations();
         updateSeries();

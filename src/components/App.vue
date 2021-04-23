@@ -16,6 +16,7 @@
       <div v-else>
         <Settings />
         <KPIs />
+        <Optimize />
         <SearchAsset />
         <Portfolio />
       </div>
@@ -52,9 +53,11 @@ import Edit from "./Edit.vue";
 import Info from "./Info.vue";
 import Header from "./Header.vue";
 import Stats from "./Stats.vue";
+import Optimize from "./Optimize.vue";
 
 export default {
   components: {
+    Optimize,
     Stats,
     Chart,
     KPIs,

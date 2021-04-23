@@ -58,7 +58,6 @@ export default {
     watch(
       () => trxCount.value,
       (count, prevCount) => {
-        console.log("Transaction count changed");
         trxListChange.value = true;
       }
     );
