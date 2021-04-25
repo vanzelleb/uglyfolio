@@ -43,7 +43,6 @@ export default {
 }
 
 header {
-  padding: 12px 8px;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -59,10 +58,7 @@ span {
 }
 
 .container {
-  display: flex;
   justify-content: center;
-  max-width: 80ch;
-  margin: 0 auto;
 }
 
 .scroll {

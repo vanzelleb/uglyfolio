@@ -4,16 +4,11 @@
 
 <script>
 import { computed, onMounted, watch } from "vue";
-import ApexCharts from "apexcharts";
 import { asset } from "../composables/use-asset";
-import { requestHandler } from "../composables/use-api";
-import useChart from "../composables/use-chart";
+import useChart from "../composables/useChart";
 
 export default {
   setup() {
-    let element, chart = null;
-    const trxCount = computed(() => asset.trxns.length);
-
     const options = {
       series: [
         {
@@ -99,27 +94,14 @@ export default {
         text: "Getting your data...",
       },
     };
+    const { chart, updateSeries, updateAnnotations } = useChart(asset, options);
 
-    onMounted(() => {
-      element = document.querySelector("#chart" + asset.ticker);
-      if (element) {
-        chart = new ApexCharts(element, options);
-        // initial render of the chart
-        chart.render();
-        const { updateAnnotations } = useChart(chart, asset);
-        updateAnnotations();
-      }
+    onMounted(updateAnnotations);
+
+    watch(asset.trxns, async () => {
+      await updateSeries();
+      updateAnnotations();
     });
-
-    watch(
-      () => trxCount.value,
-      (count, prevCount) => {
-        console.log("Updating chart series...");
-        const { updateAnnotations, updateSeries } = useChart(chart, asset);
-        updateAnnotations();
-        updateSeries();
-      }
-    );
 
     return {
       asset,

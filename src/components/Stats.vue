@@ -1,14 +1,14 @@
 <template>
   <fieldset>
     <legend>Stats</legend>
-    <div>Return over chart period: {{ periodReturn.toFixed(2) }}%</div>
+    <div>Return over chart period: {{ periodReturn.toFixed(1) }}%</div>
     <div>
-      Predicted yearly change:
-      {{ asset.predictYearlyChangePct() * 100 }}%
+      Avg. yearly change:
+      {{ (asset.predictYearlyChangePct() * 100).toFixed(1) }}%
     </div>
     <div>
-      Predicted yearly volatility:
-      {{ asset.predictYearlyVolatility() * 100 }}%
+      Avg. yearly volatility:
+      {{ (asset.predictYearlyVolatility() * 100).toFixed(1) }}%
     </div>
   </fieldset>
 </template>

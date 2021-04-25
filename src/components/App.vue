@@ -1,9 +1,10 @@
 <template>
   <Header />
-  <main>
-    <div class="container">
+
+  <div class="container">
+    <main>
       <div v-if="asset.dataload.name">
-        <Chart />
+        <DetailChart />
         <Stats />
         <Edit />
         <Info />
@@ -20,21 +21,22 @@
         <SearchAsset />
         <Portfolio />
       </div>
-    </div>
-  </main>
-  <footer style="text-align: center">
-    <p>
-      An experimental app for tracking of a stock portfolio. Data provided by
-      <a href="https://iexcloud.io">IEX Cloud</a>
-      and
-      <a href="https://finnhub.io/">Finnhub.io</a>
-    </p>
-    <br />
-    <p>
-      Made by
-      <a href="https://twitter.com/VanZelleb" target="_blank">vanzelleb</a>
-    </p>
-  </footer>
+    </main>
+  </div>
+  <div class="container">
+    <footer>
+      <p>
+        An experimental app for tracking of a stock portfolio. Data provided by
+        <a href="https://iexcloud.io">IEX Cloud</a>
+        and
+        <a href="https://finnhub.io/">Finnhub.io</a>
+      </p>
+      <p>
+        Made by
+        <a href="https://twitter.com/VanZelleb" target="_blank">vanzelleb</a>
+      </p>
+    </footer>
+  </div>
 </template>
 
 
@@ -43,7 +45,7 @@ import { initState } from "../composables/use-store";
 import { asset, removeAsset, selectAsset } from "../composables/use-asset";
 import { onMounted, watch, computed } from "vue";
 import { today } from "../utils";
-import Chart from "./Chart.vue";
+import DetailChart from "./DetailChart.vue";
 import Settings from "./Settings.vue";
 import KPIs from "./KPIs.vue";
 import SearchAsset from "./SearchAsset.vue";
@@ -59,7 +61,7 @@ export default {
   components: {
     Optimize,
     Stats,
-    Chart,
+    DetailChart,
     KPIs,
     Portfolio,
     SearchAsset,
@@ -104,12 +106,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 main {
-  padding: 0 12px;
+  width: 100%;
 }
 
 footer {
-  padding: 20px 8px;
+  width: 100%;
   font-size: 0.8rem;
+  text-align: center;
 }
 
 .space-between {

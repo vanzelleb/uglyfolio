@@ -55,12 +55,9 @@ export default {
     const buys = computed(() => asset.buys());
     const sells = computed(() => asset.sells());
 
-    watch(
-      () => trxCount.value,
-      (count, prevCount) => {
-        trxListChange.value = true;
-      }
-    );
+    watch(trxCount, () => {
+      trxListChange.value = true;
+    });
 
     return {
       buys,

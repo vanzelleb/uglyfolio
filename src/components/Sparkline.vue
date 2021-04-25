@@ -1,15 +1,12 @@
 <template>
-  <div>
-    <div :id="'sparkline' + asset.ticker"></div>
-  </div>
+  <div :id="'chart' + asset.ticker"></div>
 </template>
 
 <script>
 import { posColor, negColor } from "../utils";
 import { computed, onMounted } from "vue";
-import ApexCharts from "apexcharts";
 import { requestHandler } from "../composables/use-api";
-import useChart from "../composables/use-chart";
+import useChart from "../composables/useChart";
 
 export default {
   props: ["asset"],
@@ -37,13 +34,11 @@ export default {
       },
       stroke: {
         curve: "smooth",
-        //colors: [getColor()],
         width: 2,
       },
       tooltip: {
         enabled: false,
       },
-      //colors: [getColor()],
       theme: {
         mode: "light",
         palette: "palette4",
@@ -53,21 +48,13 @@ export default {
       },
     };
 
+    const { updateSeries } = useChart(props.asset, options);
+
     onMounted(() => {
-      const element = document.querySelector("#sparkline" + props.asset.ticker);
-
-      if (element) {
-        var chart = new ApexCharts(element, options);
-        // initial render of the chart
-        chart.render();
-        // refresh chart data if necessary
-
-        if (!props.asset.isUpdated()) {
-          const { updateSeries } = useChart(chart, props.asset);
-          requestHandler("quote", { asset: props.asset });
-          requestHandler("signal", { asset: props.asset });
-          updateSeries();
-        }
+      if (!props.asset.isUpdated()) {
+        requestHandler("quote", { asset: props.asset });
+        requestHandler("signal", { asset: props.asset });
+        updateSeries();
       }
     });
 

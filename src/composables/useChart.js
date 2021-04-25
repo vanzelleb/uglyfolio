@@ -1,4 +1,6 @@
-import { requestHandler } from "./use-api";
+import ApexCharts from "apexcharts";
+import { ref, onMounted } from "vue";
+import { requestHandler } from "../composables/use-api";
 
 function BuyAnnotation(date) {
   this.x = new Date(date).getTime();
@@ -28,17 +30,26 @@ function SellAnnotation(date) {
   };
 }
 
-export default function useChart(chart, asset) {
+export default function useChart(asset, options) {
+  const chart = ref(null);
+  const renderChart = () => {
+    let element = document.querySelector("#chart" + asset.ticker);
+    if (element) {
+      chart.value = new ApexCharts(element, options);
+      chart.value.render();
+    }
+  };
+
   const updateAnnotations = () => {
     const annotationList = [];
 
-    for (const date of asset.buyDates()) {
+    for (const date of asset.buyDates())
       annotationList.push(new BuyAnnotation(date));
-    }
-    for (const date of asset.sellDates()) {
+
+    for (const date of asset.sellDates())
       annotationList.push(new SellAnnotation(date));
-    }
-    chart.updateOptions({
+
+    chart.value.updateOptions({
       annotations: {
         xaxis: annotationList
       }
@@ -46,10 +57,11 @@ export default function useChart(chart, asset) {
   };
 
   const updateSeries = () => {
+    console.log("Updating chart series...");
     const startDate =
       asset.trxns.length > 0 ? asset.firstTrxDate() : new Date();
-    // get 3 months of data before the transaction date for context
-    startDate.setMonth(startDate.getMonth() - 12);
+    // get 3 years of data before the transaction date for context
+    startDate.setFullYear(startDate.getFullYear() - 3);
     const endDate = new Date();
     // refresh chart data if necessary
     requestHandler("history", {
@@ -57,13 +69,13 @@ export default function useChart(chart, asset) {
       start: startDate,
       end: endDate
     }).then(function () {
-      chart.updateSeries([
+      chart.value.updateSeries([
         {
           name: "Price",
           data: asset.prices()
         }
       ]);
-      chart.updateOptions({
+      chart.value.updateOptions({
         xaxis: {
           categories: asset.dates()
         }
@@ -71,5 +83,11 @@ export default function useChart(chart, asset) {
     });
   };
 
-  return { updateAnnotations, updateSeries };
+  onMounted(renderChart);
+
+  return {
+    chart,
+    updateSeries,
+    updateAnnotations
+  };
 }
