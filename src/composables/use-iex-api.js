@@ -1,4 +1,3 @@
-import { today } from "../utils";
 import { saveAsset } from "./use-asset";
 
 const baseURL = "https://cloud.iexapis.com/stable/";
@@ -30,7 +29,6 @@ function quoteURI(asset) {
 }
 
 function quoteResponse(json, asset) {
-  asset.lastChecked = today;
   asset.lastPrice = json.latestPrice;
   saveAsset(asset);
 }

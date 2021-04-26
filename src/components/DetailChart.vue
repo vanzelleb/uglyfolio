@@ -6,6 +6,7 @@
 import { computed, onMounted, watch } from "vue";
 import { asset } from "../composables/use-asset";
 import useChart from "../composables/useChart";
+import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
   setup() {
@@ -94,12 +95,14 @@ export default {
         text: "Getting your data...",
       },
     };
-    const { chart, updateSeries, updateAnnotations } = useChart(asset, options);
+    const { updateSeries, updateAnnotations } = useChart(asset, options);
+    const { refreshPrices } = useDataUpdater(asset);
 
     onMounted(updateAnnotations);
 
     watch(asset.trxns, async () => {
-      await updateSeries();
+      await refreshPrices();
+      updateSeries();
       updateAnnotations();
     });
 

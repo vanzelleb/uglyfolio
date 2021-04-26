@@ -1,7 +1,6 @@
 import { store, persistState } from "./use-store";
 import { reactive } from "vue";
 import { Trx } from "./use-transactions";
-import { today } from "../utils";
 import { mean, standardDeviation } from "simple-statistics";
 
 class Asset {
@@ -154,15 +153,6 @@ class Asset {
     // any investment that does not have a track record of at least 365 days cannot "ratchet up" its performance to be annualized
     // https://www.investopedia.com/terms/a/annualized--return.asp
     else return (this.return() / this.totalBuyValue()) * 100;
-  }
-
-  isUpdated() {
-    const hasNoPrice = !this.lastPrice;
-    const hasNoChart = this.dates().length === 0;
-    // flag to prevent repeated API calls per day for assets with unknown tickers
-    const checkedToday = this.lastChecked === today;
-    if (hasNoPrice || hasNoChart || !checkedToday) return false;
-    return true;
   }
 
   totalSharesBought() {

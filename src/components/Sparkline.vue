@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import { posColor, negColor } from "../utils";
 import { computed, onMounted } from "vue";
 import { requestHandler } from "../composables/use-api";
 import useChart from "../composables/useChart";
+import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
   props: ["asset"],
@@ -40,8 +40,12 @@ export default {
         enabled: false,
       },
       theme: {
-        mode: "light",
-        palette: "palette4",
+        monochrome: {
+          enabled: true,
+          color: "#FEB019",
+          shadeTo: "light",
+          shadeIntensity: 0.65,
+        },
       },
       noData: {
         text: "Getting your data...",
@@ -49,13 +53,11 @@ export default {
     };
 
     const { updateSeries } = useChart(props.asset, options);
+    const { refreshData } = useDataUpdater(props.asset);
 
-    onMounted(() => {
-      if (!props.asset.isUpdated()) {
-        requestHandler("quote", { asset: props.asset });
-        requestHandler("signal", { asset: props.asset });
-        updateSeries();
-      }
+    onMounted(async () => {
+      await refreshData();
+      updateSeries();
     });
 
     return {};

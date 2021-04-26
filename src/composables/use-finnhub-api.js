@@ -1,4 +1,3 @@
-import { today } from "../utils";
 import { saveAsset } from "./use-asset";
 
 const baseURL = "https://finnhub.io/api/v1/";
@@ -37,7 +36,6 @@ function quoteURI(asset) {
 
 function quoteResponse(json, asset) {
   if (!json.c) throw Error("No data");
-  asset.lastChecked = today;
   asset.lastPrice = json.c;
   saveAsset(asset);
 }

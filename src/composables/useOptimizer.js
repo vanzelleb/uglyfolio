@@ -52,6 +52,7 @@ export default function useOptimizer(assets, chart) {
   };
 
   const optimize = () => {
+    initialize();
     // Number of iterations to run the optimiser; I found that 750 is about enough for the loss (Sharpe Ratio in this case) to stablise
     const epochs = 300;
 
@@ -163,8 +164,8 @@ export default function useOptimizer(assets, chart) {
     done();
   }
 
-  onMounted(initialize);
-  watch(assets, initialize);
+  //onMounted(initialize);
+  //watch(assets, initialize);
 
   return {
     optimize,

@@ -1,6 +1,5 @@
 import ApexCharts from "apexcharts";
 import { ref, onMounted } from "vue";
-import { requestHandler } from "../composables/use-api";
 
 function BuyAnnotation(date) {
   this.x = new Date(date).getTime();
@@ -57,29 +56,16 @@ export default function useChart(asset, options) {
   };
 
   const updateSeries = () => {
-    console.log("Updating chart series...");
-    const startDate =
-      asset.trxns.length > 0 ? asset.firstTrxDate() : new Date();
-    // get 3 years of data before the transaction date for context
-    startDate.setFullYear(startDate.getFullYear() - 3);
-    const endDate = new Date();
-    // refresh chart data if necessary
-    requestHandler("history", {
-      asset: asset,
-      start: startDate,
-      end: endDate
-    }).then(function () {
-      chart.value.updateSeries([
-        {
-          name: "Price",
-          data: asset.prices()
-        }
-      ]);
-      chart.value.updateOptions({
-        xaxis: {
-          categories: asset.dates()
-        }
-      });
+    chart.value.updateSeries([
+      {
+        name: "Price",
+        data: asset.prices()
+      }
+    ]);
+    chart.value.updateOptions({
+      xaxis: {
+        categories: asset.dates()
+      }
     });
   };
 

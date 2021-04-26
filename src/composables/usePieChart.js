@@ -1,17 +1,23 @@
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import ApexCharts from "apexcharts";
 
 export default function usePieChart(assets) {
   const chart = ref(null);
+  const assetWeights = computed(() =>
+    assets.value.map(() => 1 / assets.value.length)
+  );
+  const assetNames = computed(() =>
+    assets.value.map((asset) => asset.dataload.name)
+  );
   const renderChart = () => {
-    let element = document.querySelector("#piechart");
-    let options = {
-      series: assets.value.map(() => 1 / assets.value.length),
+    const element = document.querySelector("#piechart");
+    const options = {
+      series: assetWeights.value,
       chart: {
         width: 300,
         type: "pie"
       },
-      labels: assets.value.map((asset) => asset.dataload.name),
+      labels: assetNames.value,
       legend: {
         position: "bottom"
       }
@@ -23,7 +29,7 @@ export default function usePieChart(assets) {
   };
 
   onMounted(renderChart);
-  watch(assets, renderChart);
+  watch(assetWeights, renderChart);
 
   return {
     chart
