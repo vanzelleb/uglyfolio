@@ -12,34 +12,7 @@ let finalreturn = null;
 onmessage = function (msg) {
   console.log("Message received from main script: ", msg);
   initialize(msg.data.prices);
-  train(() => {
-    let weights_array = [];
-    let final_weights = weights.dataSync();
-    //console.log("Optimized weights: ", final_weights);
-    for (const weight of final_weights) {
-      weights_array.push(Number(weight));
-    }
-
-    // Write the final return and vol of the portfolio to the screen
-    let weighted_vols = weights.mul(vols);
-    let vol = weighted_vols
-      .transpose()
-      .matMul(correlationMatrix)
-      .matMul(weighted_vols)
-      .squeeze();
-    finalvol = 100 * Math.sqrt(vol.dataSync());
-
-    let returns_sum = weights.mul(returns).sum();
-    finalreturn = 100 * returns_sum.dataSync();
-
-    const workerResponse = {
-      weights: weights_array,
-      return: finalreturn,
-      vol: finalvol
-    };
-    console.log("Posting message back to main script: ", workerResponse);
-    postMessage(workerResponse);
-  });
+  train();
 };
 
 const initialize = (prices) => {
@@ -72,15 +45,40 @@ async function train(done) {
       cost = optimizer.minimize(() => {
         constraints();
         const sharpe = predict();
-
         return sharpe;
       }, true);
       constraints();
       return cost;
     });
-    console.log("Epochs: " + i);
+    //console.log("Epochs: " + i);
   }
-  done();
+
+  let weights_array = [];
+  let final_weights = weights.dataSync();
+  //console.log("Optimized weights: ", final_weights);
+  for (const weight of final_weights) {
+    weights_array.push(Number(weight));
+  }
+
+  let weighted_vols = weights.mul(vols);
+  let vol = weighted_vols
+    .transpose()
+    .matMul(correlationMatrix)
+    .matMul(weighted_vols)
+    .squeeze();
+  finalvol = 100 * Math.sqrt(vol.dataSync());
+
+  let returns_sum = weights.mul(returns).sum();
+  finalreturn = 100 * returns_sum.dataSync();
+
+  const workerResponse = {
+    weights: weights_array,
+    return: finalreturn,
+    vol: finalvol
+  };
+
+  console.log("Posting message back to main script: ", workerResponse);
+  postMessage(workerResponse);
 }
 
 function predict() {
@@ -103,8 +101,6 @@ function predict() {
 }
 
 function constraints() {
-  // All the constraints that we are applying
-  // It looks complicated, but all we are doing is resetting the weights at each cycle
   // Weights that breach the constraints will be set to 0, 1, or the preset floors or ceilings
   /*const floors = assets.value.map((asset) => [0]);
     const ceils = assets.value.map((asset) => [1]);
@@ -128,7 +124,6 @@ function constraints() {
   weights.assign(
     tf.where(mask_wts_more_than_one, tf.onesLike(weights), weights)
   );
-  // This is a little different
   // Here we make sure the sum of weights = 1 by scaling them down
   const result_sum = tf.sum(weights);
   weights.assign(tf.div(weights, result_sum)); //If sum > 1, dividing it by the sum scales it back to 1

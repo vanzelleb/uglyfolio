@@ -13,12 +13,11 @@ function historyURI(asset, start, end) {
 }
 
 function historyResponse(json, asset) {
-  let timeseries = {};
   if (json.length === 0) throw Error("No data");
-  for (let i = 0; i < json.length - 1; i++) {
-    timeseries[json[i].date] = parseFloat(parseFloat(json[i].close).toFixed(2));
-  }
-  asset.timeseries = timeseries;
+  asset.dates = json.map((item) => item.date);
+  asset.prices = json.c.map((item) =>
+    parseFloat(parseFloat(item.price).toFixed(2))
+  );
   saveAsset(asset);
 }
 

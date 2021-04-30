@@ -5,7 +5,7 @@
       <legend>Recommended asset allocation</legend>
       <div v-show="weights.length > 0" id="piechart"></div>
       <div v-if="finalreturn && finalvol">
-        <BR />
+        <br />
         <h4>{{ finalreturn.toFixed(0) }}% expected return</h4>
         <h4>{{ finalvol.toFixed(0) }}% expected volatility</h4>
       </div>
@@ -45,9 +45,10 @@ export default {
 
     const start = () => {
       inProgress.value = true;
-      worker.postMessage({
-        prices: assets.value.map((asset) => asset.prices()),
-      });
+      let prices = assets.value.map((item) => [...item.prices]);
+      //prices = [[1, 2, 3], [(4, 5, 6)]];
+      console.log("Message to be sent to worker: ", prices);
+      worker.postMessage({ prices: prices });
       worker.onmessage = function (msg) {
         console.log("Message received from worker: ", msg.data);
         weights.value = msg.data.weights;

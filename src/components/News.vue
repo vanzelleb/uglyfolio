@@ -24,7 +24,7 @@
       <input
         type="range"
         :min="range[0]"
-        :max="asset.dates().length - 1"
+        :max="asset.dates.length - 1"
         v-model="range[1]"
         class="slider"
         id="endRange"
@@ -53,11 +53,11 @@ import { ref, computed, onMounted } from "vue";
 
 export default {
   setup() {
-    const range = ref([0, asset.dates().length - 1]);
+    const range = ref([0, asset.dates.length - 1]);
     const shake = ref(false);
     const searching = ref(false);
-    const from = computed(() => asset.dates()[range.value[0]]);
-    const to = computed(() => asset.dates()[range.value[1]]);
+    const from = computed(() => asset.dates[range.value[0]]);
+    const to = computed(() => asset.dates[range.value[1]]);
     asset.news = [];
 
     const getNews = async () => {

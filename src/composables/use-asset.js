@@ -10,7 +10,9 @@ class Asset {
     this.currency = "USD";
     this.name = obj._name;
     this.ticker = obj._ticker;
-    this.timeseries = obj._timeseries;
+    //this.timeseries = obj._timeseries;
+    this.prices = obj._prices;
+    this.dates = obj._dates;
     this.payouts = obj._payouts;
     this.lastChecked = obj._lastChecked;
     // current price quote from API
@@ -75,6 +77,22 @@ class Asset {
     this._lastPrice = val ? parseFloat(val) : "";
   }
 
+  get prices() {
+    return this._prices;
+  }
+
+  set prices(val) {
+    this._prices = val ? val : [];
+  }
+
+  get dates() {
+    return this._dates;
+  }
+
+  set dates(val) {
+    this._dates = val ? val : [];
+  }
+
   get ticker() {
     return this._ticker;
   }
@@ -82,23 +100,6 @@ class Asset {
   set ticker(val) {
     if (val) this._ticker = val.toString().toUpperCase();
     else this._ticker = "";
-  }
-
-  get timeseries() {
-    // update the timeseries with the current price
-    if (this.lastChecked && this.lastPrice)
-      this._timeseries[this.lastChecked] = this.lastPrice;
-    return this._timeseries;
-  }
-
-  set timeseries(val) {
-    this._timeseries = val ? val : {};
-    /*this._timeseries = {};
-    if (val) {
-      let dates = Object.keys(val);
-      dates.sort();
-      for (let date of dates) this._timeseries[date] = parseFloat(val[date]);
-    }*/
   }
 
   get payouts() {
@@ -116,17 +117,15 @@ class Asset {
   }
 
   lastChangePct() {
-    if (!this.isSold() && this.dates().length > 1)
+    if (!this.isSold() && this.dates.length > 1)
       return (
-        this.lastPrice /
-          this.timeseries[this.dates()[this.dates().length - 2]] -
-        1
+        this.lastPrice / this.timeseries[this.dates[this.dates.length - 2]] - 1
       );
     return null;
   }
 
   highPrice() {
-    let max = Math.max(...this.prices());
+    let max = Math.max(...this.prices);
     return max ? max : 0;
   }
 
@@ -193,14 +192,6 @@ class Asset {
 
   sells() {
     return this.trxns.filter((trx) => trx.type === "sell");
-  }
-
-  prices() {
-    return Object.values(this.timeseries);
-  }
-
-  dates() {
-    return Object.keys(this.timeseries);
   }
 
   buyDates() {

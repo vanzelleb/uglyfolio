@@ -5,7 +5,7 @@
         <span class="handFont">{{ asset.dataload.name }}</span>
       </div>
       <div v-else>
-        <span class="handFont">Uglyfolios</span>
+        <span class="handFont brand">Uglyfolio</span>
       </div>
     </div>
   </header>
@@ -40,6 +40,10 @@ export default {
 .handFont {
   font-size: 1.6rem;
   font-weight: bold;
+}
+
+.brand {
+  font-size: 2rem;
 }
 
 header {

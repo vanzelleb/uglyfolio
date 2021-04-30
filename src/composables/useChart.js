@@ -59,12 +59,12 @@ export default function useChart(asset, options) {
     chart.value.updateSeries([
       {
         name: "Price",
-        data: asset.prices()
+        data: asset.prices
       }
     ]);
     chart.value.updateOptions({
       xaxis: {
-        categories: asset.dates()
+        categories: asset.dates
       }
     });
   };

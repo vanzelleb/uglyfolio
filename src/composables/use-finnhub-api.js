@@ -8,20 +8,18 @@ function historyURI(asset, start, end) {
   let params = {
     symbol: asset.ticker,
     resolution: "D",
-    from: timestamp(start),
-    to: timestamp(end)
+    from: toTimestamp(start),
+    to: toTimestamp(end)
   };
   return { provider, url, params };
 }
 
 function historyResponse(json, asset) {
-  let timeseries = {};
   if (!json.t) throw Error("No data");
-  for (let i = 0; i < json.t.length - 1; i++) {
-    let date = new Date(json.t[i] * 1000).toISOString().substring(0, 10);
-    timeseries[date] = parseFloat(parseFloat(json.c[i]).toFixed(2));
-  }
-  asset.timeseries = timeseries;
+  asset.dates = json.t.map((date) => toDate(date));
+  asset.prices = json.c.map((price) =>
+    parseFloat(parseFloat(price).toFixed(2))
+  );
   saveAsset(asset);
 }
 
@@ -85,19 +83,19 @@ function newsResponse(json, asset) {
   const uniqueIDs = [...new Set(IDs)];
   const uniqueNews = uniqueIDs.map((id) => json[id]);
   uniqueNews.map((item) => {
-    item.datetime = convertNewsDate(item.datetime);
+    item.datetime = toDate(item.datetime);
     return item;
   });
   asset.news = uniqueNews;
   saveAsset(asset);
 }
 
-function timestamp(date) {
+function toTimestamp(date) {
   date = date ? new Date(date) : new Date();
   return (date.getTime() / 1000) | 0;
 }
 
-function convertNewsDate(date) {
+function toDate(date) {
   return new Date(date * 1000).toISOString().substring(0, 10);
 }
 

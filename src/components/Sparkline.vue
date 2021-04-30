@@ -15,7 +15,7 @@ export default {
       series: [
         {
           name: "Price",
-          data: props.asset.prices(),
+          data: props.asset.prices,
         },
       ],
       chart: {
@@ -30,7 +30,7 @@ export default {
         },
       },
       xaxis: {
-        categories: props.asset.dates(),
+        categories: props.asset.dates,
       },
       stroke: {
         curve: "smooth",

@@ -1,15 +1,23 @@
 <template>
   <fieldset>
     <legend>Stats</legend>
-    <div>Return over chart period: {{ periodReturn.toFixed(1) }}%</div>
-    <div>
+    <table>
+      <tr>
+        <td>Return over chart period:</td>
+        <td class="number">
+          <h5>{{ periodReturn.toFixed(1) }}</h5>
+          <h6>&nbsp;%</h6>
+        </td>
+      </tr>
+    </table>
+    <!--<div>
       Avg. yearly change:
       {{ (asset.predictYearlyChangePct() * 100).toFixed(1) }}%
     </div>
     <div>
       Avg. yearly volatility:
       {{ (asset.predictYearlyVolatility() * 100).toFixed(1) }}%
-    </div>
+    </div>-->
   </fieldset>
 </template>
 
@@ -22,8 +30,7 @@ export default {
     const periodReturn = ref(0);
 
     watchEffect(
-      () =>
-        (periodReturn.value = (asset.lastPrice / asset.prices()[0] - 1) * 100)
+      () => (periodReturn.value = (asset.lastPrice / asset.prices[0] - 1) * 100)
     );
 
     return {
@@ -36,4 +43,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
+h5,
+h6 {
+  display: inline-block;
+}
+
+number {
+  text-align: right;
+}
 </style>

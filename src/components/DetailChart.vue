@@ -14,7 +14,7 @@ export default {
       series: [
         {
           name: "Price",
-          data: asset.prices(),
+          data: asset.prices,
         },
       ],
       chart: {
@@ -74,7 +74,7 @@ export default {
         crosshairs: {
           show: false,
         },
-        categories: asset.dates(),
+        categories: asset.dates,
       },
       tooltip: {
         enabled: true,
