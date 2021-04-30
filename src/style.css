@@ -84,7 +84,7 @@ button {
   margin: 0.3em;
   font-size: 0.9rem;
   background-color: #dddddd;
-  border: 0.15em solid blue;
+  border: 2px solid #bd93f9;
   border-radius: 0.3em;
 }
 

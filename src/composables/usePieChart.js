@@ -14,7 +14,7 @@ export default function usePieChart(assets) {
     const options = {
       series: assetWeights.value,
       chart: {
-        width: 300,
+        width: 200,
         type: "pie"
       },
       labels: assetNames.value,
