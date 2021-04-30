@@ -91,8 +91,9 @@ export default {
 .card {
   display: grid;
   grid-template-rows: 1fr auto;
-  box-shadow: 4px 4px blue;
-  border: 1px solid;
+  border: 3px solid;
+  border-radius: 5px;
+  box-shadow: 6px 6px #bd93f9;
   margin: 0 10px 10px 0;
   padding-top: 0.5rem;
   cursor: pointer;

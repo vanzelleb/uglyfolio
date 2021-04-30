@@ -5,7 +5,7 @@
         <span class="handFont">{{ asset.dataload.name }}</span>
       </div>
       <div v-else>
-        <span class="handFont">Uglyfolio</span>
+        <span class="handFont">Uglyfolios</span>
       </div>
     </div>
   </header>
