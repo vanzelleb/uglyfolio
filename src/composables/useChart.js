@@ -31,6 +31,7 @@ function SellAnnotation(date) {
 
 export default function useChart(asset, options) {
   const chart = ref(null);
+
   const renderChart = () => {
     let element = document.querySelector("#chart" + asset.ticker);
     if (element) {
@@ -69,10 +70,10 @@ export default function useChart(asset, options) {
     });
   };
 
-  onMounted(renderChart);
+  //onMounted(renderChart);
 
   return {
-    chart,
+    renderChart,
     updateSeries,
     updateAnnotations
   };

@@ -1,5 +1,5 @@
 <template>
-  <div class="flexbox">
+  <div class="flexbox" id="flexbox">
     <div
       v-for="(item, id) of assets"
       :key="id"
@@ -58,14 +58,6 @@ export default {
     Sparkline,
   },
   setup() {
-    /*const filteredAssets = computed(() => {
-      let filtered = [];
-      assets.value.forEach((asset) => {
-        if (asset[this.kpi.key]) filtered.push(asset);
-      });
-      return filtered;
-    });*/
-
     return {
       toLocaleNumber,
       appCurrency: store.settings.currency,
@@ -84,23 +76,20 @@ export default {
   display: flex;
   overflow: hidden;
   flex-flow: row wrap;
-  gap: 10px 5px;
-  margin: 1.5rem 0 0 0;
+  gap: 15px 15px;
+  padding: 1.2rem 0 0.4rem 0;
 }
 
 .card {
   display: grid;
-  grid-template-rows: 1fr auto;
   border: 2px solid;
   border-radius: 5px;
   box-shadow: 6px 6px #bd93f9;
-  margin: 0 10px 10px 0;
-  padding-top: 0.5rem;
   cursor: pointer;
 }
 
 figcaption {
-  margin: 0 0 0.4rem 0.8rem;
+  margin: 0.5rem 0.8rem;
 }
 
 h5,

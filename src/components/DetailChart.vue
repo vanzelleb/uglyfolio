@@ -88,17 +88,27 @@ export default {
         },
       },
       theme: {
-        mode: "light",
-        palette: "palette4",
+        monochrome: {
+          enabled: true,
+          color: "#FEB019",
+          shadeTo: "light",
+          shadeIntensity: 0.65,
+        },
       },
       noData: {
         text: "Getting your data...",
       },
     };
-    const { updateSeries, updateAnnotations } = useChart(asset, options);
+    const { renderChart, updateSeries, updateAnnotations } = useChart(
+      asset,
+      options
+    );
     const { refreshPrices } = useDataUpdater(asset);
 
-    onMounted(updateAnnotations);
+    onMounted(() => {
+      renderChart();
+      updateAnnotations();
+    });
 
     watch(asset.trxns, async () => {
       await refreshPrices();

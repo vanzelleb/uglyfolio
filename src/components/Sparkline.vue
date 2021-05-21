@@ -11,51 +11,52 @@ import useDataUpdater from "../composables/useDataUpdater";
 export default {
   props: ["asset"],
   setup(props) {
-    const options = {
-      series: [
-        {
-          name: "Price",
-          data: props.asset.prices,
+    onMounted(async () => {
+      const innerWidth = document.getElementById("flexbox").clientWidth;
+
+      const options = {
+        series: [
+          {
+            name: "Price",
+            data: props.asset.prices,
+          },
+        ],
+        chart: {
+          type: "area",
+          height: 70,
+          width: innerWidth < 400 ? innerWidth - 13 : 400 - 13,
+          sparkline: {
+            enabled: true,
+          },
+          animations: {
+            enabled: false,
+          },
         },
-      ],
-      chart: {
-        type: "area",
-        height: 70,
-        width: 300,
-        sparkline: {
-          enabled: true,
+        xaxis: {
+          categories: props.asset.dates,
         },
-        animations: {
+        stroke: {
+          curve: "smooth",
+          width: 2,
+        },
+        tooltip: {
           enabled: false,
         },
-      },
-      xaxis: {
-        categories: props.asset.dates,
-      },
-      stroke: {
-        curve: "smooth",
-        width: 2,
-      },
-      tooltip: {
-        enabled: false,
-      },
-      theme: {
-        monochrome: {
-          enabled: true,
-          color: "#FEB019",
-          shadeTo: "light",
-          shadeIntensity: 0.65,
+        theme: {
+          monochrome: {
+            enabled: true,
+            color: "#FEB019",
+            shadeTo: "light",
+            shadeIntensity: 0.65,
+          },
         },
-      },
-      noData: {
-        text: "Getting your data...",
-      },
-    };
-
-    const { updateSeries } = useChart(props.asset, options);
-    const { refreshData } = useDataUpdater(props.asset);
-
-    onMounted(async () => {
+        noData: {
+          text: "Getting your data...",
+        },
+      };
+      const { refreshData } = useDataUpdater(props.asset);
+      const { renderChart, updateSeries } = useChart(props.asset, options);
+      renderChart();
       await refreshData();
       updateSeries();
     });

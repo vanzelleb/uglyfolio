@@ -1,8 +1,8 @@
 <template>
   <Header />
 
-  <div class="container">
-    <main>
+  <div class="container" id="mainContainer">
+    <main id="main">
       <div v-if="asset.dataload.name">
         <DetailChart />
         <Stats />
@@ -91,7 +91,7 @@ export default {
 
     const close = () => {
       // clear global asset variable in order to return to home screen
-      selectAsset();
+      selectAsset(null);
     };
 
     return {

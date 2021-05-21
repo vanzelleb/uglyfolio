@@ -77,7 +77,7 @@ async function train(done) {
     vol: finalvol
   };
 
-  console.log("Posting message back to main script: ", workerResponse);
+  console.log("Posting message back to application: ", workerResponse);
   postMessage(workerResponse);
 }
 

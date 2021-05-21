@@ -35,14 +35,11 @@ import usePieChart from "../composables/usePieChart";
 // Vite specific worker import with module support
 import MyWorker from "../markowitz-optimizer?worker";
 
-const worker = new MyWorker();
-
 export default {
   setup() {
     const inProgress = ref(false);
     const finalvol = ref(0);
     const finalreturn = ref(0);
-    const worker = new MyWorker();
     const weights = ref([]);
     const { chart } = usePieChart(assets);
 
@@ -50,6 +47,8 @@ export default {
       inProgress.value = true;
       let prices = assets.value.map((item) => [...item.prices]);
       console.log("Message to be sent to worker: ", prices);
+
+      const worker = new MyWorker();
       worker.postMessage({ prices: prices });
       worker.onmessage = function (msg) {
         console.log("Message received from worker: ", msg.data);
@@ -58,6 +57,7 @@ export default {
         finalreturn.value = msg.data.return;
         finalvol.value = msg.data.vol;
         inProgress.value = false;
+        worker.terminate();
       };
     };
 

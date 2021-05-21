@@ -1,6 +1,6 @@
 <template>
   <details :open="assets.length === 0">
-    <summary>🔍 <span class="link">Search</span></summary>
+    <summary role="button">🔍 <span class="link">Search</span></summary>
     <fieldset>
       <legend>Add a new asset</legend>
       <template v-if="asset.dataload.name">
