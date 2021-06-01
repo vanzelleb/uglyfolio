@@ -7,7 +7,7 @@ exports.handler = async (event) => {
     header: {
       "Access-Control-Allow-Origin": event.headers.origin
     },
-    body: event.queryStringParameters
+    body: JSON.stringify(event)
   };
   //delete event.queryStringParameters.path
 
