@@ -1,17 +1,16 @@
 import { saveAsset } from "./use-asset";
 
-const baseURL = "https://finnhub.io/api/v1/";
 const provider = "finnhub";
 
 function historyURI(asset, start, end) {
-  const url = baseURL + "stock/candle";
   let params = {
+    path: "stock/candle",
     symbol: asset.ticker,
     resolution: "D",
     from: toTimestamp(start),
     to: toTimestamp(end)
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function historyResponse(json, asset) {
@@ -24,12 +23,12 @@ function historyResponse(json, asset) {
 }
 
 function quoteURI(asset) {
-  const url = baseURL + "quote";
   const params = {
+    path: "quote",
     symbol: asset.ticker,
     adjusted: true
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function quoteResponse(json, asset) {
@@ -39,11 +38,11 @@ function quoteResponse(json, asset) {
 }
 
 const companyURI = (asset) => {
-  const url = baseURL + "stock/profile2";
   const params = {
+    path: "stock/profile2",
     symbol: asset.ticker
   };
-  return { provider, url, params };
+  return { provider, params };
 };
 
 const companyResponse = (json, asset) => {
@@ -54,12 +53,12 @@ const companyResponse = (json, asset) => {
 };
 
 function signalURI(asset) {
-  const url = baseURL + "scan/technical-indicator";
   const params = {
+    path: "scan/technical-indicator",
     symbol: asset.ticker,
     resolution: "M"
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function signalResponse(json, asset) {
@@ -68,13 +67,13 @@ function signalResponse(json, asset) {
 }
 
 function newsURI(asset, from, to) {
-  const url = baseURL + "company-news";
   const params = {
+    path: "company-news",
     symbol: asset.ticker,
     from: from,
     to: to
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function newsResponse(json, asset) {

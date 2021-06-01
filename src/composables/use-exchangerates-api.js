@@ -1,15 +1,15 @@
 import { store, persistState } from "./use-store";
 
-const baseURL = "http://api.exchangeratesapi.io/";
+
 const provider = "exchangeratesapi";
 
 function forexByDateURI({ currency, date }) {
-  const url = baseURL + date;
   const params = {
+    path: date,
     base: store.settings.currency,
     symbols: currency
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function forexByDateResponse(json, { currency, date }) {
@@ -19,11 +19,11 @@ function forexByDateResponse(json, { currency, date }) {
 }
 
 function currencyURI() {
-  const url = baseURL + "latest";
   const params = {
+    path: "latest",
     base: store.settings.currency
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function currencyResponse(json) {

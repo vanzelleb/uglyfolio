@@ -1,10 +1,11 @@
 const { callApi } = require("./apiutils");
 
 exports.handler = async (event) => {
-  const access_key = process.env.VUE_APP_EXCHANGERATESAPI_SECRET_KEY;
-  const origin = event.headers.origin;
-  let { url, params } = JSON.parse(event.body);
-  params.access_key = access_key;
-  let response = await callApi(url, params, origin);
+  const url = "http://api.exchangeratesapi.io/" + event.queryStringParameters.path
+  delete event.queryStringParameters.path
+
+  event.queryStringParameters.token = process.env.VUE_APP_EXCHANGERATESAPI_SECRET_KEY;;
+
+  let response = await callApi(url, event);
   return response;
 };

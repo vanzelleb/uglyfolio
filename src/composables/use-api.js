@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { finnhubAPI } from "../composables/use-finnhub-api";
 import { iexAPI } from "../composables/use-iex-api";
 import { exchangeratesAPI } from "../composables/use-exchangerates-api";
+import axios from "axios"
 
 export const error = ref("");
 
@@ -103,24 +104,26 @@ const resources = {
 };
 
 async function queryBackend(option, requestObj) {
-  let resString = null;
+  //let resString = null;
   const backendURL = "https://uglyfolio.netlify.app/.netlify/functions/";
 
   try {
     // generate the the address to call the API with
-    let { provider, url, params } = option.getUri(requestObj);
-    let string = JSON.stringify({ url, params });
-    const res = await fetch(backendURL + provider, {
+    let { provider, params } = option.getUri(requestObj);
+    //let string = JSON.stringify({ url, params });
+    const { data } = await axios.get(backendURL + provider, { params: params });
+    /*const res = await fetch(backendURL + provider, {
       method: "POST",
       headers: { "Content-Type": "text/plain" },
       body: string
-    });
-    resString = await res.text();
-    console.log("API return string: ", resString);
-    option.handleResponse(JSON.parse(resString), requestObj);
+    });*/
+    //resString = await res.text();
+    console.log("API return string: ", data);
+    option.handleResponse(data, requestObj);
   } catch (e) {
-    if (e instanceof SyntaxError) throw Error(resString);
-    else throw Error(e.message);
+    //if (e instanceof SyntaxError) throw Error(resString);
+    //else 
+    throw Error(e.message);
   }
 }
 

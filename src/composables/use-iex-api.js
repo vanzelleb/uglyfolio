@@ -1,15 +1,15 @@
 import { saveAsset } from "./use-asset";
 
-const baseURL = "https://cloud.iexapis.com/stable/";
+
 const provider = "iex";
 
 function historyURI(asset, start, end) {
-  const url = baseURL + "stock/" + asset.ticker + "/chart/1y";
   // + start.toISOString().substring(0, 10).replace(/-/g, "");
   const params = {
+    path: "stock/" + asset.ticker + "/chart/1y",
     chartCloseOnly: true
   };
-  return { provider, url, params };
+  return { provider, params };
 }
 
 function historyResponse(json, asset) {
@@ -22,9 +22,10 @@ function historyResponse(json, asset) {
 }
 
 function quoteURI(asset) {
-  const url = baseURL + "stock/" + asset.ticker + "/quote";
-  const params = {};
-  return { provider, url, params };
+  const params = {
+    path: "stock/" + asset.ticker + "/quote",
+  };
+  return { provider, params };
 }
 
 function quoteResponse(json, asset) {
@@ -33,9 +34,10 @@ function quoteResponse(json, asset) {
 }
 
 function companyURI(asset) {
-  const url = baseURL + "stock/" + asset.ticker + "/company";
-  const params = {};
-  return { provider, url, params };
+  const params = {
+    path: "stock/" + asset.ticker + "/company",
+  };
+  return { provider, params };
 }
 
 function companyResponse(json, asset) {
