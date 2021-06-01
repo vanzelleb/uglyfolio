@@ -51,6 +51,7 @@ export default {
   props: ["id"],
   setup(props) {
     let trx = reactive(new Trx());
+    // if there is an id it means the transaction has previously been saved
     if (props.id !== undefined) Object.assign(trx, asset.trxns[props.id]);
 
     const save = () => {

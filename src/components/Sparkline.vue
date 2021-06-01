@@ -3,14 +3,17 @@
 </template>
 
 <script>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { requestHandler } from "../composables/use-api";
-import useChart from "../composables/useChart";
+import useLineChart from "../composables/useLineChart";
 import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
   props: ["asset"],
   setup(props) {
+    const { renderChart, updateSeries } = useLineChart(props.asset);
+    const { refreshAll } = useDataUpdater(props.asset);
+
     onMounted(async () => {
       const innerWidth = document.getElementById("flexbox").clientWidth;
 
@@ -54,11 +57,14 @@ export default {
           text: "Getting your data...",
         },
       };
-      const { refreshData } = useDataUpdater(props.asset);
-      const { renderChart, updateSeries } = useChart(props.asset, options);
-      renderChart();
-      await refreshData();
-      updateSeries();
+
+      renderChart(options);
+
+      // download the prices if the asset was just added
+      if (props.asset.prices.length === 0) {
+        await refreshAll();
+        updateSeries();
+      }
     });
 
     return {};

@@ -56,6 +56,8 @@ import Info from "./Info.vue";
 import Header from "./Header.vue";
 import Stats from "./Stats.vue";
 import Optimize from "./Optimize.vue";
+import useDataUpdater from "../composables/useDataUpdater";
+import { assets } from "../composables/use-portfolio";
 
 export default {
   components: {
@@ -75,12 +77,12 @@ export default {
     initState();
 
     // scroll to the top of the page when the detail screen is opened or closed
-    watch(
+    /*watch(
       () => asset.dataload.name,
       (name, prevName) => {
         window.scrollTo(0, 0);
       }
-    );
+    );*/
 
     const remove = (asset) => {
       if (confirm("Are you sure you want delete this asset?")) {
@@ -93,6 +95,13 @@ export default {
       // clear global asset variable in order to return to home screen
       selectAsset(null);
     };
+
+    onMounted(() => {
+      assets.value.forEach((asset) => {
+        let { refreshAll } = useDataUpdater(asset);
+        refreshAll();
+      });
+    });
 
     return {
       asset,

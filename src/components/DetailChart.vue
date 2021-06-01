@@ -5,7 +5,7 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import { asset } from "../composables/use-asset";
-import useChart from "../composables/useChart";
+import useLineChart from "../composables/useLineChart";
 import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
@@ -99,20 +99,19 @@ export default {
         text: "Getting your data...",
       },
     };
-    const { renderChart, updateSeries, updateAnnotations } = useChart(
-      asset,
-      options
+    const { renderChart, updateSeries, updateAnnotations } = useLineChart(
+      asset
     );
     const { refreshPrices } = useDataUpdater(asset);
 
     onMounted(() => {
-      renderChart();
+      renderChart(options);
       updateAnnotations();
     });
 
     watch(asset.trxns, async () => {
       await refreshPrices();
-      updateSeries();
+      //updateSeries();
       updateAnnotations();
     });
 

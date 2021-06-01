@@ -10,6 +10,8 @@ exports.callApi = function (url, params, origin) {
 
     //if (allowedOrigins.indexOf(origin) > -1) {
     headers["Access-Control-Allow-Origin"] = origin;
+    // cache the response from the API for 1 hour
+    headers["Cache-Control"] = "private, max-age=3600";
     //}
 
     try {
