@@ -2,7 +2,7 @@ import { requestHandler } from "../composables/use-api";
 import { today } from "../utils";
 
 export default function useDataUpdater(asset) {
-  // get 3 years of data by default
+  // get 1 year of data by default
   const defaultMonths = 12;
 
   const isUpdated = () => {
@@ -28,7 +28,7 @@ export default function useDataUpdater(asset) {
     });
   };
 
-  const refreshData = async () => {
+  const refreshAll = async () => {
     if (!isUpdated()) {
       // flag to prevent repeated API calls per day
       asset.lastChecked = today;
@@ -39,7 +39,7 @@ export default function useDataUpdater(asset) {
   };
 
   return {
-    refreshData,
+    refreshAll,
     refreshPrices
   };
 }

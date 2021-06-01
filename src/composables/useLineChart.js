@@ -1,5 +1,5 @@
 import ApexCharts from "apexcharts";
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 function BuyAnnotation(date) {
   this.x = new Date(date).getTime();
@@ -29,15 +29,15 @@ function SellAnnotation(date) {
   };
 }
 
-export default function useChart(asset, options) {
+export default function useChart(asset) {
   const chart = ref(null);
 
-  const renderChart = () => {
+  const renderChart = (options) => {
     let element = document.querySelector("#chart" + asset.ticker);
     if (element) {
       chart.value = new ApexCharts(element, options);
       chart.value.render();
-    }
+    } else throw Error("No chart element with specified id found.");
   };
 
   const updateAnnotations = () => {
@@ -69,8 +69,6 @@ export default function useChart(asset, options) {
       }
     });
   };
-
-  //onMounted(renderChart);
 
   return {
     renderChart,
