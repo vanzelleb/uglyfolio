@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { finnhubAPI } from "../composables/use-finnhub-api";
 import { iexAPI } from "../composables/use-iex-api";
 import { exchangeratesAPI } from "../composables/use-exchangerates-api";
-import axios from "axios"
+import axios from "axios";
 
 export const error = ref("");
 
@@ -118,11 +118,11 @@ async function queryBackend(option, requestObj) {
       body: string
     });*/
     //resString = await res.text();
-    console.log("API return string: ", data);
-    option.handleResponse(data, requestObj);
+    console.log("API return string: ", JSON.parse(data));
+    option.handleResponse(JSON.parse(data), requestObj);
   } catch (e) {
     //if (e instanceof SyntaxError) throw Error(resString);
-    //else 
+    //else
     throw Error(e.message);
   }
 }
