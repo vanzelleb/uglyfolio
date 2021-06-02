@@ -22,16 +22,18 @@ exports.callApi = function (url, event) {
       //Object.keys(event.queryStringParameters).forEach((key) =>
       // url.searchParams.append(key, event.queryStringParameters[key])
       //);
-      let { data } = await axios.get(url, {
+
+      /*const { data } = await axios.get(url, {
         params: event.queryStringParameters
-      });
+      });*/
+
       //res = await fetch(url);
       //responseText = await res.text();
       //if (data === {}) data = "No data received.";
       resolve({
         statusCode: 200,
         headers,
-        body: data
+        body: "Test"
       });
     } catch (e) {
       // if the API call fails, e.g. because of an unknown stock symbol
