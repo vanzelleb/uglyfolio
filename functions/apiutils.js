@@ -1,28 +1,18 @@
 //const fetch = require("node-fetch");
 const axios = require("axios");
-const stringify = require("qs-stringify");
-
-const allowedOrigins = ["https://uglyfolio.netlify.app"];
 
 exports.callApi = function (url, event) {
   return new Promise(async function (resolve) {
-    //let responseText = null;
     let headers = {
       // cache the response from the API for 1 hour
-      "Cache-Control": "private, max-age=3600"
+      "Cache-Control": "private, max-age=3600",
+      "Access-Control-Allow-Origin": event.headers.origin
     };
-    //let res = null;
 
-    //if (allowedOrigins.indexOf(origin) > -1) {
-    headers["Access-Control-Allow-Origin"] = event.headers.origin;
-
+    //const allowedOrigins = ["https://uglyfolio.netlify.app"];
+    //if (allowedOrigins.indexOf(origin) > -1) { 
+      //headers["Access-Control-Allow-Origin"] = event.headers.origin
     //}
-
-    //try {
-    //url = new URL(url);
-    //Object.keys(event.queryStringParameters).forEach((key) =>
-    // url.searchParams.append(key, event.queryStringParameters[key])
-    //);
 
     axios
       .get(url, {
@@ -32,14 +22,14 @@ exports.callApi = function (url, event) {
         resolve({
           statusCode: 200,
           headers: headers,
-          body: stringify(response.data)
+          body: JSON.stringify(response.data)
         });
       })
       .catch(function (error) {
         resolve({
           statusCode: 404,
           headers: headers,
-          body: stringify(error.message)
+          body: JSON.stringify(error.message)
         });
       });
 
