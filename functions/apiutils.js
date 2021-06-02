@@ -1,5 +1,6 @@
 //const fetch = require("node-fetch");
 const axios = require("axios");
+const stringify = require("qs-stringify");
 
 const allowedOrigins = ["https://uglyfolio.netlify.app"];
 
@@ -30,14 +31,14 @@ exports.callApi = function (url, event) {
       .then(function (response) {
         resolve({
           statusCode: 200,
-          headers,
-          body: response.data
+          headers: stringify(headers),
+          body: stringify(response.data)
         });
       })
       .catch(function (error) {
         resolve({
           statusCode: 404,
-          headers,
+          headers: stringify(headers),
           body: error.message
         });
       });
