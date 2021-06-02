@@ -31,15 +31,15 @@ exports.callApi = function (url, event) {
       .then(function (response) {
         resolve({
           statusCode: 200,
-          headers: stringify(headers),
+          headers: headers,
           body: stringify(response.data)
         });
       })
       .catch(function (error) {
         resolve({
           statusCode: 404,
-          headers: stringify(headers),
-          body: error.message
+          headers: headers,
+          body: stringify(error.message)
         });
       });
 
