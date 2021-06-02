@@ -17,31 +17,38 @@ exports.callApi = function (url, event) {
 
     //}
 
-    try {
-      //url = new URL(url);
-      //Object.keys(event.queryStringParameters).forEach((key) =>
-      // url.searchParams.append(key, event.queryStringParameters[key])
-      //);
+    //try {
+    //url = new URL(url);
+    //Object.keys(event.queryStringParameters).forEach((key) =>
+    // url.searchParams.append(key, event.queryStringParameters[key])
+    //);
 
-      /*const { data } = await axios.get(url, {
+    axios
+      .get(url, {
         params: event.queryStringParameters
-      });*/
+      })
+      .then(function (response) {
+        resolve({
+          statusCode: 200,
+          headers,
+          body: response.data
+        });
+      })
+      .catch(function (error) {
+        resolve({
+          statusCode: 404,
+          headers,
+          body: error.message
+        });
+      });
 
-      //res = await fetch(url);
-      //responseText = await res.text();
-      //if (data === {}) data = "No data received.";
-      resolve({
-        statusCode: 200,
-        headers,
-        body: "Test"
-      });
-    } catch (e) {
-      // if the API call fails, e.g. because of an unknown stock symbol
-      resolve({
-        statusCode: 404,
-        headers,
-        body: e.message
-      });
-    }
+    //res = await fetch(url);
+    //responseText = await res.text();
+    //if (data === {}) data = "No data received.";
+
+    //} catch (e) {
+    // if the API call fails, e.g. because of an unknown stock symbol
+
+    //}
   });
 };
