@@ -1,5 +1,5 @@
 //const fetch = require("node-fetch");
-const axios = require("axios")
+const axios = require("axios");
 
 const allowedOrigins = ["https://uglyfolio.netlify.app"];
 
@@ -13,16 +13,18 @@ exports.callApi = function (url, event) {
     //let res = null;
 
     //if (allowedOrigins.indexOf(origin) > -1) {
-    headers["Access-Control-Allow-Origin"] =   event.headers.origin;
-    
+    headers["Access-Control-Allow-Origin"] = event.headers.origin;
+
     //}
 
     try {
       //url = new URL(url);
       //Object.keys(event.queryStringParameters).forEach((key) =>
-       // url.searchParams.append(key, event.queryStringParameters[key])
+      // url.searchParams.append(key, event.queryStringParameters[key])
       //);
-      let { data } = await axios.get(url, {params: event.queryStringParameters }) 
+      let { data } = await axios.get(url, {
+        params: event.queryStringParameters
+      });
       //res = await fetch(url);
       //responseText = await res.text();
       //if (data === {}) data = "No data received.";
