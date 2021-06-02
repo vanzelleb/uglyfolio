@@ -10,8 +10,8 @@ exports.callApi = function (url, event) {
     };
 
     //const allowedOrigins = ["https://uglyfolio.netlify.app"];
-    //if (allowedOrigins.indexOf(origin) > -1) { 
-      //headers["Access-Control-Allow-Origin"] = event.headers.origin
+    //if (allowedOrigins.indexOf(origin) > -1) {
+    //headers["Access-Control-Allow-Origin"] = event.headers.origin
     //}
 
     axios
@@ -32,14 +32,5 @@ exports.callApi = function (url, event) {
           body: JSON.stringify(error.message)
         });
       });
-
-    //res = await fetch(url);
-    //responseText = await res.text();
-    //if (data === {}) data = "No data received.";
-
-    //} catch (e) {
-    // if the API call fails, e.g. because of an unknown stock symbol
-
-    //}
   });
 };

@@ -104,25 +104,15 @@ const resources = {
 };
 
 async function queryBackend(option, requestObj) {
-  //let resString = null;
   const backendURL = "https://uglyfolio.netlify.app/.netlify/functions/";
 
   try {
     // generate the the address to call the API with
     let { provider, params } = option.getUri(requestObj);
-    //let string = JSON.stringify({ url, params });
     const { data } = await axios.get(backendURL + provider, { params: params });
-    /*const res = await fetch(backendURL + provider, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: string
-    });*/
-    //resString = await res.text();
-    console.log("API return string: ", JSON.parse(data));
-    option.handleResponse(JSON.parse(data), requestObj);
+    console.log("API return string: ", data);
+    option.handleResponse(data, requestObj);
   } catch (e) {
-    //if (e instanceof SyntaxError) throw Error(resString);
-    //else
     throw Error(e.message);
   }
 }
@@ -140,9 +130,10 @@ export async function requestHandler(type, requestObj) {
       await queryBackend(resources[type][i], requestObj);
       i = options + 1;
     } catch (e) {
+      // fill error variable for display to user
+      error.value = e.message;
       // catch API errors and try the next option
-      error.value = e.message + " " + error.value;
-      console.log("API error for request type " + type + ": " + error.value);
+      console.log("API error for request type " + type + ": " + e.message);
       i++;
     }
   }
