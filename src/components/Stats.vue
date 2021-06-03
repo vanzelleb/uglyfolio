@@ -30,7 +30,9 @@ export default {
     const periodReturn = ref(0);
 
     watchEffect(
-      () => (periodReturn.value = (asset.lastPrice / asset.prices[0] - 1) * 100)
+      () =>
+        (periodReturn.value =
+          (asset.dataload.lastPrice / asset.prices[0] - 1) * 100)
     );
 
     return {

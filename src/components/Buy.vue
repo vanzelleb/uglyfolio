@@ -41,10 +41,9 @@
 
 <script>
 import { computed, reactive, ref, watch, toRefs } from "vue";
-import { requestHandler } from "../composables/use-api";
 import { today } from "../utils";
-import { store } from "../composables/use-store";
-import { asset, removeAsset, selectAsset } from "../composables/use-asset";
+import { store, removeAsset } from "../composables/use-store";
+import { asset } from "../composables/use-asset";
 import { Trx, saveTrx, removeTrx } from "../composables/use-transactions";
 
 export default {

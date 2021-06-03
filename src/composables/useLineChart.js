@@ -1,5 +1,5 @@
 import ApexCharts from "apexcharts";
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 
 function BuyAnnotation(date) {
   this.x = new Date(date).getTime();

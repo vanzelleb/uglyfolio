@@ -1,8 +1,8 @@
-import { saveAsset } from "./use-asset";
+import { saveAsset } from "../composables/use-store";
 
 const provider = "finnhub";
 
-function historyURI(asset, start, end) {
+function historyRequest(asset, start, end) {
   let params = {
     path: "stock/candle",
     symbol: asset.ticker,
@@ -22,7 +22,7 @@ function historyResponse(json, asset) {
   saveAsset(asset);
 }
 
-function quoteURI(asset) {
+function quoteRequest(asset) {
   const params = {
     path: "quote",
     symbol: asset.ticker,
@@ -33,11 +33,11 @@ function quoteURI(asset) {
 
 function quoteResponse(json, asset) {
   if (!json.c) throw Error("No data");
-  asset.lastPrice = json.c;
+  asset.dataload.lastPrice = parseFloat(json.c);
   saveAsset(asset);
 }
 
-const companyURI = (asset) => {
+const companyRequest = (asset) => {
   const params = {
     path: "stock/profile2",
     symbol: asset.ticker
@@ -46,13 +46,13 @@ const companyURI = (asset) => {
 };
 
 const companyResponse = (json, asset) => {
-  asset.name = json.name;
-  asset.currency = json.currency;
+  asset.dataload.name = json.dataload.name;
+  asset.dataload.currency = json.dataload.currency;
   asset.dataload.industry = json.finnhubIndustry;
   saveAsset(asset);
 };
 
-function signalURI(asset) {
+function signalRequest(asset) {
   const params = {
     path: "scan/technical-indicator",
     symbol: asset.ticker,
@@ -66,7 +66,7 @@ function signalResponse(json, asset) {
   saveAsset(asset);
 }
 
-function newsURI(asset, from, to) {
+function newsRequest(asset, from, to) {
   const params = {
     path: "company-news",
     symbol: asset.ticker,
@@ -85,7 +85,7 @@ function newsResponse(json, asset) {
     item.datetime = toDate(item.datetime);
     return item;
   });
-  asset.news = uniqueNews;
+  asset.dataload.news = uniqueNews;
   saveAsset(asset);
 }
 
@@ -99,11 +99,11 @@ function toDate(date) {
 }
 
 export const finnhubAPI = {
-  historyURI,
-  quoteURI,
-  companyURI,
-  signalURI,
-  newsURI,
+  historyRequest,
+  quoteRequest,
+  companyRequest,
+  signalRequest,
+  newsRequest,
   historyResponse,
   quoteResponse,
   companyResponse,

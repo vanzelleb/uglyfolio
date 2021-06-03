@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import { assets, useKPI } from "../composables/use-portfolio";
+import { useKPI } from "../composables/use-portfolio";
 import { reactive, computed, watch } from "vue";
-import { store } from "../composables/use-store";
+import { store, assets } from "../composables/use-store";
 import { toLocaleNumber } from "../utils";
 
 export default {
@@ -111,13 +111,13 @@ export default {
         value: toLocaleNumber(useKPI.missedGain(assets.value), 0),
         unit: computed(() => store.settings.currency),
       },
-      "Delta to target": {
+      /*"Delta to target": {
         icon: "😢",
         subtitle: "Predicted change based on avg. price target.",
         info: null,
         value: toLocaleNumber(useKPI.diffToTargetPrice(assets.value), 0),
         unit: computed(() => store.settings.currency),
-      },
+      },*/
     });
 
     return { kpis };

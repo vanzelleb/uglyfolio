@@ -42,7 +42,9 @@
 
 <script>
 import { initState } from "../composables/use-store";
-import { asset, removeAsset, selectAsset } from "../composables/use-asset";
+import { asset, selectAsset } from "../composables/use-asset";
+import { assets, saveAsset, removeAsset } from "../composables/use-store";
+import useDataUpdater from "../composables/useDataUpdater";
 import { onMounted, watch, computed } from "vue";
 import { today } from "../utils";
 import DetailChart from "./DetailChart.vue";
@@ -56,8 +58,6 @@ import Info from "./Info.vue";
 import Header from "./Header.vue";
 import Stats from "./Stats.vue";
 import Optimize from "./Optimize.vue";
-import useDataUpdater from "../composables/useDataUpdater";
-import { assets } from "../composables/use-portfolio";
 
 export default {
   components: {
@@ -75,6 +75,8 @@ export default {
   },
   setup() {
     initState();
+
+    const { refreshAssetAll, refreshFXRates } = useDataUpdater();
 
     // scroll to the top of the page when the detail screen is opened or closed
     /*watch(
@@ -97,10 +99,11 @@ export default {
     };
 
     onMounted(() => {
+      // update application data
       assets.value.forEach((asset) => {
-        let { refreshAll } = useDataUpdater(asset);
-        refreshAll();
+        refreshAssetAll(asset);
       });
+      refreshFXRates();
     });
 
     return {

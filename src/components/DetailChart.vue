@@ -102,7 +102,7 @@ export default {
     const { renderChart, updateSeries, updateAnnotations } = useLineChart(
       asset
     );
-    const { refreshPrices } = useDataUpdater(asset);
+    const { refreshAssetPrices } = useDataUpdater(asset);
 
     onMounted(() => {
       renderChart(options);
@@ -110,7 +110,7 @@ export default {
     });
 
     watch(asset.trxns, async () => {
-      await refreshPrices();
+      await refreshAssetPrices(asset);
       //updateSeries();
       updateAnnotations();
     });

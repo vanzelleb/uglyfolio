@@ -1,4 +1,5 @@
-import { asset, saveAsset } from "../composables/use-asset";
+import { asset } from "../composables/use-asset";
+import { saveAsset } from "../composables/use-store";
 
 export class Trx {
   constructor(obj) {

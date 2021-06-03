@@ -33,13 +33,13 @@
         <span v-if="searching">Searching...</span>
         <span v-else>🔍 Check</span>
       </button>
-      <template v-if="asset.news.length > 0">
+      <template v-if="asset.dataload.news.length > 0">
         <br />
-        <article v-for="(item, idx) of asset.news" :key="idx">
+        <article v-for="(item, idx) of asset.dataload.news" :key="idx">
           <div>{{ item.datetime }}</div>
           <a :href="item.url" target="_blank">{{ item.headline }}</a>
           <div>{{ item.summary }}</div>
-          <hr v-if="idx + 1 < asset.news.length" :key="'hr-' + idx" />
+          <hr v-if="idx + 1 < asset.dataload.news.length" :key="'hr-' + idx" />
         </article>
       </template>
     </fieldset>
@@ -58,7 +58,7 @@ export default {
     const searching = ref(false);
     const from = computed(() => asset.dates[range.value[0]]);
     const to = computed(() => asset.dates[range.value[1]]);
-    asset.news = [];
+    asset.dataload.news = [];
 
     const getNews = async () => {
       shake.value = false;
@@ -71,7 +71,7 @@ export default {
       });
       searching.value = false;
       // animate the search button to indicate that no news were found
-      if (asset.news.length === 0) shake.value = true;
+      if (asset.dataload.news.length === 0) shake.value = true;
     };
 
     return {

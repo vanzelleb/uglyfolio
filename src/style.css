@@ -15,7 +15,7 @@ body {
 .container {
   padding: 12px 8px;
   display: flex;
-  max-width: 785px;
+  max-width: 810px;
   margin: 0 auto;
   flex-grow: 1;
 }

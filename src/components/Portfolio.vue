@@ -10,17 +10,6 @@
         <h4>
           {{ item.dataload.name }} <small>({{ item.ticker }})</small>
         </h4>
-        <div v-if="item.buys().length > 0">
-          <h5 v-if="!item.isSold()">
-            You're {{ change([item]) >= 0 ? "up " : "down " }}
-            {{ toLocaleNumber(change([item]), 0) }}
-          </h5>
-          <h5 v-else :class="{ posColor: returns([item]) >= 0 }">
-            You {{ returns([item]) >= 0 ? "made " : "lost " }}
-            {{ toLocaleNumber(returns([item]), 0) }}
-          </h5>
-          <h6>&nbsp;{{ appCurrency }}</h6>
-        </div>
         <h5 v-if="item.dataload.technicalAnalysis?.signal">
           <!--<span v-if="item.hasAlarm()" class="ml-2">⏰</span>
           <span v-if="item.forexChange" class="ml-2">💵</span>
@@ -39,6 +28,17 @@
         <h5 v-if="item.dataload.trend?.trending">
           <span> / Trending: ✔️</span>
         </h5>
+        <div v-if="item.buys().length > 0">
+          <h3 v-if="!item.isSold()">
+            You're {{ change([item]) >= 0 ? "up " : "down " }}
+            {{ toLocaleNumber(change([item]), 0) }}
+          </h3>
+          <h3 v-else :class="{ posColor: returns([item]) >= 0 }">
+            You {{ returns([item]) >= 0 ? "made " : "lost " }}
+            {{ toLocaleNumber(returns([item]), 0) }}
+          </h3>
+          <h6>&nbsp;{{ appCurrency }}</h6>
+        </div>
       </figcaption>
       <Sparkline :asset="item" class="sparkline" />
     </div>
@@ -47,11 +47,11 @@
 
 <script>
 import Sparkline from "../components/Sparkline.vue";
-import { assets, useKPI } from "../composables/use-portfolio";
+import { useKPI } from "../composables/use-portfolio";
 import { computed } from "vue";
 import { toLocaleNumber } from "../utils";
-import { store } from "../composables/use-store";
-import { asset, removeAsset, selectAsset } from "../composables/use-asset";
+import { store, removeAsset, assets } from "../composables/use-store";
+import { asset, selectAsset } from "../composables/use-asset";
 
 export default {
   components: {
@@ -92,9 +92,14 @@ figcaption {
   margin: 0.5rem 0.8rem;
 }
 
+h3,
 h5,
 h6 {
   display: inline-block;
   color: rgb(59, 59, 59);
+}
+
+h3 {
+  margin: 5px 0 0 0;
 }
 </style>

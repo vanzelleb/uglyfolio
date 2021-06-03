@@ -1,4 +1,3 @@
-import { store, persistState } from "./use-store";
 import { reactive } from "vue";
 import { Trx } from "./use-transactions";
 
@@ -6,20 +5,15 @@ class Asset {
   constructor(obj) {
     obj = obj ? obj : {};
     this.id = obj._id;
-    // by default all stocks from the APIs are in USD
-    this.currency = "USD";
-    this.name = obj._name;
     this.ticker = obj._ticker;
-    //this.timeseries = obj._timeseries;
     this.prices = obj._prices;
     this.dates = obj._dates;
     this.payouts = obj._payouts;
-    this.lastChecked = obj._lastChecked;
-    // current price quote from API
-    this.lastPrice = obj._lastPrice;
     this.trxns = obj._trxns;
     // miscellaneous information that does not need transformation
     this.dataload = obj._dataload;
+    // by default all stocks from the APIs are in USD
+    if (!this.dataload.currency) this.dataload["currency"] = "USD";
   }
 
   get id() {
@@ -44,37 +38,6 @@ class Asset {
 
   set dataload(val) {
     this._dataload = val ? val : {};
-  }
-
-  get currency() {
-    return this._currency;
-  }
-
-  set currency(val) {
-    this._currency = val ? val : null;
-  }
-
-  get lastChecked() {
-    if (this._lastChecked)
-      return this._lastChecked.toISOString().substring(0, 10);
-    else return null;
-  }
-
-  set lastChecked(date) {
-    if (date) {
-      let dt = new Date(date);
-      this._lastChecked = new Date(
-        dt.getTime() - dt.getTimezoneOffset() * 60000
-      );
-    } else this._lastChecked = null;
-  }
-
-  get lastPrice() {
-    return this._lastPrice;
-  }
-
-  set lastPrice(val) {
-    this._lastPrice = val ? parseFloat(val) : "";
   }
 
   get prices() {
@@ -114,14 +77,6 @@ class Asset {
       for (let payout of val)
         this._payouts[payout.year] = { value: payout.value };
     else if (val) this._payouts = val;
-  }
-
-  lastChangePct() {
-    if (!this.isSold() && this.dates.length > 1)
-      return (
-        this.lastPrice / this.timeseries[this.dates[this.dates.length - 2]] - 1
-      );
-    return null;
   }
 
   highPrice() {
@@ -173,17 +128,17 @@ class Asset {
   }
 
   hasAlarm() {
-    return this.stopLoss > this.lastPrice;
+    return this.stopLoss > this.dataload.lastPrice;
   }
 
   firstTrxDate() {
     const dates = this.trxns.map((trx) => trx.date);
-    return new Date(dates.sort()[0]);
+    return dates.length > 0 ? new Date(dates.sort()[0]) : null;
   }
 
   lastTrxDate() {
     const dates = this.trxns.map((trx) => trx.date);
-    return new Date(dates.sort()[dates.length - 1]);
+    return dates.length > 0 ? new Date(dates.sort()[dates.length - 1]) : null;
   }
 
   buys() {
@@ -227,9 +182,9 @@ class Asset {
 
   change() {
     if (this.isSold()) return 0;
-    if (this.lastPrice)
+    if (this.dataload.lastPrice)
       return (
-        (this.lastPrice / this.avgBuyPrice()) * this.totalBuyValue() -
+        (this.dataload.lastPrice / this.avgBuyPrice()) * this.totalBuyValue() -
         this.totalBuyValue()
       );
     return 0;
@@ -239,30 +194,19 @@ class Asset {
     if (this.isSold()) return this.totalSellValue() - this.totalBuyValue();
     else return 0;
   }
+
+  lastChangePct() {
+    if (!this.isSold() && this.dates.length > 1)
+      return this.dataload.lastPrice / this.prices[this.prices.length - 1];
+    return null;
+  }
 }
 
 const asset = reactive(new Asset());
 
-const saveAsset = (asset) => {
-  if (asset._id) {
-    // make sure every ticker is only saved once
-    const IDs = store.assetList.map((item) => item._id);
-    const idx = IDs.indexOf(asset._id);
-    if (idx === -1) store.assetList.push(new Asset(asset));
-    else store.assetList[idx] = new Asset(asset);
-    persistState();
-  }
-};
-
-const removeAsset = (asset) => {
-  store.assetList = store.assetList.filter(
-    (item) => item._ticker !== asset._ticker
-  );
-  persistState();
-};
-
 const selectAsset = (item) => {
+  // makes a copy of the asset
   Object.assign(asset, new Asset(item));
 };
 
-export { Asset, asset, saveAsset, removeAsset, selectAsset };
+export { Asset, asset, selectAsset };

@@ -1,24 +1,23 @@
 import { store, persistState } from "./use-store";
 
-
 const provider = "exchangeratesapi";
 
-function forexByDateURI({ currency, date }) {
+function forexByDateRequest({ currency, date }) {
   const params = {
-    path: date,
+    path: date instanceof Date ? date.toISOString().substring(0, 10) : date,
     base: store.settings.currency,
     symbols: currency
   };
   return { provider, params };
 }
 
-function forexByDateResponse(json, { currency, date }) {
-  store.exchangeRates[store.settings.currency][currency][date] =
+function forexByDateResponse(json, { currency }) {
+  store.exchangeRates[store.settings.currency][currency][json.date] =
     json.rates[currency];
   persistState();
 }
 
-function currencyURI() {
+function currencyRequest() {
   const params = {
     path: "latest",
     base: store.settings.currency
@@ -32,8 +31,8 @@ function currencyResponse(json) {
 }
 
 export const exchangeratesAPI = {
-  forexByDateURI,
-  currencyURI,
+  forexByDateRequest,
+  currencyRequest,
   forexByDateResponse,
   currencyResponse
 };

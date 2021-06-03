@@ -9,16 +9,16 @@ export const error = ref("");
 const resources = {
   history: {
     2: {
-      getUri: function ({ asset, start, end }) {
-        return iexAPI.historyURI(asset, start, end);
+      prepareRequest: function ({ asset, start, end }) {
+        return iexAPI.historyRequest(asset, start, end);
       },
       handleResponse: function (json, { asset }) {
         iexAPI.historyResponse(json, asset);
       }
     },
     1: {
-      getUri: function ({ asset, start, end }) {
-        return finnhubAPI.historyURI(asset, start, end);
+      prepareRequest: function ({ asset, start, end }) {
+        return finnhubAPI.historyRequest(asset, start, end);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.historyResponse(json, asset);
@@ -27,16 +27,16 @@ const resources = {
   },
   quote: {
     1: {
-      getUri: function ({ asset }) {
-        return finnhubAPI.quoteURI(asset);
+      prepareRequest: function ({ asset }) {
+        return finnhubAPI.quoteRequest(asset);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.quoteResponse(json, asset);
       }
     },
     2: {
-      getUri: function ({ asset }) {
-        return iexAPI.quoteURI(asset);
+      prepareRequest: function ({ asset }) {
+        return iexAPI.quoteRequest(asset);
       },
       handleResponse: function (json, { asset }) {
         iexAPI.quoteResponse(json, asset);
@@ -45,16 +45,16 @@ const resources = {
   },
   company: {
     1: {
-      getUri: function ({ asset }) {
-        return iexAPI.companyURI(asset);
+      prepareRequest: function ({ asset }) {
+        return iexAPI.companyRequest(asset);
       },
       handleResponse: function (json, { asset }) {
         iexAPI.companyResponse(json, asset);
       }
     },
     2: {
-      getUri: function ({ asset }) {
-        return finnhubAPI.companyURI(asset);
+      prepareRequest: function ({ asset }) {
+        return finnhubAPI.companyRequest(asset);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.companyResponse(json, asset);
@@ -63,8 +63,8 @@ const resources = {
   },
   signal: {
     1: {
-      getUri: function ({ asset }) {
-        return finnhubAPI.signalURI(asset);
+      prepareRequest: function ({ asset }) {
+        return finnhubAPI.signalRequest(asset);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.signalResponse(json, asset);
@@ -73,8 +73,8 @@ const resources = {
   },
   news: {
     1: {
-      getUri: function ({ asset, from, to }) {
-        return finnhubAPI.newsURI(asset, from, to);
+      prepareRequest: function ({ asset, from, to }) {
+        return finnhubAPI.newsRequest(asset, from, to);
       },
       handleResponse: function (json, { asset }) {
         finnhubAPI.newsResponse(json, asset);
@@ -83,8 +83,8 @@ const resources = {
   },
   forexByDate: {
     1: {
-      getUri: function ({ currency, date }) {
-        return exchangeratesAPI.forexByDateURI({ currency, date });
+      prepareRequest: function ({ currency, date }) {
+        return exchangeratesAPI.forexByDateRequest({ currency, date });
       },
       handleResponse: function (json, { currency, date }) {
         exchangeratesAPI.forexByDateResponse(json, { currency, date });
@@ -93,8 +93,8 @@ const resources = {
   },
   currencies: {
     1: {
-      getUri: function () {
-        return exchangeratesAPI.currencyURI();
+      prepareRequest: function () {
+        return exchangeratesAPI.currencyRequest();
       },
       handleResponse: function (json) {
         exchangeratesAPI.currencyResponse(json);
@@ -104,13 +104,12 @@ const resources = {
 };
 
 async function queryBackend(option, requestObj) {
-  const backendURL = "https://uglyfolio.netlify.app/.netlify/functions/";
-
+  const backendUrl = "https://uglyfolio.netlify.app/.netlify/functions/";
   try {
     // generate the the address to call the API with
-    let { provider, params } = option.getUri(requestObj);
-    const { data } = await axios.get(backendURL + provider, { params: params });
-    console.log("API return string: ", data);
+    let { provider, params } = option.prepareRequest(requestObj);
+    const { data } = await axios.get(backendUrl + provider, { params: params });
+    //console.log("API return string: ", data);
     option.handleResponse(data, requestObj);
   } catch (e) {
     throw Error(e.message);

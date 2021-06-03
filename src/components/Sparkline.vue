@@ -4,7 +4,6 @@
 
 <script>
 import { computed, onMounted, watch } from "vue";
-import { requestHandler } from "../composables/use-api";
 import useLineChart from "../composables/useLineChart";
 import useDataUpdater from "../composables/useDataUpdater";
 
@@ -12,7 +11,7 @@ export default {
   props: ["asset"],
   setup(props) {
     const { renderChart, updateSeries } = useLineChart(props.asset);
-    const { refreshAll } = useDataUpdater(props.asset);
+    const { refreshAssetAll } = useDataUpdater();
 
     onMounted(async () => {
       const innerWidth = document.getElementById("flexbox").clientWidth;
@@ -62,7 +61,7 @@ export default {
 
       // download the prices if the asset was just added
       if (props.asset.prices.length === 0) {
-        await refreshAll();
+        await refreshAssetAll(props.asset);
         updateSeries();
       }
     });

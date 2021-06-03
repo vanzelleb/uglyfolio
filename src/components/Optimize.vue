@@ -30,7 +30,7 @@
 <script>
 import { ref, watch, onMounted } from "vue";
 import { asset } from "../composables/use-asset";
-import { assets } from "../composables/use-portfolio";
+import { assets } from "../composables/use-store";
 import usePieChart from "../composables/usePieChart";
 // Vite specific worker import with module support
 import MyWorker from "../markowitz-optimizer?worker";

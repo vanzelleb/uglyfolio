@@ -1,7 +1,5 @@
 import { today } from "../utils";
 import { store } from "../composables/use-store";
-import { computed } from "vue";
-import { Asset } from "../composables/use-asset";
 
 const sum = (array) => {
   const method = (acc, cur) => acc + cur;
@@ -24,13 +22,13 @@ const lastDiff = (array) => {
   return array[array.length - 1] - array[array.length - 2];
 };
 
-function relativeChange(items, benchmark) {
+/*function relativeChange(items, benchmark) {
   return items.map((asset) => {
     // calculate annulaized relative return/alpha in comparison to the benchmark
     const hasData =
       asset.dates.length > 0 && benchmark.hasOwnProperty("_timeseries");
     if (!asset.isSold() && hasData) {
-      let startPrice = benchmark._timeseries[asset.dateBuy];
+      let startPrice = benchmark._timeseries[asset.firstTrxDate()];
       // by default assume the asset is active, therefore use the last available benchmark price
       let benchmarkPrices = Object.values(benchmark._timeseries);
       let endPrice = benchmarkPrices[benchmarkPrices.length - 1];
@@ -41,7 +39,7 @@ function relativeChange(items, benchmark) {
     }
     return null;
   });
-}
+}*/
 
 function change(items) {
   const results = items.map((asset) => asset.change());
@@ -55,15 +53,23 @@ function FXChange(items) {
   if (!FXBase) return null;
 
   const calculateFXChange = (item) => {
-    const hasCurrencyPair = !!FXBase[item.currency];
+    const hasCurrencyPair = !!FXBase[item.dataload.currency];
     if (hasCurrencyPair) {
-      const lastRate = FXBase[item.currency][today];
-      const buyRate = FXBase[item.currency][item.dateBuy];
-      const changeRatio = buyRate / lastRate;
-      const assetValue = (item.lastPrice / item.buyPrice) * item.buyValue;
-      const FXChange = assetValue * changeRatio - assetValue;
-      return FXChange;
-    } else return null;
+      const hasTrx = item.firstTrxDate() ? true : false;
+      if (hasTrx) {
+        const lastRate = FXBase[item.dataload.currency][today];
+        const buyRate =
+          FXBase[item.dataload.currency][
+            item.firstTrxDate().toISOString().substring(0, 10)
+          ];
+        const changeRatio = buyRate / lastRate;
+        const assetValue =
+          (item.dataload.lastPrice / item.avgBuyPrice()) * item.totalBuyValue();
+        const FXChange = assetValue * changeRatio - assetValue;
+        return FXChange;
+      }
+    }
+    return null;
   };
 
   const result = items.map((item) => {
@@ -75,7 +81,7 @@ function FXChange(items) {
 
 function invested(items) {
   const result = items.map((asset) => {
-    if (!asset.isSold()) return asset.buyValue;
+    if (!asset.isSold()) return asset.totalBuyValue();
     return null;
   });
   return sum(result);
@@ -88,20 +94,23 @@ function returns(items) {
   return sum(result) + income(items);
 }
 
-function diffToTargetPrice(items) {
+/*function diffToTargetPrice(items) {
   const result = items.map((asset) => {
-    if (!asset.isSold() && asset.targetPrice && asset.lastPrice)
+    if (!asset.isSold() && asset.targetPrice && asset.dataload.lastPrice)
       return (
-        (asset.targetPrice / asset.lastPrice) * value([asset]) - value([asset])
+        (asset.targetPrice / asset.dataload.lastPrice) * value([asset]) - value([asset])
       );
     return null;
   });
   return sum(result);
-}
+}*/
 
 function lastChange(items) {
   const result = items.map((asset) => {
-    if (asset.dates.length > 1) return asset.lastChangePct * asset.buyValue;
+    if (asset.dates.length > 1)
+      return (
+        asset.lastChangePct() * asset.totalBuyValue() - asset.totalBuyValue()
+      );
     return null;
   });
   return sum(result);
@@ -109,7 +118,7 @@ function lastChange(items) {
 
 /*function changePct(items) {
   const result = items.map((asset) => {
-    if (!asset.isSold()) return (asset.change / asset.buyValue) * 100;
+    if (!asset.isSold()) return (asset.change / asset.totalBuyValue) * 100;
     return null;
   });
 }*/
@@ -120,10 +129,11 @@ function value(items) {
 
 function missedGain(items) {
   const result = items.map((asset) => {
-    if (asset.lastPrice && asset.highPrice)
-      if (asset.highPrice > asset.lastPrice)
+    if (asset.dataload.lastPrice && asset.highPrice())
+      if (asset.highPrice() > asset.dataload.lastPrice)
         return (
-          (asset.highPrice / asset.lastPrice) * value([asset]) - value([asset])
+          (asset.highPrice() / asset.dataload.lastPrice) * value([asset]) -
+          value([asset])
         );
     return null;
   });
@@ -140,21 +150,15 @@ function income(items) {
   return sum(result);
 }
 
-// convert items into Asset class before using them
-export const assets = computed(() =>
-  // convert items into Asset class before using them
-  store.assetList.map((item) => new Asset(item))
-);
-
 export const useKPI = {
   change,
   value,
   income,
-  diffToTargetPrice,
+  //diffToTargetPrice,
   missedGain,
   invested,
   returns,
   FXChange,
-  relativeChange,
+  //relativeChange,
   lastChange
 };

@@ -52,9 +52,9 @@
 
 <script>
 import { watch, ref, reactive, onMounted, computed } from "vue";
-import { requestHandler } from "../composables/use-api";
-import { assets } from "../composables/use-portfolio";
-import { Asset, saveAsset, selectAsset } from "../composables/use-asset";
+import { Asset, selectAsset } from "../composables/use-asset";
+import { saveAsset, assets } from "../composables/use-store";
+import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
   setup() {
@@ -62,6 +62,7 @@ export default {
     const asset = reactive(new Asset());
     const searching = ref(false);
     const error = ref("");
+    const { refreshAssetCompany } = useDataUpdater();
 
     watch(
       () => ticker.value,
@@ -80,7 +81,7 @@ export default {
         ) {
           searching.value = true;
           asset.ticker = ticker.value;
-          await requestHandler("company", { asset: asset });
+          await refreshAssetCompany(asset);
           searching.value = false;
           if (!asset.dataload.name) error.value = "Not found";
         } else error.value = "Already added";
@@ -88,7 +89,7 @@ export default {
     };
 
     const close = () => {
-      // reset the asset object
+      // reset the form and asset object
       ticker.value = "";
       Object.assign(asset, new Asset());
     };

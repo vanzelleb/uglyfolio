@@ -1,9 +1,8 @@
-import { saveAsset } from "./use-asset";
-
+import { saveAsset } from "../composables/use-store";
 
 const provider = "iex";
 
-function historyURI(asset, start, end) {
+function historyRequest(asset, start, end) {
   // + start.toISOString().substring(0, 10).replace(/-/g, "");
   const params = {
     path: "stock/" + asset.ticker + "/chart/1y",
@@ -21,21 +20,21 @@ function historyResponse(json, asset) {
   saveAsset(asset);
 }
 
-function quoteURI(asset) {
+function quoteRequest(asset) {
   const params = {
-    path: "stock/" + asset.ticker + "/quote",
+    path: "stock/" + asset.ticker + "/quote"
   };
   return { provider, params };
 }
 
 function quoteResponse(json, asset) {
-  asset.lastPrice = json.latestPrice;
+  asset.dataload.lastPrice = parseFloat(json.latestPrice);
   saveAsset(asset);
 }
 
-function companyURI(asset) {
+function companyRequest(asset) {
   const params = {
-    path: "stock/" + asset.ticker + "/company",
+    path: "stock/" + asset.ticker + "/company"
   };
   return { provider, params };
 }
@@ -49,9 +48,9 @@ function companyResponse(json, asset) {
 }
 
 export const iexAPI = {
-  historyURI,
-  quoteURI,
-  companyURI,
+  historyRequest,
+  quoteRequest,
+  companyRequest,
   historyResponse,
   quoteResponse,
   companyResponse
