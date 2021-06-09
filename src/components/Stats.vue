@@ -22,22 +22,17 @@
 </template>
 
 <script>
-import { asset } from "../composables/use-asset";
-import { ref, watchEffect } from "vue";
+import { computed } from "vue";
 
 export default {
-  setup() {
-    const periodReturn = ref(0);
-
-    watchEffect(
-      () =>
-        (periodReturn.value =
-          (asset.dataload.lastPrice / asset.prices[0] - 1) * 100)
+  props: ["asset"],
+  setup(props) {
+    const periodReturn = computed(
+      () => (props.asset.dataload.lastPrice / props.asset.prices[0] - 1) * 100
     );
 
     return {
       periodReturn,
-      asset,
     };
   },
 };

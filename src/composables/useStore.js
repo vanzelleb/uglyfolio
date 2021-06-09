@@ -1,5 +1,5 @@
-import { reactive, computed } from "vue";
-import { Asset } from "../composables/use-asset";
+import { reactive, computed, watch } from "vue";
+import { Asset } from "../composables/useAsset";
 
 export const store = reactive({
   assetList: [],
@@ -29,6 +29,7 @@ export const initState = () => {
 
 export const persistState = () => {
   localStorage.store = JSON.stringify(store);
+  console.log("Local storage updated.");
 };
 
 export const saveAsset = (asset) => {
@@ -38,7 +39,7 @@ export const saveAsset = (asset) => {
     const idx = IDs.indexOf(asset._id);
     if (idx === -1) store.assetList.push(new Asset(asset));
     else store.assetList[idx] = new Asset(asset);
-    persistState();
+    //persistState();
   }
 };
 
@@ -46,7 +47,7 @@ export const removeAsset = (asset) => {
   store.assetList = store.assetList.filter(
     (item) => item._ticker !== asset._ticker
   );
-  persistState();
+  //persistState();
 };
 
 // convert items into Asset class before using them
@@ -54,3 +55,8 @@ export const assets = computed(() =>
   // convert items into Asset class before using them
   store.assetList.map((item) => new Asset(item))
 );
+
+watch(store, (store, prevStore) => {
+  console.log("Store watcher triggered.");
+  persistState();
+});

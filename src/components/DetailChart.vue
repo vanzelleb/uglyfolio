@@ -4,17 +4,17 @@
 
 <script>
 import { computed, onMounted, watch } from "vue";
-import { asset } from "../composables/use-asset";
 import useLineChart from "../composables/useLineChart";
 import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
-  setup() {
+  props: ["asset"],
+  setup(props) {
     const options = {
       series: [
         {
           name: "Price",
-          data: asset.prices,
+          data: props.asset.prices,
         },
       ],
       chart: {
@@ -74,7 +74,7 @@ export default {
         crosshairs: {
           show: false,
         },
-        categories: asset.dates,
+        categories: props.asset.dates,
       },
       tooltip: {
         enabled: true,
@@ -100,24 +100,22 @@ export default {
       },
     };
     const { renderChart, updateSeries, updateAnnotations } = useLineChart(
-      asset
+      props.asset
     );
-    const { refreshAssetPrices } = useDataUpdater(asset);
+    const { getAssetPrices } = useDataUpdater();
 
     onMounted(() => {
       renderChart(options);
       updateAnnotations();
     });
 
-    watch(asset.trxns, async () => {
-      await refreshAssetPrices(asset);
-      //updateSeries();
+    watch(props.asset.trxns, async () => {
+      await getAssetPrices(props.asset);
+      updateSeries();
       updateAnnotations();
     });
 
-    return {
-      asset,
-    };
+    return {};
   },
 };
 </script>

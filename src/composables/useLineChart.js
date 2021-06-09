@@ -1,5 +1,6 @@
 import ApexCharts from "apexcharts";
 import { ref } from "vue";
+import { buyDates, sellDates } from "../composables/useAsset";
 
 function BuyAnnotation(date) {
   this.x = new Date(date).getTime();
@@ -29,7 +30,7 @@ function SellAnnotation(date) {
   };
 }
 
-export default function useChart(asset) {
+export default function useLineChart(asset) {
   const chart = ref(null);
 
   const renderChart = (options) => {
@@ -43,10 +44,10 @@ export default function useChart(asset) {
   const updateAnnotations = () => {
     const annotationList = [];
 
-    for (const date of asset.buyDates())
+    for (const date of buyDates(asset))
       annotationList.push(new BuyAnnotation(date));
 
-    for (const date of asset.sellDates())
+    for (const date of sellDates(asset))
       annotationList.push(new SellAnnotation(date));
 
     chart.value.updateOptions({

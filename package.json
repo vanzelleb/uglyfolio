@@ -9,17 +9,17 @@
     "build:lambda": "netlify-lambda build ./functions"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "3.3.0",
+    "@tensorflow/tfjs": "^3.3.0",
     "apexcharts": "^3.25.0",
-    "axios": "0.21.1",
-    "simple-statistics": "7.7.0",
+    "axios": "^0.21.1",
+    "simple-statistics": "^7.7.0",
     "vue": "^3.0.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.1.4",
     "@vue/compiler-sfc": "^3.0.5",
     "vite": "^2.2.1",
-    "netlify-lambda": "1.6.3"
+    "netlify-lambda": "^1.6.3"
   },
   "description": "Minimalistic stock portfolio app",
   "keywords": []

@@ -17,13 +17,14 @@
     <fieldset>
       <legend>Customize</legend>
       <label for="currency">Display currency</label>
-      <select id="currency" v-model="settings.currency">
+      <select id="currency" v-model="settings.currency" disabled>
         <option v-for="item of currencies" :key="item">
           {{ item }}
         </option>
       </select>
       <label for="benchmark">Benchmark</label>
       <select
+        disabled
         id="benchmark"
         @change="settings.benchmark.ticker = $event.target.value"
       >
@@ -51,14 +52,14 @@
 
 <script>
 import { onMounted, watch, toRefs, computed } from "vue";
-import { store, persistState, assets } from "../composables/use-store";
-import { Asset } from "../composables/use-asset";
+import { store, persistState, assets } from "../composables/useStore";
+import { Asset } from "../composables/useAsset";
 import { today } from "../utils";
 import useDataUpdater from "../composables/useDataUpdater";
 
 export default {
   setup() {
-    const { refreshFXRates, refreshCurrencies } = useDataUpdater();
+    const { getFXRate, getCurrencies } = useDataUpdater();
 
     const benchmarksList = [
       { text: "S&P500", value: "SPY" },
@@ -69,7 +70,11 @@ export default {
     onMounted(() => {
       // add more currencies to the default one
       if (store.currencies.length === 1) {
-        refreshCurrencies();
+        assets.value.forEach((asset) => {
+          asset.trxns.forEach((trx) => {
+            getFXRate(asset.dataload.currency, today);
+          });
+        });
       }
     });
 
@@ -78,17 +83,16 @@ export default {
       () => store.settings.currency,
       (currency, prevCurrency) => {
         // reset the exchange rates object when default currency changes
-        store.exchangeRates[currency] = {};
+        //store.exchangeRates[currency] = {};
         //persistState();
-        refreshFXRates();
+        assets.value.forEach((asset) => {
+          asset.trxns.forEach((trx) => {
+            getFXRate(asset.dataload.currency, today);
+            getFXRate(asset.dataload.currency, trx.date);
+          });
+        });
       }
     );
-
-    // gets executed when stop loss changes
-    watch(() => store.settings.stopLoss.pct, persistState);
-
-    // gets executed when benchmark changes
-    watch(() => store.settings.benchmark.ticker, persistState);
 
     return {
       benchmarksList,

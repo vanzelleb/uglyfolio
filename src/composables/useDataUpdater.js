@@ -1,6 +1,7 @@
 import { requestHandler } from "../composables/use-api";
 import { today } from "../utils";
-import { store, assets } from "../composables/use-store";
+import { store } from "../composables/useStore";
+import { firstTrxDate } from "../composables/useAsset";
 
 export default function useDataUpdater() {
   // get 1 year of data by default
@@ -8,16 +9,15 @@ export default function useDataUpdater() {
 
   const isUpdated = (asset) => {
     const hasNoPrice = !asset.dataload.lastPrice;
-    const hasNoChart = asset.dates.length === 0;
+    const hasNoChart = asset.prices.length === 0;
     const checkedToday = asset.dataload.lastChecked === today;
     if (hasNoPrice || hasNoChart || !checkedToday) return false;
     return true;
   };
 
-  const refreshAssetPrices = async (asset) => {
+  const getAssetPrices = async (asset) => {
     //console.log("Updating prices...");
-    const startDate =
-      asset.trxns.length > 0 ? asset.firstTrxDate() : new Date();
+    const startDate = asset.trxns.length > 0 ? firstTrxDate(asset) : new Date();
 
     startDate.setMonth(startDate.getMonth() - defaultMonths);
     const endDate = new Date();
@@ -35,56 +35,44 @@ export default function useDataUpdater() {
     asset.dataload.lastChecked = timezoneDate.toISOString().substring(0, 10);
   };
 
-  const refreshAssetCompany = async (asset) => {
+  const getAssetCompany = async (asset) => {
     await requestHandler("company", { asset: asset });
   };
 
-  const refreshAssetAll = async (asset) => {
+  const getAssetAll = async (asset) => {
     if (!isUpdated(asset)) {
       requestHandler("quote", { asset: asset });
       requestHandler("signal", { asset: asset });
-      await refreshAssetPrices(asset);
+      await getAssetPrices(asset);
     }
   };
 
-  const getFXRate = (cur, date) => {
-    requestHandler("forexByDate", {
-      currency: cur,
-      date: date
-    });
-  };
-
-  const refreshFXRates = () => {
+  const getFXRate = (currency, date) => {
     let FXBase = store.exchangeRates[store.settings.currency];
     if (!FXBase) FXBase = {};
     // retrieve latest exchange rates for all currency combinations
-    for (const item of assets.value) {
-      if (item.currency !== store.settings.currency) {
-        const hasFXPair = !!FXBase[item.currency];
-        // reset the exchange rates for the currency pair
-        if (!hasFXPair) {
-          FXBase[item.currency] = {};
-        } else {
-          let FXPair = FXBase[item.currency];
-          var hasFXForBuyDate = !!FXPair[item.firstTrxDate()];
-          var hasLatestFX = !!FXPair[today];
-        }
-        if (!hasFXForBuyDate && item.firstTrxDate())
-          getFXRate(item.currency, item.firstTrxDate());
-        if (!hasLatestFX) getFXRate(item.currency, today);
-      }
+    if (currency !== store.settings.currency) {
+      const hasFXPair = !!FXBase[currency];
+      // reset the exchange rates for the currency pair
+      if (!hasFXPair) FXBase[currency] = {};
+      const hasDate = !!FXBase[currency][date];
+      if (!hasDate)
+        requestHandler("forexByDate", {
+          currency: currency,
+          date: date
+        });
     }
   };
 
-  const refreshCurrencies = async () => {
+  const getCurrencies = async () => {
     requestHandler("currencies");
   };
 
   return {
-    refreshAssetAll,
-    refreshAssetPrices,
-    refreshAssetCompany,
-    refreshFXRates,
-    refreshCurrencies
+    getAssetAll,
+    getAssetPrices,
+    getAssetCompany,
+    getFXRate,
+    getCurrencies
   };
 }

@@ -4,11 +4,11 @@
   <div class="container" id="mainContainer">
     <main id="main">
       <div v-if="asset.dataload.name">
-        <DetailChart />
-        <Stats />
-        <Edit />
-        <Info />
-        <News />
+        <DetailChart :asset="asset" />
+        <Stats :asset="asset" />
+        <Edit :asset="asset" />
+        <Info :asset="asset" />
+        <News :asset="asset" />
         <div class="space-between">
           <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
           <button @click="close()">🏠 Home</button>
@@ -16,10 +16,17 @@
       </div>
       <div v-else>
         <Settings />
-        <KPIs />
-        <Optimize />
+        <KPIs :assets="assets" />
+        <Optimize :assets="assets" />
         <SearchAsset />
-        <Portfolio />
+        <div class="flexbox" id="flexbox">
+          <Card
+            v-for="(item, id) of assets"
+            :key="id"
+            @click="selectAsset(item)"
+            :asset="item"
+          />
+        </div>
       </div>
     </main>
   </div>
@@ -41,17 +48,21 @@
 
 
 <script>
-import { initState } from "../composables/use-store";
-import { asset, selectAsset } from "../composables/use-asset";
-import { assets, saveAsset, removeAsset } from "../composables/use-store";
+import { asset, selectAsset } from "../composables/useAsset";
+import {
+  initState,
+  assets,
+  saveAsset,
+  removeAsset,
+} from "../composables/useStore";
 import useDataUpdater from "../composables/useDataUpdater";
-import { onMounted, watch, computed } from "vue";
+import { onMounted } from "vue";
 import { today } from "../utils";
 import DetailChart from "./DetailChart.vue";
 import Settings from "./Settings.vue";
 import KPIs from "./KPIs.vue";
 import SearchAsset from "./SearchAsset.vue";
-import Portfolio from "./Portfolio.vue";
+import Card from "./Card.vue";
 import News from "./News.vue";
 import Edit from "./Edit.vue";
 import Info from "./Info.vue";
@@ -65,7 +76,7 @@ export default {
     Stats,
     DetailChart,
     KPIs,
-    Portfolio,
+    Card,
     SearchAsset,
     Info,
     Edit,
@@ -73,10 +84,11 @@ export default {
     Settings,
     Header,
   },
+
   setup() {
     initState();
 
-    const { refreshAssetAll, refreshFXRates } = useDataUpdater();
+    const { getAssetAll, getFXRate } = useDataUpdater();
 
     // scroll to the top of the page when the detail screen is opened or closed
     /*watch(
@@ -100,16 +112,14 @@ export default {
 
     onMounted(() => {
       // update application data
-      assets.value.forEach((asset) => {
-        refreshAssetAll(asset);
-      });
-      refreshFXRates();
     });
 
     return {
       asset,
+      assets,
       close,
       remove,
+      selectAsset,
     };
   },
 };
@@ -119,6 +129,14 @@ export default {
 <style scoped>
 main {
   width: 100%;
+}
+
+.flexbox {
+  display: flex;
+  overflow: hidden;
+  flex-flow: row wrap;
+  gap: 15px 15px;
+  padding: 1.2rem 0 0.4rem 0;
 }
 
 footer {

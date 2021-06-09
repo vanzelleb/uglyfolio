@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { asset } from "../composables/use-asset";
+import { asset } from "../composables/useAsset";
 
 export default {
   setup() {

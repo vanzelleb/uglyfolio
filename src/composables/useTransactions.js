@@ -1,7 +1,6 @@
-import { asset } from "../composables/use-asset";
-import { saveAsset } from "../composables/use-store";
+import { saveAsset } from "../composables/useStore";
 
-export class Trx {
+class Trx {
   constructor(obj) {
     this.type = obj ? obj.type : null;
     this.value = obj ? obj.value : null;
@@ -23,14 +22,22 @@ export class Trx {
   }
 }
 
-export function saveTrx(trx, id) {
-  if (!Number.isInteger(id)) {
-    asset.trxns.push(new Trx(trx));
-  } else asset.trxns[id] = new Trx(trx);
-  saveAsset(asset);
+function useTransactions(asset) {
+  function saveTrx(trx, trxId) {
+    if (trxId >= 0) asset.trxns[trxId] = new Trx(trx);
+    else asset.trxns.push(new Trx(trx));
+    saveAsset(asset);
+  }
+
+  function removeTrx(trxId) {
+    asset.trxns.splice(trxId, 1);
+    saveAsset(asset);
+  }
+
+  return {
+    saveTrx,
+    removeTrx
+  };
 }
 
-export function removeTrx(id) {
-  asset.trxns.splice(id, 1);
-  saveAsset(asset);
-}
+export { Trx, useTransactions };

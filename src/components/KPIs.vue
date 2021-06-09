@@ -1,13 +1,14 @@
-<template>
+""<template>
   <details>
     <summary>🏆 <span class="link">Portfolio Performance</span></summary>
     <fieldset>
       <legend>KPIs</legend>
       <table>
-        <tr v-for="(kpi, name) in kpis" :key="name">
-          <td>{{ name }}:</td>
+        <tr v-for="(kpi, id) of stats" :key="id">
+          <td>{{ kpi.icon }}</td>
+          <td>{{ kpi.title }}:</td>
           <td class="number">
-            <h5>{{ kpi.value }}</h5>
+            <h5>{{ toLocaleNumber(kpi.value, 0) }}</h5>
             <h6>&nbsp;{{ kpi.unit }}</h6>
           </td>
         </tr>
@@ -17,66 +18,93 @@
 </template>
 
 <script>
-import { useKPI } from "../composables/use-portfolio";
 import { reactive, computed, watch } from "vue";
-import { store, assets } from "../composables/use-store";
+import { store } from "../composables/useStore";
+import {
+  change,
+  totalBuyValue,
+  nominalReturn,
+  isSold,
+  income,
+  lastChangePct,
+  highPrice,
+} from "../composables/useAsset";
 import { toLocaleNumber } from "../utils";
 
 export default {
-  setup() {
-    // gets executed when currency changes
-    watch(
-      () => store.settings.currency,
-      (currency, prevCurrency) => {
-        console.log("currency change in KPI detected");
-      }
-    );
-
-    const kpis = reactive({
-      "Currently invested": {
-        icon: "🧾",
+  props: ["assets"],
+  setup(props) {
+    const kpis = reactive([
+      {
+        title: "Currently invested",
+        icon: "🛒",
         subtitle: "Purchase value of your assets.",
         info: "https://www.investopedia.com/terms/i/investment.asp",
-        value: toLocaleNumber(useKPI.invested(assets.value), 0),
+        method: (asset) => (isSold(asset) ? 0 : totalBuyValue(asset)),
         unit: computed(() => store.settings.currency),
       },
-      "Day's/Total change": {
+      {
+        title: "Day's change",
+        icon: "📯",
         subtitle: "How much you are up/down.",
         info: null,
-        value:
-          toLocaleNumber(useKPI.lastChange(assets.value), 0) +
-          "/" +
-          toLocaleNumber(useKPI.change(assets.value), 0),
+        method: (asset) =>
+          asset.dates.length > 0
+            ? lastChangePct(asset) * totalBuyValue(asset)
+            : 0,
         unit: computed(() => store.settings.currency),
       },
-      "Currency effects": {
+      {
+        title: "Total change",
+        icon: "📈",
+        subtitle: "How much you are up/down.",
+        info: null,
+        method: (asset) => (isSold(asset) ? 0 : change(asset)),
+        unit: computed(() => store.settings.currency),
+      },
+      {
+        title: "Profit/Loss from selling",
+        icon: "💰",
+        subtitle: "Gain/Loss from sold assets & dividends.",
+        info: "https://www.investopedia.com/terms/r/return.asp",
+        method: (asset) => (isSold(asset) ? nominalReturn(asset) : 0),
+        unit: computed(() => store.settings.currency),
+      },
+      {
+        title: "Dividend payments",
+        icon: "🤑",
+        subtitle: "Income from receiving dividends.",
+        info: "https://www.investopedia.com/terms/d/dividend.asp",
+        method: (asset) => income(asset),
+        unit: computed(() => store.settings.currency),
+      },
+      {
+        title: "Current balance",
+        icon: "🗓️",
+        subtitle: "Your assets' current value.",
+        info: "https://www.investopedia.com/terms/m/marketvalue.asp",
+        method: (asset) =>
+          isSold(asset) ? 0 : totalBuyValue(asset) + change(asset),
+        unit: computed(() => store.settings.currency),
+      },
+      {
+        title: "Missed Profit",
+        icon: "😢",
+        subtitle: "Drop in value from highest price.",
+        info: null,
+        method: (asset) => {
+          const incRatio = highPrice(asset) / asset.dataload.lastPrice;
+          return incRatio > 1 ? (incRatio - 1) * totalBuyValue(asset) : 0;
+        },
+        unit: computed(() => store.settings.currency),
+      },
+      /*"Currency effects": {
         icon: "😢",
         subtitle: "Effect of currency exchange rate changes.",
         info: null,
         value: computed(() => toLocaleNumber(useKPI.FXChange(assets.value), 0)),
         unit: computed(() => store.settings.currency),
-      },
-      "Profit/Loss from selling": {
-        icon: "💰",
-        subtitle: "Gain/Loss from sold assets & dividends.",
-        info: "https://www.investopedia.com/terms/r/return.asp",
-        value: toLocaleNumber(useKPI.returns(assets.value), 0),
-        unit: computed(() => store.settings.currency),
-      },
-      "Dividend payouts": {
-        icon: "🗓️",
-        subtitle: "Income from receiving dividends.",
-        info: "https://www.investopedia.com/terms/d/dividend.asp",
-        value: toLocaleNumber(useKPI.income(assets.value), 0),
-        unit: computed(() => store.settings.currency),
-      },
-      "Current balance": {
-        icon: "🏦",
-        subtitle: "Your assets' current value.",
-        info: "https://www.investopedia.com/terms/m/marketvalue.asp",
-        value: computed(() => toLocaleNumber(useKPI.value(assets.value), 0)),
-        unit: computed(() => store.settings.currency),
-      },
+      },*/
       /*
   {
     name: "Avg. monthly income",
@@ -86,41 +114,25 @@ export default {
     value: null,
     key: "avgPayout",
     unit: "appCurrency"
-  },
-  {
-    name: "Avg. monthly change",
-    subtitle: "Average monthly change of your portfolio's valuation.",
-    info: null,
-    method: "monthlyMean",
-    value: null,
-    key: "avgChange",
-    unit: "appCurrency"
-  },
-  {
-    name: "Taxes",
-    subtitle: "How much of your gains you need to let go of.",
-    info: null,
-    values: Object.values(this.$store.store.stats["Taxes EUR"]),
-    method: "sum",
-    kpi: null,
-    unit: this.$store.store.settings.currency
-  },*/ "Missed Profit": {
-        icon: "😢",
-        subtitle: "Drop in value from highest price.",
-        info: null,
-        value: toLocaleNumber(useKPI.missedGain(assets.value), 0),
-        unit: computed(() => store.settings.currency),
-      },
-      /*"Delta to target": {
-        icon: "😢",
-        subtitle: "Predicted change based on avg. price target.",
-        info: null,
-        value: toLocaleNumber(useKPI.diffToTargetPrice(assets.value), 0),
-        unit: computed(() => store.settings.currency),
-      },*/
+  },*/
+    ]);
+
+    const sum = (array) => {
+      const method = (acc, cur) => acc + cur;
+      return array.reduce(method, 0);
+    };
+
+    const stats = computed(() => {
+      const calculatedKpi = kpis.map((kpi) => {
+        const values = props.assets.map((asset) => kpi.method(asset));
+        kpi.value = sum(values);
+        return kpi;
+      });
+      console.log("Computed KPIs:", calculatedKpi);
+      return calculatedKpi;
     });
 
-    return { kpis };
+    return { stats, toLocaleNumber };
   },
 };
 </script>

@@ -1,4 +1,4 @@
-import { store, persistState } from "./use-store";
+import { store, persistState } from "./useStore";
 
 const provider = "exchangeratesapi";
 

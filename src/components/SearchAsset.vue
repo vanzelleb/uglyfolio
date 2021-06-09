@@ -52,9 +52,10 @@
 
 <script>
 import { watch, ref, reactive, onMounted, computed } from "vue";
-import { Asset, selectAsset } from "../composables/use-asset";
-import { saveAsset, assets } from "../composables/use-store";
+import { Asset, selectAsset } from "../composables/useAsset";
+import { saveAsset, assets } from "../composables/useStore";
 import useDataUpdater from "../composables/useDataUpdater";
+import { today } from "../utils";
 
 export default {
   setup() {
@@ -62,7 +63,7 @@ export default {
     const asset = reactive(new Asset());
     const searching = ref(false);
     const error = ref("");
-    const { refreshAssetCompany } = useDataUpdater();
+    const { getAssetCompany, getFXRate } = useDataUpdater();
 
     watch(
       () => ticker.value,
@@ -81,7 +82,7 @@ export default {
         ) {
           searching.value = true;
           asset.ticker = ticker.value;
-          await refreshAssetCompany(asset);
+          await getAssetCompany(asset);
           searching.value = false;
           if (!asset.dataload.name) error.value = "Not found";
         } else error.value = "Already added";
@@ -97,6 +98,7 @@ export default {
     const confirm = () => {
       asset.id = asset.ticker;
       saveAsset(asset);
+      getFXRate(asset.dataload.currency, today);
       close();
     };
 

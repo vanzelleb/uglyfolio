@@ -11,7 +11,7 @@ export default {
   props: ["asset"],
   setup(props) {
     const { renderChart, updateSeries } = useLineChart(props.asset);
-    const { refreshAssetAll } = useDataUpdater();
+    const { getAssetAll } = useDataUpdater();
 
     onMounted(async () => {
       const innerWidth = document.getElementById("flexbox").clientWidth;
@@ -61,7 +61,7 @@ export default {
 
       // download the prices if the asset was just added
       if (props.asset.prices.length === 0) {
-        await refreshAssetAll(props.asset);
+        await getAssetAll(props.asset);
         updateSeries();
       }
     });

@@ -33,7 +33,7 @@
 
 <script>
 import { toLocaleNumber } from "../utils";
-import { state } from "./use-store";
+import { state } from "./useStore";
 
 export default {
   props: {

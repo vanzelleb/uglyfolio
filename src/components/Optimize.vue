@@ -29,8 +29,8 @@
 
 <script>
 import { ref, watch, onMounted } from "vue";
-import { asset } from "../composables/use-asset";
-import { assets } from "../composables/use-store";
+import { asset } from "../composables/useAsset";
+import { assets } from "../composables/useStore";
 import usePieChart from "../composables/usePieChart";
 // Vite specific worker import with module support
 import MyWorker from "../markowitz-optimizer?worker";
