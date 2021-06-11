@@ -6,6 +6,7 @@
 import { computed, onMounted, watch } from "vue";
 import useLineChart from "../composables/useLineChart";
 import useDataUpdater from "../composables/useDataUpdater";
+import ApexCharts from "apexcharts";
 
 export default {
   props: ["asset"],
@@ -35,7 +36,7 @@ export default {
         show: false,
         padding: {
           left: -16,
-          right: 0,
+          right: 5,
           bottom: 0,
           top: 0,
         },

@@ -8,10 +8,6 @@ export const store = reactive({
     EUR: {}
   },
   settings: {
-    stopLoss: {
-      pct: 0,
-      date: null
-    },
     taxes: 0,
     currency: "EUR",
     benchmark: {},

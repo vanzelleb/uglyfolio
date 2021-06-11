@@ -43,8 +43,8 @@
         type="number"
         min="0"
         max="99"
-        v-model="settings.stopLoss.pct"
-        placeholder="e.g. warn when 20% down"
+        v-model.number="stopLossPct"
+        placeholder="0"
       />
     </fieldset>
   </details>
@@ -52,14 +52,16 @@
 
 <script>
 import { onMounted, watch, toRefs, computed } from "vue";
-import { store, persistState, assets } from "../composables/useStore";
+import { store, assets } from "../composables/useStore";
 import { Asset } from "../composables/useAsset";
 import { today } from "../utils";
 import useDataUpdater from "../composables/useDataUpdater";
+import useStopLoss from "../composables/useStopLoss";
 
 export default {
   setup() {
     const { getFXRate, getCurrencies } = useDataUpdater();
+    const { stopLossPct } = useStopLoss();
 
     const benchmarksList = [
       { text: "S&P500", value: "SPY" },
@@ -97,6 +99,7 @@ export default {
     return {
       benchmarksList,
       ...toRefs(store),
+      stopLossPct,
       assets,
     };
   },

@@ -22,13 +22,10 @@
 </template>
 
 <script>
-import { asset } from "../composables/useAsset";
-
 export default {
-  setup() {
-    return {
-      asset,
-    };
+  props: ["asset"],
+  setup(props) {
+    return {};
   },
 };
 </script>

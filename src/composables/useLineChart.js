@@ -1,37 +1,41 @@
 import ApexCharts from "apexcharts";
-import { ref } from "vue";
-import { buyDates, sellDates } from "../composables/useAsset";
+import { ref, onMounted } from "vue";
+import useStopLoss from "./useStopLoss";
 
-function BuyAnnotation(date) {
-  this.x = new Date(date).getTime();
-  this.borderColor = "#999";
-  this.yAxisIndex = 0;
-  this.label = {
-    show: true,
-    text: "Buy",
-    style: {
-      color: "#fff",
-      background: "#775DD0"
+function xAxisAnnotation(text, date) {
+  return {
+    x: new Date(date).getTime(),
+    borderColor: "#999",
+    yAxisIndex: 0,
+    label: {
+      show: true,
+      text: text,
+      style: {
+        color: "#fff",
+        background: text === "Buy" ? "#775DD0" : "#DD5770"
+      }
     }
   };
 }
 
-function SellAnnotation(date) {
-  this.x = new Date(date).getTime();
-  this.borderColor = "#999";
-  this.yAxisIndex = 0;
-  this.label = {
-    show: true,
-    text: "Sell",
-    style: {
-      color: "#fff",
-      background: "#DD5770"
+function yAxisAnnotation(text, price) {
+  return {
+    y: price,
+    borderColor: "#FF0000",
+    label: {
+      borderColor: "#FFFFFF",
+      style: {
+        color: "#fff",
+        background: "#FF0000"
+      },
+      text: text
     }
   };
 }
 
 export default function useLineChart(asset) {
   const chart = ref(null);
+  const { stopLossLimit } = useStopLoss();
 
   const renderChart = (options) => {
     let element = document.querySelector("#chart" + asset.ticker);
@@ -42,17 +46,20 @@ export default function useLineChart(asset) {
   };
 
   const updateAnnotations = () => {
-    const annotationList = [];
+    const xAnnotationList = [];
+    const yAnnotationList = [];
 
-    for (const date of buyDates(asset))
-      annotationList.push(new BuyAnnotation(date));
+    asset.trxns.forEach((trx) =>
+      xAnnotationList.push(new xAxisAnnotation(trx.type, trx.date))
+    );
 
-    for (const date of sellDates(asset))
-      annotationList.push(new SellAnnotation(date));
+    if (stopLossLimit(asset))
+      yAnnotationList.push(yAxisAnnotation("StopLoss", stopLossLimit(asset)));
 
     chart.value.updateOptions({
       annotations: {
-        xaxis: annotationList
+        xaxis: xAnnotationList,
+        yaxis: yAnnotationList
       }
     });
   };
@@ -70,6 +77,8 @@ export default function useLineChart(asset) {
       }
     });
   };
+
+  //onMounted(renderChart(options));
 
   return {
     renderChart,

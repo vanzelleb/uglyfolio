@@ -2,37 +2,28 @@
   <fieldset>
     <legend>Stats</legend>
     <table>
-      <tr>
-        <td>Return over chart period:</td>
+      <tr v-if="avgPrice">
+        <td>Avg. purchase price/share:</td>
         <td class="number">
-          <h5>{{ periodReturn.toFixed(1) }}</h5>
-          <h6>&nbsp;%</h6>
+          <h5>{{ avgPrice.toFixed(2) }}</h5>
+          <h6>&nbsp;{{ asset.dataload.currency }}</h6>
         </td>
       </tr>
     </table>
-    <!--<div>
-      Avg. yearly change:
-      {{ (asset.predictYearlyChangePct() * 100).toFixed(1) }}%
-    </div>
-    <div>
-      Avg. yearly volatility:
-      {{ (asset.predictYearlyVolatility() * 100).toFixed(1) }}%
-    </div>-->
   </fieldset>
 </template>
 
 <script>
 import { computed } from "vue";
+import { avgBuyPrice } from "../composables/useAsset";
 
 export default {
   props: ["asset"],
   setup(props) {
-    const periodReturn = computed(
-      () => (props.asset.dataload.lastPrice / props.asset.prices[0] - 1) * 100
-    );
+    const avgPrice = computed(() => avgBuyPrice(props.asset));
 
     return {
-      periodReturn,
+      avgPrice,
     };
   },
 };

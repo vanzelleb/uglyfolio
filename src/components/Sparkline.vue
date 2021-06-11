@@ -10,8 +10,8 @@ import useDataUpdater from "../composables/useDataUpdater";
 export default {
   props: ["asset"],
   setup(props) {
-    const { renderChart, updateSeries } = useLineChart(props.asset);
     const { getAssetAll } = useDataUpdater();
+    const { renderChart, updateSeries } = useLineChart(props.asset);
 
     onMounted(async () => {
       const innerWidth = document.getElementById("flexbox").clientWidth;

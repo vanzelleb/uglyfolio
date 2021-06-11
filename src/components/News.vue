@@ -48,34 +48,33 @@
 
 <script>
 import { requestHandler } from "../composables/use-api";
-import { asset } from "../composables/useAsset";
 import { ref, computed, onMounted } from "vue";
 
 export default {
-  setup() {
-    const range = ref([0, asset.dates.length - 1]);
+  props: ["asset"],
+  setup(props) {
+    const range = ref([0, props.asset.dates.length - 1]);
     const shake = ref(false);
     const searching = ref(false);
-    const from = computed(() => asset.dates[range.value[0]]);
-    const to = computed(() => asset.dates[range.value[1]]);
-    asset.dataload.news = [];
+    const from = computed(() => props.asset.dates[range.value[0]]);
+    const to = computed(() => props.asset.dates[range.value[1]]);
+    props.asset.dataload.news = [];
 
     const getNews = async () => {
       shake.value = false;
       searching.value = true;
 
       await requestHandler("news", {
-        asset: asset,
+        asset: props.asset,
         from: from.value,
         to: to.value,
       });
       searching.value = false;
       // animate the search button to indicate that no news were found
-      if (asset.dataload.news.length === 0) shake.value = true;
+      if (props.asset.dataload.news.length === 0) shake.value = true;
     };
 
     return {
-      asset,
       range,
       from,
       to,

@@ -19,16 +19,13 @@
           >👎</span
         >
       </h5>
-      <h5 v-if="asset.dataload.trend?.trending">
-        <span> / Trending: ✔️</span>
-      </h5>
       <div v-if="buys(asset).length > 0">
         <h3 v-if="!isSold(asset)">
-          You're {{ change(asset) >= 0 ? "up " : "down " }}
+          You are {{ change(asset) >= 0 ? "up " : "down " }}
           {{ toLocaleNumber(change(asset), 0) }}
         </h3>
         <h3 v-else :class="{ posColor: nominalReturn(asset) >= 0 }">
-          You {{ nominalReturn(asset) >= 0 ? "made " : "lost " }}
+          You {{ nominalReturn(asset) >= 0 ? "sold & made " : "sold & lost " }}
           {{ toLocaleNumber(nominalReturn(asset), 0) }}
         </h3>
         <h6>&nbsp;{{ appCurrency }}</h6>
@@ -80,7 +77,8 @@ h6 {
   color: rgb(59, 59, 59);
 }
 
-h3 {
+h3,
+h5 {
   margin: 5px 0 0 0;
 }
 </style>

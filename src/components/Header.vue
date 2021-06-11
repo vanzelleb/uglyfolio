@@ -1,7 +1,7 @@
 <template>
   <header :class="{ scroll: scrolled }">
     <div class="container">
-      <div v-if="asset.dataload.name">
+      <div v-if="Object.keys(asset).length !== 0">
         <span class="handFont">{{ asset.dataload.name }}</span>
       </div>
       <div v-else>
@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import { asset } from "../composables/useAsset";
 import { onMounted, ref } from "vue";
 
 export default {
-  setup() {
+  props: ["asset"],
+  setup(props) {
     let scrolled = ref(false);
 
     const handleScroll = (e) => {
@@ -29,7 +29,6 @@ export default {
 
     return {
       scrolled,
-      asset,
     };
   },
 };

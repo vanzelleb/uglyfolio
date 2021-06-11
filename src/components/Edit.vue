@@ -10,11 +10,11 @@
         <summary class="link">
           {{ trx.date }}: {{ toLocaleNumber(trx.value, 2) }} {{ appCurrency }}
         </summary>
-        <Transaction :asset="asset" :trxId="id" type="buy" />
+        <Transaction :asset="asset" :trxId="id" type="Buy" />
       </details>
       <details :open="!trxListChange">
         <summary class="link">Add shares</summary>
-        <Transaction :asset="asset" type="buy" />
+        <Transaction :asset="asset" type="Buy" />
       </details>
     </fieldset>
     <fieldset v-if="buys(asset).length > 0">
@@ -26,11 +26,11 @@
         <summary class="link">
           {{ trx.date }}: {{ toLocaleNumber(trx.value, 2) }} {{ appCurrency }}
         </summary>
-        <Transaction :asset="asset" :trxId="id" type="sell" />
+        <Transaction :asset="asset" :trxId="id" type="Sell" />
       </details>
       <details :open="!trxListChange">
         <summary class="link">Sell shares</summary>
-        <Transaction :asset="asset" type="sell" />
+        <Transaction :asset="asset" type="Sell" />
       </details>
     </fieldset>
   </details>

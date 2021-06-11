@@ -1,7 +1,7 @@
 import { reactive } from "vue";
 import { Trx } from "./useTransactions";
 
-class Asset {
+export class Asset {
   constructor(obj) {
     obj = obj ? obj : {};
     this.id = obj._id;
@@ -75,36 +75,36 @@ class Asset {
   }
 }
 
-function highPrice(asset) {
+export function highPrice(asset) {
   let max = Math.max(...asset.prices);
   return max ? max : 0;
 }
 
-function hasAlarm(asset) {
+export function hasAlarm(asset) {
   return asset.stopLoss > asset.dataload.lastPrice;
 }
 
-function lastChangePct(asset) {
+export function lastChangePct(asset) {
   if (asset.dataload.lastPrice && asset.prices.length > 0)
     return asset.dataload.lastPrice / asset.prices[asset.prices.length - 1] - 1;
   return null;
 }
 
-function income(asset) {
+export function income(asset) {
   let sum = 0;
   for (let date in asset._payouts)
     sum += parseFloat(asset._payouts[date].value);
   return sum;
 }
 
-function holdingPeriod(asset) {
+export function holdingPeriod(asset) {
   let diff = null;
   if (!isSold(asset)) diff = new Date() - firstTrxDate(asset);
   else diff = lastTrxDate(asset) - firstTrxDate(asset);
   return parseInt(diff / (1000 * 60 * 60 * 24), 10);
 }
 
-function roi(asset) {
+export function roi(asset) {
   // calculate the annualized return on investment
   if (asset.holdingPeriod(asset) > 365) {
     return (
@@ -121,75 +121,74 @@ function roi(asset) {
   else return (nominalReturn(asset) / totalBuyValue(asset)) * 100;
 }
 
-function totalSharesBought(asset) {
+export function totalSharesBought(asset) {
   const count = buys(asset).reduce((acc, cur) => {
     return acc + cur.amount;
   }, 0);
   return count;
 }
 
-function totalSharesSold(asset) {
+export function totalSharesSold(asset) {
   const count = sells(asset).reduce((acc, cur) => {
     return acc + cur.amount;
   }, 0);
   return count;
 }
 
-function isSold(asset) {
+export function isSold(asset) {
   if (totalSharesSold(asset) === totalSharesBought(asset)) return true;
   else return false;
 }
 
-function firstTrxDate(asset) {
+export function firstTrxDate(asset) {
   const dates = asset.trxns.map((trx) => trx.date);
   return dates.length > 0 ? new Date(dates.sort()[0]) : null;
 }
 
-function lastTrxDate(asset) {
+export function lastTrxDate(asset) {
   const dates = asset.trxns.map((trx) => trx.date);
   return dates.length > 0 ? new Date(dates.sort()[dates.length - 1]) : null;
 }
 
-function buys(asset) {
-  return asset.trxns.filter((trx) => trx.type === "buy");
+export function buys(asset) {
+  return asset.trxns.filter((trx) => trx.type === "Buy");
 }
 
-function sells(asset) {
-  return asset.trxns.filter((trx) => trx.type === "sell");
+export function sells(asset) {
+  return asset.trxns.filter((trx) => trx.type === "Sell");
 }
 
-function buyDates(asset) {
+export function buyDates(asset) {
   return buys(asset).map((trx) => trx.date);
 }
 
-function sellDates(asset) {
+export function sellDates(asset) {
   return sells(asset).map((trx) => trx.date);
 }
 
-function avgBuyPrice(asset) {
+export function avgBuyPrice(asset) {
   let sum = 0;
   for (const trx of buys(asset)) {
     sum += trx.price * trx.amount;
   }
-  const price = sum / totalSharesBought(asset);
-  return price;
+  return sum === 0 ? null : sum / totalSharesBought(asset);
 }
 
-function totalBuyValue(asset) {
+export function totalBuyValue(asset) {
   const value = buys(asset).reduce((acc, cur) => {
     return acc + cur.value;
   }, 0);
   return value;
 }
 
-function totalSellValue(asset) {
+export function totalSellValue(asset) {
   const value = sells(asset).reduce((acc, cur) => {
     return acc + cur.value;
   }, 0);
   return value;
 }
 
-function change(asset) {
+export function change(asset) {
   if (isSold(asset)) return 0;
   if (asset.dataload.lastPrice)
     return (
@@ -199,40 +198,12 @@ function change(asset) {
   return 0;
 }
 
-function nominalReturn(asset) {
+export function nominalReturn(asset) {
   if (isSold(asset)) return totalSellValue(asset) - totalBuyValue(asset);
   else return 0;
 }
 
-const asset = reactive(new Asset());
-
-const selectAsset = (item) => {
+export function selectAsset(item) {
   // makes a copy of the asset
   Object.assign(asset, new Asset(item));
-};
-
-export {
-  Asset,
-  asset,
-  selectAsset,
-  change,
-  totalBuyValue,
-  totalSellValue,
-  totalSharesBought,
-  totalSharesSold,
-  buyDates,
-  sellDates,
-  buys,
-  sells,
-  firstTrxDate,
-  lastTrxDate,
-  isSold,
-  roi,
-  avgBuyPrice,
-  holdingPeriod,
-  nominalReturn,
-  income,
-  highPrice,
-  lastChangePct,
-  hasAlarm
-};
+}

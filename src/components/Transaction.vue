@@ -11,7 +11,7 @@
       type="number"
       step="0.01"
       min="0"
-      :max="type === 'sell' ? boughtAmount : 1000000"
+      :max="type === 'Sell' ? boughtAmount : 1000000"
     />
 
     <label for="price">Price per share (in {{ assetCurrency }})</label>

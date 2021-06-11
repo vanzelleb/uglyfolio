@@ -1,9 +1,9 @@
 <template>
-  <Header />
+  <Header :asset="asset" />
 
   <div class="container" id="mainContainer">
     <main id="main">
-      <div v-if="asset.dataload.name">
+      <div v-if="isAssetSelected">
         <DetailChart :asset="asset" />
         <Stats :asset="asset" />
         <Edit :asset="asset" />
@@ -48,7 +48,7 @@
 
 
 <script>
-import { asset, selectAsset } from "../composables/useAsset";
+import { Asset } from "../composables/useAsset";
 import {
   initState,
   assets,
@@ -56,7 +56,7 @@ import {
   removeAsset,
 } from "../composables/useStore";
 import useDataUpdater from "../composables/useDataUpdater";
-import { onMounted } from "vue";
+import { reactive, onMounted, computed } from "vue";
 import { today } from "../utils";
 import DetailChart from "./DetailChart.vue";
 import Settings from "./Settings.vue";
@@ -87,7 +87,7 @@ export default {
 
   setup() {
     initState();
-
+    const asset = reactive(new Asset());
     const { getAssetAll, getFXRate } = useDataUpdater();
 
     // scroll to the top of the page when the detail screen is opened or closed
@@ -110,6 +110,15 @@ export default {
       selectAsset(null);
     };
 
+    const selectAsset = (item) => {
+      Object.assign(asset, new Asset(item));
+      console.log(asset);
+    };
+
+    const isAssetSelected = computed(() => {
+      return !!asset.dataload.name;
+    });
+
     onMounted(() => {
       // update application data
     });
@@ -120,6 +129,7 @@ export default {
       close,
       remove,
       selectAsset,
+      isAssetSelected,
     };
   },
 };
