@@ -40,8 +40,8 @@
 import { computed, ref, watch } from "vue";
 import Transaction from "./Transaction.vue";
 import { toLocaleNumber } from "../utils";
-import { store } from "../composables/useStore";
 import * as useAsset from "../composables/useAsset";
+import { appCurrency } from "../composables/useCurrencies";
 
 export default {
   components: {
@@ -59,7 +59,7 @@ export default {
     return {
       trxListChange,
       toLocaleNumber,
-      appCurrency: store.settings.currency,
+      appCurrency,
       ...useAsset,
     };
   },

@@ -1,4 +1,6 @@
 import { saveAsset } from "../composables/useStore";
+import { getFxRate } from "../composables/useCurrencies";
+import { today } from "../utils";
 
 class Trx {
   constructor(obj) {
@@ -26,6 +28,8 @@ function useTransactions(asset) {
   function saveTrx(trx, trxId) {
     if (trxId >= 0) asset.trxns[trxId] = new Trx(trx);
     else asset.trxns.push(new Trx(trx));
+    getFxRate(asset.dataload.currency, trx.date);
+    getFxRate(asset.dataload.currency, today);
     saveAsset(asset);
   }
 

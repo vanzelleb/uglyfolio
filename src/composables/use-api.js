@@ -83,21 +83,29 @@ const resources = {
   },
   forexByDate: {
     1: {
-      prepareRequest: function ({ currency, date }) {
-        return exchangeratesAPI.forexByDateRequest({ currency, date });
+      prepareRequest: function ({ appCurrency, currency, date }) {
+        return exchangeratesAPI.forexByDateRequest({
+          appCurrency,
+          currency,
+          date
+        });
       },
-      handleResponse: function (json, { currency, date }) {
-        exchangeratesAPI.forexByDateResponse(json, { currency, date });
+      handleResponse: function (json, { currency, date, fxBase }) {
+        exchangeratesAPI.forexByDateResponse(json, {
+          currency,
+          date,
+          fxBase
+        });
       }
     }
   },
   currencies: {
     1: {
-      prepareRequest: function () {
-        return exchangeratesAPI.currencyRequest();
+      prepareRequest: function ({ appCurrency }) {
+        return exchangeratesAPI.currencyRequest({ appCurrency });
       },
-      handleResponse: function (json) {
-        exchangeratesAPI.currencyResponse(json);
+      handleResponse: function (json, { currencies }) {
+        exchangeratesAPI.currencyResponse(json, { currencies });
       }
     }
   }

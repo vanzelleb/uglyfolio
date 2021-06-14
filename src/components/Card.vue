@@ -40,6 +40,7 @@ import Sparkline from "../components/Sparkline.vue";
 import { toLocaleNumber } from "../utils";
 import { store } from "../composables/useStore";
 import * as useAsset from "../composables/useAsset";
+import { appCurrency } from "../composables/useCurrencies";
 
 export default {
   components: {
@@ -49,7 +50,7 @@ export default {
   setup() {
     return {
       toLocaleNumber,
-      appCurrency: store.settings.currency,
+      appCurrency,
       ...useAsset,
     };
   },

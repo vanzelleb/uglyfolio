@@ -17,7 +17,7 @@
     <fieldset>
       <legend>Customize</legend>
       <label for="currency">Display currency</label>
-      <select id="currency" v-model="settings.currency" disabled>
+      <select id="currency" v-model="appCurrency" disabled>
         <option v-for="item of currencies" :key="item">
           {{ item }}
         </option>
@@ -55,12 +55,11 @@ import { onMounted, watch, toRefs, computed } from "vue";
 import { store, assets } from "../composables/useStore";
 import { Asset } from "../composables/useAsset";
 import { today } from "../utils";
-import useDataUpdater from "../composables/useDataUpdater";
 import useStopLoss from "../composables/useStopLoss";
+import { currencies, appCurrency } from "../composables/useCurrencies";
 
 export default {
   setup() {
-    const { getFXRate, getCurrencies } = useDataUpdater();
     const { stopLossPct } = useStopLoss();
 
     const benchmarksList = [
@@ -69,36 +68,10 @@ export default {
       { text: "DOW JONES", value: "DIA" },
     ];
 
-    onMounted(() => {
-      // add more currencies to the default one
-      if (store.currencies.length === 1) {
-        assets.value.forEach((asset) => {
-          asset.trxns.forEach((trx) => {
-            getFXRate(asset.dataload.currency, today);
-          });
-        });
-      }
-    });
-
-    // gets executed when currency changes
-    watch(
-      () => store.settings.currency,
-      (currency, prevCurrency) => {
-        // reset the exchange rates object when default currency changes
-        //store.exchangeRates[currency] = {};
-        //persistState();
-        assets.value.forEach((asset) => {
-          asset.trxns.forEach((trx) => {
-            getFXRate(asset.dataload.currency, today);
-            getFXRate(asset.dataload.currency, trx.date);
-          });
-        });
-      }
-    );
-
     return {
+      currencies,
+      appCurrency,
       benchmarksList,
-      ...toRefs(store),
       stopLossPct,
       assets,
     };

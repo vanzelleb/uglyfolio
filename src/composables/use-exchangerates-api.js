@@ -1,33 +1,31 @@
-import { store, persistState } from "./useStore";
-
+import { today } from "../utils";
 const provider = "exchangeratesapi";
 
-function forexByDateRequest({ currency, date }) {
+function forexByDateRequest({ appCurrency, currency, date }) {
   const params = {
-    path: date instanceof Date ? date.toISOString().substring(0, 10) : date,
-    base: store.settings.currency,
+    path: date instanceof Date ? today : date,
+    base: appCurrency.value,
     symbols: currency
   };
   return { provider, params };
 }
 
-function forexByDateResponse(json, { currency }) {
-  store.exchangeRates[store.settings.currency][currency][json.date] =
-    json.rates[currency];
-  persistState();
+function forexByDateResponse(json, { currency, fxBase }) {
+  console.log("in exchangerateAPI: ", fxBase);
+  fxBase[currency][json.date] = json.rates[currency];
 }
 
-function currencyRequest() {
+function currencyRequest({ appCurrency }) {
   const params = {
     path: "latest",
-    base: store.settings.currency
+    base: appCurrency
   };
   return { provider, params };
 }
 
-function currencyResponse(json) {
-  store.currencies = [...Object.keys(json.rates), store.settings.currency];
-  persistState();
+function currencyResponse(json, { currencies }) {
+  const fxList = Object.keys(json.rates);
+  currencies.value = fxList;
 }
 
 export const exchangeratesAPI = {

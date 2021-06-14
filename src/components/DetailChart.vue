@@ -5,7 +5,7 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import useLineChart from "../composables/useLineChart";
-import useDataUpdater from "../composables/useDataUpdater";
+import { getAssetPrices } from "../composables/useDataUpdater";
 import ApexCharts from "apexcharts";
 
 export default {
@@ -103,7 +103,6 @@ export default {
     const { renderChart, updateSeries, updateAnnotations } = useLineChart(
       props.asset
     );
-    const { getAssetPrices } = useDataUpdater();
 
     onMounted(() => {
       renderChart(options);

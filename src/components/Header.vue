@@ -1,7 +1,7 @@
 <template>
   <header :class="{ scroll: scrolled }">
     <div class="container">
-      <div v-if="Object.keys(asset).length !== 0">
+      <div v-if="asset.dataload.name">
         <span class="handFont">{{ asset.dataload.name }}</span>
       </div>
       <div v-else>

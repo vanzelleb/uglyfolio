@@ -5,12 +5,11 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import useLineChart from "../composables/useLineChart";
-import useDataUpdater from "../composables/useDataUpdater";
+import { getAssetAll } from "../composables/useDataUpdater";
 
 export default {
   props: ["asset"],
   setup(props) {
-    const { getAssetAll } = useDataUpdater();
     const { renderChart, updateSeries } = useLineChart(props.asset);
 
     onMounted(async () => {

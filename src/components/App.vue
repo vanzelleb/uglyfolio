@@ -3,7 +3,7 @@
 
   <div class="container" id="mainContainer">
     <main id="main">
-      <div v-if="isAssetSelected">
+      <div v-if="asset.dataload.name">
         <DetailChart :asset="asset" />
         <Stats :asset="asset" />
         <Edit :asset="asset" />
@@ -49,13 +49,13 @@
 
 <script>
 import { Asset } from "../composables/useAsset";
+import useCurrencies from "../composables/useCurrencies";
 import {
   initState,
   assets,
   saveAsset,
   removeAsset,
 } from "../composables/useStore";
-import useDataUpdater from "../composables/useDataUpdater";
 import { reactive, onMounted, computed } from "vue";
 import { today } from "../utils";
 import DetailChart from "./DetailChart.vue";
@@ -87,8 +87,8 @@ export default {
 
   setup() {
     initState();
+    useCurrencies();
     const asset = reactive(new Asset());
-    const { getAssetAll, getFXRate } = useDataUpdater();
 
     // scroll to the top of the page when the detail screen is opened or closed
     /*watch(
@@ -112,12 +112,7 @@ export default {
 
     const selectAsset = (item) => {
       Object.assign(asset, new Asset(item));
-      console.log(asset);
     };
-
-    const isAssetSelected = computed(() => {
-      return !!asset.dataload.name;
-    });
 
     onMounted(() => {
       // update application data
@@ -129,7 +124,6 @@ export default {
       close,
       remove,
       selectAsset,
-      isAssetSelected,
     };
   },
 };

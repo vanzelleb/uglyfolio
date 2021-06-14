@@ -65,7 +65,7 @@ export default {
       saveTrx(trx, props.trxId);
       if (!props.trxId) {
         // reset new trx form fields after saving a new transaction
-        Object.assign(trx, new Trx());
+        Object.assign(trx, new Trx({ type: props.type }));
       }
     };
 
