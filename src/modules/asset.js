@@ -1,5 +1,33 @@
-import { reactive } from "vue";
-import { Trx } from "./useTransactions";
+import { computed, toRef } from "vue";
+import { Trx } from "../composables/useTransactions";
+import { store } from "../modules/store";
+
+if (!store.assetList) store.assetList = [];
+
+const assetList = toRef(store, "assetList");
+
+export const saveAsset = (asset) => {
+  // only save assets that have an ID
+  if (asset._id) {
+    // To ensure Vue watcher notices the change:
+    // if the asset is already in the list delete it and add it again
+    removeAsset(asset);
+    assetList.value.push(asset);
+  }
+};
+
+export const removeAsset = (asset) => {
+  const idx = assetList.value.findIndex(
+    (item) => item._ticker === asset._ticker
+  );
+  if (idx !== -1) assetList.value.splice(idx, 1);
+};
+
+// convert items into Asset class before using them
+export const assets = computed(() =>
+  // convert items into Asset class before using them
+  assetList.value.map((item) => new Asset(item))
+);
 
 export class Asset {
   constructor(obj) {
@@ -201,9 +229,4 @@ export function change(asset) {
 export function nominalReturn(asset) {
   if (isSold(asset)) return totalSellValue(asset) - totalBuyValue(asset);
   else return 0;
-}
-
-export function selectAsset(item) {
-  // makes a copy of the asset
-  Object.assign(asset, new Asset(item));
 }

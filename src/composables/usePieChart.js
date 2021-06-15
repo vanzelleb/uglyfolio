@@ -1,7 +1,7 @@
 import { ref, onMounted, watch, computed } from "vue";
 import ApexCharts from "apexcharts";
 
-export default function usePieChart(assets) {
+export default function (assets) {
   const chart = ref(null);
   const assetWeights = computed(() =>
     assets.value.map(() => 1 / assets.value.length)

@@ -1,8 +1,8 @@
-import { saveAsset } from "../composables/useStore";
-import { getFxRate } from "../composables/useCurrencies";
+import { saveAsset } from "../modules/asset";
+import { getFxRate } from "../modules/currencies";
 import { today } from "../utils";
 
-class Trx {
+export class Trx {
   constructor(obj) {
     this.type = obj ? obj.type : null;
     this.value = obj ? obj.value : null;
@@ -24,7 +24,7 @@ class Trx {
   }
 }
 
-function useTransactions(asset) {
+export function useTransactions(asset) {
   function saveTrx(trx, trxId) {
     if (trxId >= 0) asset.trxns[trxId] = new Trx(trx);
     else asset.trxns.push(new Trx(trx));
@@ -43,5 +43,3 @@ function useTransactions(asset) {
     removeTrx
   };
 }
-
-export { Trx, useTransactions };

@@ -1,4 +1,4 @@
-import { saveAsset } from "../composables/useStore";
+import { saveAsset } from "../modules/asset";
 
 const provider = "finnhub";
 

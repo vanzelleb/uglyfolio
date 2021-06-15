@@ -1,6 +1,6 @@
 import ApexCharts from "apexcharts";
-import { ref, onMounted } from "vue";
-import useStopLoss from "./useStopLoss";
+import { ref } from "vue";
+import { stopLossLimit } from "../modules/stopLoss";
 
 function xAxisAnnotation(text, date) {
   return {
@@ -33,9 +33,8 @@ function yAxisAnnotation(text, price) {
   };
 }
 
-export default function useLineChart(asset) {
+export default function (asset) {
   const chart = ref(null);
-  const { stopLossLimit } = useStopLoss();
 
   const renderChart = (options) => {
     let element = document.querySelector("#chart" + asset.ticker);
@@ -77,8 +76,6 @@ export default function useLineChart(asset) {
       }
     });
   };
-
-  //onMounted(renderChart(options));
 
   return {
     renderChart,
