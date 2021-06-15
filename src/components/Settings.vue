@@ -52,15 +52,14 @@
 
 <script>
 import { onMounted, watch, toRefs, computed } from "vue";
-import { store, assets } from "../composables/useStore";
-import { Asset } from "../composables/useAsset";
+import { Asset, assets } from "../modules/asset";
+import { stopLossPct } from "../modules/stopLoss";
+import { currencies, appCurrency } from "../modules/currencies";
 import { today } from "../utils";
-import useStopLoss from "../composables/useStopLoss";
-import { currencies, appCurrency } from "../composables/useCurrencies";
 
 export default {
   setup() {
-    const { stopLossPct } = useStopLoss();
+    //const { stopLossPct } = useStopLoss();
 
     const benchmarksList = [
       { text: "S&P500", value: "SPY" },

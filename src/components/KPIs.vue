@@ -19,7 +19,8 @@
 
 <script>
 import { reactive, computed, watch } from "vue";
-import { store } from "../composables/useStore";
+import { store } from "../modules/store";
+import { appCurrency } from "../modules/currencies";
 import {
   change,
   totalBuyValue,
@@ -28,7 +29,7 @@ import {
   income,
   lastChangePct,
   highPrice,
-} from "../composables/useAsset";
+} from "../modules/asset";
 import { toLocaleNumber } from "../utils";
 
 export default {
@@ -41,7 +42,7 @@ export default {
         subtitle: "Purchase value of your assets.",
         info: "https://www.investopedia.com/terms/i/investment.asp",
         method: (asset) => (isSold(asset) ? 0 : totalBuyValue(asset)),
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       {
         title: "Day's change",
@@ -52,7 +53,7 @@ export default {
           asset.dates.length > 0
             ? lastChangePct(asset) * totalBuyValue(asset)
             : 0,
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       {
         title: "Total change",
@@ -60,7 +61,7 @@ export default {
         subtitle: "How much you are up/down.",
         info: null,
         method: (asset) => (isSold(asset) ? 0 : change(asset)),
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       {
         title: "Profit/Loss from selling",
@@ -68,7 +69,7 @@ export default {
         subtitle: "Gain/Loss from sold assets & dividends.",
         info: "https://www.investopedia.com/terms/r/return.asp",
         method: (asset) => (isSold(asset) ? nominalReturn(asset) : 0),
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       {
         title: "Dividend payments",
@@ -76,7 +77,7 @@ export default {
         subtitle: "Income from receiving dividends.",
         info: "https://www.investopedia.com/terms/d/dividend.asp",
         method: (asset) => income(asset),
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       {
         title: "Current balance",
@@ -85,7 +86,7 @@ export default {
         info: "https://www.investopedia.com/terms/m/marketvalue.asp",
         method: (asset) =>
           isSold(asset) ? 0 : totalBuyValue(asset) + change(asset),
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       {
         title: "Missed Profit",
@@ -96,7 +97,7 @@ export default {
           const incRatio = highPrice(asset) / asset.dataload.lastPrice;
           return incRatio > 1 ? (incRatio - 1) * totalBuyValue(asset) : 0;
         },
-        unit: computed(() => store.settings.currency),
+        unit: appCurrency.value,
       },
       /*"Currency effects": {
         icon: "😢",

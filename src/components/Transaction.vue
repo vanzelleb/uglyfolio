@@ -47,9 +47,9 @@
 <script>
 import { reactive } from "vue";
 import { today } from "../utils";
-import { store } from "../composables/useStore";
 import { Trx, useTransactions } from "../composables/useTransactions";
-import { totalSharesBought } from "../composables/useAsset";
+import { totalSharesBought } from "../modules/asset";
+import { appCurrency } from "../modules/currencies";
 
 export default {
   props: ["asset", "trxId", "type"],
@@ -80,7 +80,7 @@ export default {
       today,
       boughtAmount: totalSharesBought,
       assetCurrency: props.asset.dataload.currency,
-      appCurrency: store.settings.currency,
+      appCurrency,
     };
   },
 };

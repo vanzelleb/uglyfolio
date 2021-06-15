@@ -15,7 +15,7 @@
 
 <script>
 import { computed } from "vue";
-import { avgBuyPrice } from "../composables/useAsset";
+import { avgBuyPrice } from "../modules/asset";
 
 export default {
   props: ["asset"],

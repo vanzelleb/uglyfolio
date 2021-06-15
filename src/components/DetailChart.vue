@@ -5,12 +5,13 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import useLineChart from "../composables/useLineChart";
-import { getAssetPrices } from "../composables/useDataUpdater";
+import useAssetUpdater from "../composables/useAssetUpdater";
 import ApexCharts from "apexcharts";
 
 export default {
   props: ["asset"],
   setup(props) {
+    const { getPriceData } = useAssetUpdater(props.asset);
     const options = {
       series: [
         {
@@ -110,7 +111,7 @@ export default {
     });
 
     watch(props.asset.trxns, async () => {
-      await getAssetPrices(props.asset);
+      await getPriceData();
       updateSeries();
       updateAnnotations();
     });

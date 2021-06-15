@@ -48,14 +48,8 @@
 
 
 <script>
-import { Asset } from "../composables/useAsset";
-import useCurrencies from "../composables/useCurrencies";
-import {
-  initState,
-  assets,
-  saveAsset,
-  removeAsset,
-} from "../composables/useStore";
+import { Asset, assets, saveAsset, removeAsset } from "../modules/asset";
+import { store } from "../modules/store";
 import { reactive, onMounted, computed } from "vue";
 import { today } from "../utils";
 import DetailChart from "./DetailChart.vue";
@@ -86,17 +80,13 @@ export default {
   },
 
   setup() {
-    initState();
-    useCurrencies();
-    const asset = reactive(new Asset());
+    if (localStorage.store) {
+      // copy store from local storage
+      Object.assign(store, JSON.parse(localStorage.store));
+      console.log("Local storage loaded into app.");
+    }
 
-    // scroll to the top of the page when the detail screen is opened or closed
-    /*watch(
-      () => asset.dataload.name,
-      (name, prevName) => {
-        window.scrollTo(0, 0);
-      }
-    );*/
+    const asset = reactive(new Asset());
 
     const remove = (asset) => {
       if (confirm("Are you sure you want delete this asset?")) {
@@ -113,10 +103,6 @@ export default {
     const selectAsset = (item) => {
       Object.assign(asset, new Asset(item));
     };
-
-    onMounted(() => {
-      // update application data
-    });
 
     return {
       asset,

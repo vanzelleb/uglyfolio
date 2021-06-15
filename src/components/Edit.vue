@@ -40,8 +40,8 @@
 import { computed, ref, watch } from "vue";
 import Transaction from "./Transaction.vue";
 import { toLocaleNumber } from "../utils";
-import * as useAsset from "../composables/useAsset";
-import { appCurrency } from "../composables/useCurrencies";
+import * as useAsset from "../modules/asset";
+import { appCurrency } from "../modules/currencies";
 
 export default {
   components: {

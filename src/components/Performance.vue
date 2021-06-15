@@ -8,10 +8,11 @@
       <!--<span v-if="asset.roi" class="d-flex justify-end pr-3">{{ asset.roi | toLocaleNumber(1) }} %</span>-->
     </v-expansion-panel-header>
     <v-expansion-panel-content>
-      <div
-        class="body-2 my-2"
-      >The yearly Rate of Return allows you to compare assets that you have owned for different lengths of time.</div>
-      <P/>
+      <div class="body-2 my-2">
+        The yearly Rate of Return allows you to compare assets that you have
+        owned for different lengths of time.
+      </div>
+      <P />
       <div v-for="detail in details" :key="detail.key">
         <div
           v-if="asset[detail.key] && suffix(detail.suffix)"
@@ -19,11 +20,10 @@
         >
           <span class="subtitle-2" v-html="detail.name"></span>
           <span>
-            {{  toLocaleNumber(usePortfolio[detail.key](asset), detail.digits) }}
-            <span
-              v-if="detail.suffix"
-              class="caption align-self-end"
-            >{{ suffix(detail.suffix) }}</span>
+            {{ toLocaleNumber(usePortfolio[detail.key](asset), detail.digits) }}
+            <span v-if="detail.suffix" class="caption align-self-end">{{
+              suffix(detail.suffix)
+            }}</span>
           </span>
         </div>
       </div>
@@ -33,15 +33,15 @@
 
 <script>
 import { toLocaleNumber } from "../utils";
-import { state } from "./useStore";
+import { state } from "./atore";
 
 export default {
   props: {
     data: Object,
-    required: true
+    required: true,
   },
   setup() {
-    return { toLocaleNumber }
+    return { toLocaleNumber };
   },
   data() {
     return {
@@ -51,107 +51,107 @@ export default {
           name: "Holding period",
           key: "holdingPeriod",
           digits: 0,
-          suffix: " days"
+          suffix: " days",
         },
         {
           name: "Last price",
           key: "lastPrice",
           digits: 2,
-          suffix: "assetCurrency"
-        },/*
+          suffix: "assetCurrency",
+        } /*
         {
           name: "Stop Loss at",
           key: calcStopLoss,
           digits: 2,
           suffix: "appCurrency"
-        },*/
+        },*/,
         {
           name: "Avg. price target",
           key: "targetPrice",
           digits: 2,
-          suffix: "assetCurrency"
+          suffix: "assetCurrency",
         },
         {
           name: "Invested value",
           key: "buyValue",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Change",
           key: "change",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Currency effects",
           key: "calcFXChange",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Current value",
           key: "value",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Down from high",
           key: "missedGain",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Upside to 52 weeks high",
           key: "diffToYearlyHigh",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Change in %",
           key: "changePct",
           digits: 1,
-          suffix: "%"
+          suffix: "%",
         },
         {
           name: "Return (incl. income)",
           key: "return",
           digits: 0,
-          suffix: "appCurrency"
+          suffix: "appCurrency",
         },
         {
           name: "Yearly Rate of Return",
           key: "roi",
           digits: 1,
-          suffix: "%"
+          suffix: "%",
         },
         {
           name: "Technical signal",
           key: "signal",
           digits: null,
-          suffix: null
-        }
+          suffix: null,
+        },
         /*{
           name: "Relative change to benchmark",
           key: "calcRelativeChange",
           digits: 1,
           suffix: "%"
         },*/
-      ]
+      ],
     };
   },
-  created: function() {},
-  mounted: function() {},
+  created: function () {},
+  mounted: function () {},
   computed: {},
   watch: {},
   methods: {
     calcStopLoss(asset) {
-  const baseline = asset.timeseries[state.settings.stopLoss.date];
-  if (baseline && state.settings.stopLoss.pct > 0)
-    return baseline - (baseline / 100) * state.settings.stopLoss.pct;
-  return null;
-},
-    suffix: function(suffix) {
+      const baseline = asset.timeseries[state.settings.stopLoss.date];
+      if (baseline && state.settings.stopLoss.pct > 0)
+        return baseline - (baseline / 100) * state.settings.stopLoss.pct;
+      return null;
+    },
+    suffix: function (suffix) {
       if (suffix === "assetCurrency") {
         if (this.asset.currency) return " " + this.asset.currency;
         else return null;
@@ -159,8 +159,8 @@ export default {
       if (suffix === "appCurrency")
         return " " + (suffix = this.$store.state.settings.currency);
       else return " " + suffix;
-    }
-  }
+    },
+  },
 };
 </script>
 

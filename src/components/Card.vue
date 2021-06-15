@@ -5,9 +5,6 @@
         {{ asset.dataload.name }} <small>({{ asset.ticker }})</small>
       </h4>
       <h5 v-if="asset.dataload.technicalAnalysis?.signal">
-        <!--<span v-if="asset.hasAlarm()" class="ml-2">⏰</span>
-          <span v-if="asset.forexChange" class="ml-2">💵</span>
-          <span v-if="asset.return" class="ml-2">💰</span>-->
         Analyst Rating:
         <span v-if="asset.dataload.technicalAnalysis?.signal === 'buy'"
           >👍</span
@@ -25,7 +22,8 @@
           {{ toLocaleNumber(change(asset), 0) }}
         </h3>
         <h3 v-else :class="{ posColor: nominalReturn(asset) >= 0 }">
-          You {{ nominalReturn(asset) >= 0 ? "sold & made " : "sold & lost " }}
+          You
+          {{ nominalReturn(asset) >= 0 ? "sold & gained " : "sold & lost " }}
           {{ toLocaleNumber(nominalReturn(asset), 0) }}
         </h3>
         <h6>&nbsp;{{ appCurrency }}</h6>
@@ -38,9 +36,8 @@
 <script>
 import Sparkline from "../components/Sparkline.vue";
 import { toLocaleNumber } from "../utils";
-import { store } from "../composables/useStore";
-import * as useAsset from "../composables/useAsset";
-import { appCurrency } from "../composables/useCurrencies";
+import { isSold, change, nominalReturn, buys } from "../modules/asset";
+import { appCurrency } from "../modules/currencies";
 
 export default {
   components: {
@@ -51,7 +48,10 @@ export default {
     return {
       toLocaleNumber,
       appCurrency,
-      ...useAsset,
+      isSold,
+      change,
+      nominalReturn,
+      buys,
     };
   },
 };
