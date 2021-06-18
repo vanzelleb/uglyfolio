@@ -1,5 +1,5 @@
 import ApexCharts from "apexcharts";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { stopLossLimit } from "../modules/stopLoss";
 
 function xAxisAnnotation(text, date) {
@@ -64,6 +64,7 @@ export default function (asset) {
   };
 
   const updateSeries = () => {
+    console.log("useLineChart: updating chart series with new price info.");
     chart.value.updateSeries([
       {
         name: "Price",

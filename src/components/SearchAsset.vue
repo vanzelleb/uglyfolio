@@ -41,8 +41,8 @@
           <span v-else>Add</span>
         </button>
         <small>
-          <p class="errors" v-if="ticker && error">
-            {{ error }}
+          <p class="errors" v-if="ticker && warning">
+            {{ warning }}
           </p>
         </small>
       </template>
@@ -53,23 +53,22 @@
 <script>
 import { watch, ref, reactive, onMounted, computed } from "vue";
 import { Asset, saveAsset, assets } from "../modules/asset";
-import useAssetUpdater from "../composables/useAssetUpdater";
-import { getFxRate } from "../modules/currencies";
-import { today } from "../utils";
+import { today } from "../modules/utils";
+import useCompanyApi from "../composables/useCompanyApi";
 
 export default {
   setup() {
     const ticker = ref("");
     const asset = reactive(new Asset());
     const searching = ref(false);
-    const error = ref("");
-    const { getCompanyData } = useAssetUpdater(asset);
+    const warning = ref("");
+    const { getCompany } = useCompanyApi(asset);
 
     watch(
       () => ticker.value,
       (ticker, prevTicker) => {
         // reset errors when the ticker is reset
-        if (!ticker.value) error.value = "";
+        if (!ticker.value) warning.value = "";
       }
     );
 
@@ -82,10 +81,10 @@ export default {
         ) {
           searching.value = true;
           asset.ticker = ticker.value;
-          await getCompanyData();
+          await getCompany();
           searching.value = false;
-          if (!asset.dataload.name) error.value = "Not found";
-        } else error.value = "Already added";
+          if (!asset.dataload.name) warning.value = "Not found";
+        } else warning.value = "Already added";
       }
     };
 
@@ -110,7 +109,7 @@ export default {
       confirm,
       close,
       getCompanyInfo,
-      error,
+      warning,
     };
   },
 };

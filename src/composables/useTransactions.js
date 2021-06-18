@@ -1,6 +1,6 @@
 import { saveAsset } from "../modules/asset";
-import { getFxRate } from "../modules/currencies";
-import { today } from "../utils";
+import { today } from "../modules/utils";
+import useFxApi from "./useFxApi";
 
 export class Trx {
   constructor(obj) {
@@ -25,16 +25,18 @@ export class Trx {
 }
 
 export function useTransactions(asset) {
-  function saveTrx(trx, trxId) {
-    if (trxId >= 0) asset.trxns[trxId] = new Trx(trx);
+  const { getFx } = useFxApi();
+
+  function saveTrx(trx, trxIdx) {
+    if (trxIdx >= 0) asset.trxns[trxIdx] = new Trx(trx);
     else asset.trxns.push(new Trx(trx));
-    getFxRate(asset.dataload.currency, trx.date);
-    getFxRate(asset.dataload.currency, today);
     saveAsset(asset);
+    getFx(asset, trx.date);
+    getFx(asset, today);
   }
 
-  function removeTrx(trxId) {
-    asset.trxns.splice(trxId, 1);
+  function removeTrx(trxIdx) {
+    asset.trxns.splice(trxIdx, 1);
     saveAsset(asset);
   }
 

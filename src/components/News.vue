@@ -29,7 +29,7 @@
         class="slider"
         id="endRange"
       />
-      <button :class="{ shake: shake }" @click="getNews()">
+      <button :class="{ shake: shake }" @click="searchNews()">
         <span v-if="searching">Searching...</span>
         <span v-else>🔍 Check</span>
       </button>
@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import { requestHandler } from "../composables/use-api";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+import useNewsApi from "../composables/useNewsApi";
 
 export default {
   props: ["asset"],
@@ -60,15 +60,12 @@ export default {
     const to = computed(() => props.asset.dates[range.value[1]]);
     props.asset.dataload.news = [];
 
-    const getNews = async () => {
+    const { getNews } = useNewsApi(props.asset);
+
+    const searchNews = async () => {
       shake.value = false;
       searching.value = true;
-
-      await requestHandler("news", {
-        asset: props.asset,
-        from: from.value,
-        to: to.value,
-      });
+      await getNews(from, to);
       searching.value = false;
       // animate the search button to indicate that no news were found
       if (props.asset.dataload.news.length === 0) shake.value = true;
@@ -78,7 +75,7 @@ export default {
       range,
       from,
       to,
-      getNews,
+      searchNews,
       searching,
       shake,
     };

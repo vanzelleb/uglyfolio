@@ -5,13 +5,13 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import useLineChart from "../composables/useLineChart";
-import useAssetUpdater from "../composables/useAssetUpdater";
 import ApexCharts from "apexcharts";
+import useHistoryApi from "../composables/useHistoryApi";
 
 export default {
   props: ["asset"],
   setup(props) {
-    const { getPriceData } = useAssetUpdater(props.asset);
+    const { getPriceHistory } = useHistoryApi(props.asset);
     const options = {
       series: [
         {
@@ -110,11 +110,22 @@ export default {
       updateAnnotations();
     });
 
-    watch(props.asset.trxns, async () => {
-      await getPriceData();
-      updateSeries();
-      updateAnnotations();
+    // update the price history considering the earliest transaction date
+    watch(props.asset.trxns, () => {
+      console.log("DetailChart: Transactions changed");
+      getPriceHistory();
     });
+
+    watch(
+      () => props.asset.prices,
+      async () => {
+        console.log("DetailChart: Prices changed");
+        // update the chart
+        updateSeries();
+        // update the buy/sell annotations in the updated chart
+        updateAnnotations();
+      }
+    );
 
     return {};
   },

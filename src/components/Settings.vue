@@ -55,12 +55,10 @@ import { onMounted, watch, toRefs, computed } from "vue";
 import { Asset, assets } from "../modules/asset";
 import { stopLossPct } from "../modules/stopLoss";
 import { currencies, appCurrency } from "../modules/currencies";
-import { today } from "../utils";
+import { today } from "../modules/utils";
 
 export default {
   setup() {
-    //const { stopLossPct } = useStopLoss();
-
     const benchmarksList = [
       { text: "S&P500", value: "SPY" },
       { text: "NASDAQ", value: "QQQ" },

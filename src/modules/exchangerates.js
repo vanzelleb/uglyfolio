@@ -1,7 +1,7 @@
-import { today } from "../utils";
+import { today } from "../modules/utils";
 const provider = "exchangeratesapi";
 
-function forexByDateRequest({ appCurrency, currency, date }) {
+function fxByDateRequest({ appCurrency, currency, date }) {
   const params = {
     path: date instanceof Date ? today : date,
     base: appCurrency.value,
@@ -10,15 +10,14 @@ function forexByDateRequest({ appCurrency, currency, date }) {
   return { provider, params };
 }
 
-function forexByDateResponse(json, { currency, fxBase }) {
-  console.log("in exchangerateAPI: ", fxBase);
-  fxBase[currency][json.date] = json.rates[currency];
+function fxByDateResponse(json, { appCurrency, currency, fxRates }) {
+  fxRates[appCurrency][currency][json.date] = json.rates[currency];
 }
 
 function currencyRequest({ appCurrency }) {
   const params = {
     path: "latest",
-    base: appCurrency
+    base: appCurrency.value
   };
   return { provider, params };
 }
@@ -29,8 +28,8 @@ function currencyResponse(json, { currencies }) {
 }
 
 export const exchangeratesAPI = {
-  forexByDateRequest,
+  fxByDateRequest,
   currencyRequest,
-  forexByDateResponse,
+  fxByDateResponse,
   currencyResponse
 };

@@ -16,6 +16,7 @@ function historyRequest(asset, start, end) {
 function historyResponse(json, asset) {
   if (!json.t) throw Error("No data");
   asset.dates = json.t.map((date) => toDate(date));
+  console.log("Adding prices to asset...");
   asset.prices = json.c.map((price) =>
     parseFloat(parseFloat(price).toFixed(2))
   );

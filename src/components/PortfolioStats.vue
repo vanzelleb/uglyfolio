@@ -29,8 +29,8 @@ import {
   income,
   lastChangePct,
   highPrice,
-} from "../modules/asset";
-import { toLocaleNumber } from "../utils";
+} from "../modules/stats";
+import { toLocaleNumber } from "../modules/utils";
 
 export default {
   props: ["assets"],
@@ -64,6 +64,15 @@ export default {
         unit: appCurrency.value,
       },
       {
+        title: "Current balance",
+        icon: "🗓️",
+        subtitle: "Your assets' current value.",
+        info: "https://www.investopedia.com/terms/m/marketvalue.asp",
+        method: (asset) =>
+          isSold(asset) ? 0 : totalBuyValue(asset) + change(asset),
+        unit: appCurrency.value,
+      },
+      {
         title: "Profit/Loss from selling",
         icon: "💰",
         subtitle: "Gain/Loss from sold assets & dividends.",
@@ -77,15 +86,6 @@ export default {
         subtitle: "Income from receiving dividends.",
         info: "https://www.investopedia.com/terms/d/dividend.asp",
         method: (asset) => income(asset),
-        unit: appCurrency.value,
-      },
-      {
-        title: "Current balance",
-        icon: "🗓️",
-        subtitle: "Your assets' current value.",
-        info: "https://www.investopedia.com/terms/m/marketvalue.asp",
-        method: (asset) =>
-          isSold(asset) ? 0 : totalBuyValue(asset) + change(asset),
         unit: appCurrency.value,
       },
       {
@@ -129,7 +129,7 @@ export default {
         kpi.value = sum(values);
         return kpi;
       });
-      console.log("Computed KPIs:", calculatedKpi);
+      console.log("Computed KPIs");
       return calculatedKpi;
     });
 

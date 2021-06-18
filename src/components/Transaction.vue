@@ -11,7 +11,7 @@
       type="number"
       step="0.01"
       min="0"
-      :max="type === 'Sell' ? boughtAmount : 1000000"
+      :max="type === 'Sell' ? maxSellAmount : 1000000"
     />
 
     <label for="price">Price per share (in {{ assetCurrency }})</label>
@@ -37,48 +37,50 @@
     />
     <div>
       <button type="submit">✔️ Save</button>
-      <button v-if="trxId >= 0" @click.prevent="remove(trxId)">
-        ❌ Delete
-      </button>
+      <button v-if="trxIdx >= 0" @click.prevent="remove()">❌ Delete</button>
     </div>
   </form>
 </template>
 
 <script>
-import { reactive } from "vue";
-import { today } from "../utils";
+import { reactive, computed } from "vue";
+import { today } from "../modules/utils";
 import { Trx, useTransactions } from "../composables/useTransactions";
-import { totalSharesBought } from "../modules/asset";
+import { totalSharesBought, totalSharesSold } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 
 export default {
-  props: ["asset", "trxId", "type"],
+  props: ["asset", "trxIdx", "type"],
   setup(props) {
     let trx = reactive(new Trx({ type: props.type }));
     const { saveTrx, removeTrx } = useTransactions(props.asset);
 
     // if there is an id it means the transaction has previously been saved
-    if (props.trxId !== undefined)
-      Object.assign(trx, props.asset.trxns[props.trxId]);
+    if (props.trxIdx !== undefined)
+      Object.assign(trx, props.asset.trxns[props.trxIdx]);
 
     const save = () => {
-      saveTrx(trx, props.trxId);
-      if (!props.trxId) {
+      saveTrx(trx, props.trxIdx);
+      if (props.trxIdx === undefined) {
         // reset new trx form fields after saving a new transaction
         Object.assign(trx, new Trx({ type: props.type }));
       }
     };
 
-    const remove = (trxId) => {
-      removeTrx(trxId);
+    const remove = () => {
+      removeTrx(props.trxIdx);
     };
+
+    const maxSellAmount = computed(
+      () => totalSharesBought(props.asset) - totalSharesSold(props.asset)
+    );
 
     return {
       trx,
       save,
       remove,
       today,
-      boughtAmount: totalSharesBought,
+      maxSellAmount,
       assetCurrency: props.asset.dataload.currency,
       appCurrency,
     };

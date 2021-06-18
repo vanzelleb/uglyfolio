@@ -5,13 +5,26 @@
 <script>
 import { computed, onMounted, watch } from "vue";
 import useLineChart from "../composables/useLineChart";
-import useAssetUpdater from "../composables/useAssetUpdater";
+import useHistoryApi from "../composables/useHistoryApi";
+import useQuoteApi from "../composables/useQuoteApi";
+import useSignalApi from "../composables/useSignalApi";
+import { today } from "../modules/utils";
 
 export default {
   props: ["asset"],
   setup(props) {
     const { renderChart, updateSeries } = useLineChart(props.asset);
-    const { getAllData } = useAssetUpdater(props.asset);
+    const { getPriceHistory } = useHistoryApi(props.asset);
+    const { getQuote } = useQuoteApi(props.asset);
+    const { getSignal } = useSignalApi(props.asset);
+
+    const isUpdated = () => {
+      const hasNoPrice = !props.asset.dataload.lastPrice;
+      const hasNoChart = props.asset.prices.length === 0;
+      const checkedToday = props.asset.dataload.lastChecked === today;
+      if (hasNoPrice || hasNoChart || !checkedToday) return false;
+      return true;
+    };
 
     onMounted(async () => {
       const innerWidth = document.getElementById("flexbox").clientWidth;
@@ -59,12 +72,24 @@ export default {
 
       renderChart(options);
 
-      // download the prices if the asset was just added
+      // update the asset if the it has no data yet
       if (props.asset.prices.length === 0) {
-        await getAllData();
-        updateSeries();
+        //await getAllData();
+        //updateSeries();
+        if (!isUpdated()) {
+          getQuote();
+          getSignal();
+          getPriceHistory();
+        }
+        // set a flag to prevent repeated API calls per day
+        props.asset.dataload.lastChecked = today;
       }
     });
+
+    watch(
+      () => props.asset.prices,
+      () => updateSeries()
+    );
 
     return {};
   },

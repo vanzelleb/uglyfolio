@@ -7,7 +7,12 @@ export function toLocaleNumber(value, digits) {
   return value;
 }
 
-export const today = new Date().toISOString().substring(0, 10);
+// find the current date in the users timezone
+export const today = new Date(
+  new Date().getTime() - new Date().getTimezoneOffset() * 60000
+)
+  .toISOString()
+  .substring(0, 10);
 
 // green color
 export const posColor = "#1B998B";

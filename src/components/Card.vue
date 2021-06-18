@@ -35,8 +35,8 @@
 
 <script>
 import Sparkline from "../components/Sparkline.vue";
-import { toLocaleNumber } from "../utils";
-import { isSold, change, nominalReturn, buys } from "../modules/asset";
+import { toLocaleNumber } from "../modules/utils";
+import { isSold, change, nominalReturn, buys } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 
 export default {

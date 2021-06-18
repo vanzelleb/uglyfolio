@@ -32,7 +32,7 @@ import { ref, watch, onMounted } from "vue";
 import { assets } from "../modules/asset";
 import usePieChart from "../composables/usePieChart";
 // Vite specific worker import with module support
-import MyWorker from "../markowitz-optimizer?worker";
+import MyWorker from "../modules/markowitz-optimizer?worker";
 
 export default {
   setup() {
