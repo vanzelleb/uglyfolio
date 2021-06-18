@@ -1,5 +1,5 @@
 import { store } from "../modules/store";
-import { avgBuyPrice } from "../modules/asset";
+import { avgBuyPrice } from "../modules/stats";
 import { toRef } from "vue";
 
 if (!store.stopLossPct) store.stopLossPct = 0;
