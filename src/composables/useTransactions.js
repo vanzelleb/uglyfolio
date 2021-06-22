@@ -12,14 +12,16 @@ export class Trx {
   }
   // add getter and setter for date to offset timezone differences
   get date() {
-    if (this._date) return this._date.toISOString().substring(0, 10);
+    if (this._date) return this._date;
     else return null;
   }
 
   set date(date) {
     if (date) {
       let dt = new Date(date);
-      this._date = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000);
+      this._date = new Date(dt.getTime() - dt.getTimezoneOffset() * 60000)
+        .toISOString()
+        .substring(0, 10);
     } else this._date = null;
   }
 }

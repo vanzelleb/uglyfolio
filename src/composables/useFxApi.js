@@ -1,6 +1,6 @@
 import useBackend from "../composables/useBackend";
 import { exchangeratesAPI } from "../modules/exchangerates";
-import { appCurrency, fx } from "../modules/currencies";
+import { appCurrency, fxRates } from "../modules/currencies";
 
 const apiOptions = {
   1: {
@@ -11,15 +11,12 @@ const apiOptions = {
         date
       });
     },
-    handleResponse: function (
-      json,
-      { appCurrency, currency, date, fxInventory }
-    ) {
+    handleResponse: function (json, { appCurrency, currency, date, fxRates }) {
       exchangeratesAPI.fxByDateResponse(json, {
         appCurrency,
         currency,
         date,
-        fxInventory
+        fxRates
       });
     }
   }
@@ -29,18 +26,32 @@ export default function () {
   const { callServer } = useBackend(apiOptions);
 
   const getFx = async (asset, date) => {
-    let fxBase = fx[appCurrency.value];
-    if (!fxBase) fxBase = {};
     // retrieve latest exchange rates for all currency combinations
-    if (asset.currency !== appCurrency.value) {
-      const hasFXPair = !!fxBase[asset.currency];
+    const hasFxBase = fxRates.value.hasOwnProperty(appCurrency.value);
+    if (!hasFxBase) throw Error("useFxApi: Missing FxBase");
+    if (asset.dataload.currency !== appCurrency.value) {
+      const hasFxPair = fxRates.value[appCurrency.value].hasOwnProperty(
+        asset.dataload.currency
+      );
       // reset the exchange rates for the currency pair
-      if (!hasFXPair) fxBase[asset.currency] = {};
-      const hasDate = !!fxBase[asset.currency][date];
+      if (!hasFxPair)
+        fxRates.value[appCurrency.value][asset.dataload.currency] = {};
+      const hasDate = fxRates.value[appCurrency.value][
+        asset.dataload.currency
+      ].hasOwnProperty(date);
       if (!hasDate)
         await callServer(
-          { appCurrency: appCurrency, currency: asset.currency, date: date },
-          { asset: asset, fxRates: fx }
+          {
+            appCurrency: appCurrency.value,
+            currency: asset.dataload.currency,
+            date
+          },
+          {
+            appCurrency: appCurrency.value,
+            currency: asset.dataload.currency,
+            date,
+            fxRates
+          }
         );
     }
   };

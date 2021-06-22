@@ -77,6 +77,10 @@ export function sells(asset) {
   return asset.trxns.filter((trx) => trx.type === "Sell");
 }
 
+export function payouts(asset) {
+  return asset.trxns.filter((trx) => trx.type === "Payout");
+}
+
 export function buyDates(asset) {
   return buys(asset).map((trx) => trx.date);
 }
@@ -120,4 +124,11 @@ export function change(asset) {
 export function nominalReturn(asset) {
   if (isSold(asset)) return totalSellValue(asset) - totalBuyValue(asset);
   else return 0;
+}
+
+export function totalPayoutValue(asset) {
+  const value = payouts(asset).reduce((acc, cur) => {
+    return acc + cur.value;
+  }, 0);
+  return value;
 }

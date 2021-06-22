@@ -17,7 +17,10 @@ export default function () {
   const { callServer } = useBackend(apiOptions);
 
   const getCurrencies = async () => {
-    await callServer({ appCurrency: appCurrency }, { currencies: currencies });
+    await callServer(
+      { appCurrency: appCurrency.value },
+      { currencies: currencies }
+    );
   };
 
   return {
