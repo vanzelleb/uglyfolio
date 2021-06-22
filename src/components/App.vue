@@ -7,6 +7,7 @@
         <DetailChart :asset="asset" />
         <AssetStats :asset="asset" />
         <BuySell :asset="asset" />
+        <Income :asset="asset" />
         <Info :asset="asset" />
         <News :asset="asset" />
         <div class="space-between">
@@ -40,7 +41,9 @@
       </p>
       <p>
         Made by
-        <a href="https://twitter.com/VanZelleb" target="_blank">vanzelleb</a>
+        <a href="https://twitter.com/VanZelleb" target="_blank" rel="noreferrer"
+          >vanzelleb</a
+        >
       </p>
     </footer>
   </div>
@@ -58,6 +61,7 @@ import PortfolioStats from "./PortfolioStats.vue";
 import SearchAsset from "./SearchAsset.vue";
 import Card from "./Card.vue";
 import News from "./News.vue";
+import Income from "./Income.vue";
 import BuySell from "./BuySell.vue";
 import Info from "./Info.vue";
 import Header from "./Header.vue";
@@ -78,6 +82,7 @@ export default {
     Info,
     BuySell,
     News,
+    Income,
     Settings,
     Header,
   },
@@ -101,8 +106,8 @@ export default {
       // update the exchange rates for all transactions
       assets.value.forEach((asset) => {
         asset.trxns.forEach((trx) => {
-          getFx(today);
-          getFx(trx.date);
+          getFx(asset, today);
+          getFx(asset, trx.date);
         });
       });
     });
