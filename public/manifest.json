@@ -4,10 +4,16 @@
   "display": "fullscreen",
   "start_url": "/",
   "background_color": "#ffffff",
-  "theme_color": "transparent",
+  "theme_color": "#ffffff",
   "description": "Minimalistic stock portfolio app with performance statistics.",
   "orientation": "any",
   "icons": [
+    {
+      "src": "/images/chrome/maskable-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/images/chrome/chrome-extensionmanagementpage-48-48.png",
       "sizes": "48x48"
