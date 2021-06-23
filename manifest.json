@@ -5,7 +5,7 @@
   "short_name": "Uglyfolio",
   "scope": "/",
   "display": "standalone",
-  "start_url": "https://uglyfolio.netlify.com/",
+  "start_url": "https://uglyfolio.netlify.app/",
   "background_color": "#ffffff",
   "theme_color": "transparent",
   "description": "Minimalistic stock portfolio app with performance statistics.",
