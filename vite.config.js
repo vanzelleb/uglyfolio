@@ -9,5 +9,9 @@ export default defineConfig({
 import vue from "@vitejs/plugin-vue";
 
 export default {
-  plugins: [vue()]
+  plugins: [vue()],
+  build: {
+    emptyOutDir: false,
+    minify: false
+  }
 };
