@@ -11,7 +11,7 @@
   "description": "Minimalistic stock portfolio app with performance statistics.",
   "orientation": "any",
   "related_applications": [],
-  "prefer_related_applications": "false",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/chrome/chrome-extensionmanagementpage-48-48.png",
@@ -62,7 +62,7 @@
       "sizes": "16x16"
     }
   ],
-  "url": "https://uglyfolio.netlify.com",
+  "url": "https://uglyfolio.netlify.app",
   "generated": true,
   "screenshots": []
 }
