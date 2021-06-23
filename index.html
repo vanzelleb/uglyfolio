@@ -28,24 +28,6 @@
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
-    <script type="module">
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function () {
-          navigator.serviceWorker.register("/sw.js").then(
-            function (registration) {
-              // Registration was successful
-              console.log(
-                "ServiceWorker registration successful with scope: ",
-                registration.scope
-              );
-            },
-            function (err) {
-              // registration failed :(
-              console.log("ServiceWorker registration failed: ", err);
-            }
-          );
-        });
-      }
-    </script>
+    <script type="module" src="sw-register.js"></script>
   </body>
 </html>
