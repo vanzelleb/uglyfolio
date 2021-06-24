@@ -12,7 +12,6 @@
         <News :asset="asset" />
         <div class="space-between">
           <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
-          <button @click="close()">🏠 Home</button>
         </div>
       </template>
       <template v-else>
@@ -119,11 +118,6 @@ export default {
       }
     };
 
-    const close = () => {
-      // clear asset variable in order to return from detail screen
-      selectAsset(null);
-    };
-
     const selectAsset = (item) => {
       Object.assign(asset, new Asset(item));
     };
@@ -131,7 +125,6 @@ export default {
     return {
       asset,
       assets,
-      close,
       remove,
       selectAsset,
     };

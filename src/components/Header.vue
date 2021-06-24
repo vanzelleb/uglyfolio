@@ -1,23 +1,28 @@
 <template>
   <header :class="{ scroll: scrolled }">
     <div class="container">
-      <div v-if="asset.dataload.name">
-        <span class="handFont">{{ asset.dataload.name }}</span>
-      </div>
-      <div v-else>
-        <span class="handFont brand">Uglyfolio</span>
-      </div>
+      <span v-if="asset.dataload.name" class="material-icons" @click="close()"
+        >arrow_back</span
+      >
+      <span v-else></span>
+      <span v-if="asset.dataload.name" class="title">{{
+        asset.dataload.name
+      }}</span>
+      <span v-else class="title">Uglyfolio</span>
+      <span v-if="asset.dataload.name"></span>
+      <span v-else></span>
     </div>
   </header>
 </template>
 
 <script>
 import { onMounted, ref } from "vue";
+import { Asset } from "../modules/asset";
 
 export default {
   props: ["asset"],
   setup(props) {
-    let scrolled = ref(false);
+    const scrolled = ref(false);
 
     const handleScroll = (e) => {
       scrolled.value = e.target.documentElement.scrollTop > 0;
@@ -27,7 +32,13 @@ export default {
       window.addEventListener("scroll", handleScroll);
     });
 
+    const close = () => {
+      // clear asset variable in order to return from detail screen
+      Object.assign(props.asset, new Asset(null));
+    };
+
     return {
+      close,
       scrolled,
     };
   },
@@ -36,15 +47,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
-.handFont {
-  font-size: 1.6rem;
-  font-weight: bold;
-}
-
-.brand {
-  font-size: 2rem;
-}
-
 header {
   position: -webkit-sticky;
   position: sticky;
@@ -54,6 +56,16 @@ header {
 }
 
 span {
+  min-width: 30px;
+}
+
+.material-icons {
+  align-self: center;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 1.6rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -61,7 +73,7 @@ span {
 }
 
 .container {
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .scroll {
