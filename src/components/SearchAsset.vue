@@ -1,9 +1,8 @@
 <template>
   <details :open="assets.length === 0">
-    <summary role="button">🔍 <span class="link">Search</span></summary>
+    <summary role="button">🔍 <span class="link">Add an asset</span></summary>
     <fieldset>
       <template v-if="asset.dataload.name">
-        Found:
         <h3>{{ asset.dataload.name }}</h3>
         <h5>
           {{ asset.dataload.industry }}
@@ -11,7 +10,7 @@
         <p>Do you want to add this asset to your portfolio?</p>
         <button type="button" value="cancel" @click="close()">Nope</button>
         <button type="button" value="yes" @click="confirm()" autofocus>
-          Ok, Add it.
+          Ok, add it.
         </button>
       </template>
       <template v-else>
@@ -37,7 +36,7 @@
         />
         <button @click="getCompanyInfo()">
           <span v-if="searching">Searching...</span>
-          <span v-else>Add</span>
+          <span v-else>Search</span>
         </button>
         <small>
           <p class="errors" v-if="ticker && warning">
@@ -65,7 +64,7 @@ export default {
 
     watch(
       () => ticker.value,
-      (ticker, prevTicker) => {
+      () => {
         // reset errors when the ticker is reset
         if (!ticker.value) warning.value = "";
       }
@@ -75,8 +74,9 @@ export default {
       if (ticker.value) {
         // check is the asset is already part of the portfolio
         if (
-          assets.value.find((item) => item.ticker === ticker.value) ===
-          undefined
+          assets.value.find(
+            (item) => item.ticker === ticker.value.toUpperCase()
+          ) === undefined
         ) {
           searching.value = true;
           asset.ticker = ticker.value;
@@ -122,6 +122,7 @@ export default {
 
 h3,
 h5 {
-  margin: 10px 0 0 10px;
+  margin: 6px 0 0 0px;
+  color: #7d13a9;
 }
 </style>

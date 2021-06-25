@@ -2,7 +2,7 @@
   <header :class="{ scroll: scrolled }">
     <div class="container">
       <span v-if="asset.dataload.name" class="material-icons" @click="close()"
-        >arrow_back</span
+        >arrow_back_ios</span
       >
       <span v-else></span>
       <span v-if="asset.dataload.name" class="title">{{
@@ -48,6 +48,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
 header {
+  font-family: "Lato", sans-serif;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -73,6 +74,7 @@ span {
 }
 
 .container {
+  margin: 12px 8px;
   justify-content: space-between;
 }
 

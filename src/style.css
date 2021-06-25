@@ -13,7 +13,7 @@ body {
 }
 
 .container {
-  padding: 12px 8px;
+  padding: 0px 8px;
   display: flex;
   max-width: 810px;
   margin: 0 auto;

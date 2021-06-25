@@ -2,7 +2,6 @@
   <details>
     <summary>🏆 <span class="link">Portfolio Performance</span></summary>
     <fieldset>
-      <legend>KPIs</legend>
       <table>
         <tr v-for="(kpi, id) of stats" :key="id">
           <td>{{ kpi.icon }}</td>

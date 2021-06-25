@@ -2,7 +2,6 @@
   <details v-if="assets.length > 1">
     <summary>🍰 <span class="link">Optimize</span></summary>
     <fieldset>
-      <legend>Portfolio optimization</legend>
       The Markowitz optimization tries to find the asset mix that strikes a
       balance between portfolio returns and volatility. This is based on
       historical data and does not guarantee any future gains.

@@ -143,7 +143,7 @@ main {
   overflow: hidden;
   flex-flow: row wrap;
   gap: 15px 15px;
-  padding: 1.2rem 0 0.4rem 0;
+  padding: 1.2rem 0;
 }
 
 footer {
