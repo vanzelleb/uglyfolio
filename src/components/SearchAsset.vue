@@ -2,7 +2,6 @@
   <details :open="assets.length === 0">
     <summary role="button">🔍 <span class="link">Search</span></summary>
     <fieldset>
-      <legend>Add a new asset</legend>
       <template v-if="asset.dataload.name">
         Found:
         <h3>{{ asset.dataload.name }}</h3>
