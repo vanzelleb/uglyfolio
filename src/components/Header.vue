@@ -8,7 +8,7 @@
       <span v-if="asset.dataload.name" class="title">{{
         asset.dataload.name
       }}</span>
-      <span v-else class="title">Uglyfolio</span>
+      <span v-else class="title">UGLYFOLIO</span>
       <span v-if="asset.dataload.name"></span>
       <span v-else></span>
     </div>
@@ -48,7 +48,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
 header {
-  font-family: "Lato", sans-serif;
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -66,6 +65,7 @@ span {
 }
 
 .title {
+  font-family: "Bebas Neue", cursive;
   font-size: 1.6rem;
   white-space: nowrap;
   overflow: hidden;
@@ -74,7 +74,7 @@ span {
 }
 
 .container {
-  margin: 12px 8px;
+  padding: 12px 8px;
   justify-content: space-between;
 }
 
