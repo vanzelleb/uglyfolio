@@ -60,7 +60,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .card {
-  display: grid;
+  margin: 0 6px 0 0;
   border: 2px solid;
   border-radius: 5px;
   box-shadow: 6px 6px #bd93f9;
@@ -81,5 +81,11 @@ h6 {
 h3,
 h5 {
   margin: 5px 0 0 0;
+}
+
+h4 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

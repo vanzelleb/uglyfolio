@@ -27,7 +27,7 @@ export default {
     };
 
     onMounted(async () => {
-      const innerWidth = document.getElementById("flexbox").clientWidth;
+      const innerWidth = document.getElementById("main").clientWidth;
 
       const options = {
         series: [
@@ -39,7 +39,7 @@ export default {
         chart: {
           type: "area",
           height: 70,
-          width: innerWidth < 400 ? innerWidth - 13 : 400 - 13,
+          //width: innerWidth < 400 ? innerWidth - 13 : 400 - 13,
           sparkline: {
             enabled: true,
           },

@@ -8,10 +8,10 @@
           {{ asset.dataload.industry }}
         </h5>
         <p>Do you want to add this asset to your portfolio?</p>
-        <button type="button" value="cancel" @click="close()">Nope</button>
         <button type="button" value="yes" @click="confirm()" autofocus>
           Ok, add it.
         </button>
+        <button type="button" value="cancel" @click="close()">Nope</button>
       </template>
       <template v-else>
         <div>

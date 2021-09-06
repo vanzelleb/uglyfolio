@@ -19,7 +19,7 @@
         <PortfolioStats :assets="assets" />
         <Optimize :assets="assets" />
         <SearchAsset />
-        <div class="flexbox" id="flexbox">
+        <div class="card-grid">
           <Card
             v-for="(item, id) of assets"
             :key="id"
@@ -138,11 +138,10 @@ main {
   width: 100%;
 }
 
-.flexbox {
-  display: flex;
-  overflow: hidden;
-  flex-flow: row wrap;
-  gap: 15px 15px;
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+  grid-gap: 1rem;
   padding: 1.2rem 0;
 }
 

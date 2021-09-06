@@ -2,13 +2,13 @@
   <header :class="{ scroll: scrolled }">
     <div class="container">
       <span v-if="asset.dataload.name" class="material-icons" @click="close()"
-        >arrow_back_ios</span
+        >arrow_back</span
       >
       <span v-else></span>
       <span v-if="asset.dataload.name" class="title">{{
         asset.dataload.name
       }}</span>
-      <span v-else class="title">UGLYFOLIO</span>
+      <span v-else class="title">Uglyfolio</span>
       <span v-if="asset.dataload.name"></span>
       <span v-else></span>
     </div>
@@ -60,13 +60,13 @@ span {
 }
 
 .material-icons {
+  font-size: 20pt;
   align-self: center;
   cursor: pointer;
 }
 
 .title {
-  font-family: "Bebas Neue", cursive;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -74,7 +74,7 @@ span {
 }
 
 .container {
-  padding: 12px 8px;
+  padding: 18px 8px;
   justify-content: space-between;
 }
 
