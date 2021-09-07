@@ -12,12 +12,58 @@ body {
   user-select: none;
 }
 
-.container {
-  padding: 0px 16px;
+#app {
+  height: 100vh;
+  /* grid container settings */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "header"
+    "main";
+}
+
+#app > Header {
+  /* z-index to make sure the shadows overlap the content of the main area */
+  z-index: 999;
+  grid-area: header;
   display: flex;
-  max-width: 800px;
-  margin: 0 auto;
-  flex-grow: 1;
+  justify-content: space-between;
+  padding: 15px 15px;
+  background: rgb(255, 255, 255);
+
+  /*background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);*/
+}
+
+#app > main {
+  grid-area: main;
+  overflow: auto;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "cards"
+    "footer";
+}
+
+#app > main > section {
+  grid-area: cards;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 800px) 1fr;
+  padding: 15px 15px;
+}
+
+#app > main > footer {
+  grid-area: footer;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 15px 15px;
+}
+
+.material-icons {
+  font-size: 20pt;
+  align-self: center;
+  cursor: pointer;
 }
 
 .link {

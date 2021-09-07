@@ -27,7 +27,7 @@ export default {
     };
 
     onMounted(async () => {
-      const innerWidth = document.getElementById("main").clientWidth;
+      const innerWidth = document.getElementById("content").clientWidth;
 
       const options = {
         series: [

@@ -1,9 +1,9 @@
 <template>
-  <Header :asset="asset" />
-
-  <div class="container" id="mainContainer">
-    <main id="main">
-      <template v-if="asset.dataload.name">
+  <Header :asset="asset" :class="{ scroll: scrolled }" />
+  <main id="main">
+    <section>
+      <div></div>
+      <div id="content" v-if="asset.dataload.name">
         <DetailChart :asset="asset" />
         <AssetStats :asset="asset" />
         <BuySell :asset="asset" />
@@ -13,8 +13,8 @@
         <div class="space-between">
           <button v-if="asset.id" @click="remove(asset)">❌ Delete</button>
         </div>
-      </template>
-      <template v-else>
+      </div>
+      <div id="content" v-else>
         <Settings />
         <PortfolioStats :assets="assets" />
         <Optimize :assets="assets" />
@@ -27,32 +27,36 @@
             :asset="item"
           />
         </div>
-      </template>
-    </main>
-  </div>
-  <div class="container">
+      </div>
+      <div></div>
+    </section>
     <footer>
       <p>
-        An experimental app for tracking of a stock portfolio. Data provided by
+        Stock data provided by
         <a href="https://iexcloud.io">IEX Cloud</a>
         and
         <a href="https://finnhub.io/">Finnhub.io</a>
       </p>
       <p>
-        Made by
-        <a href="https://twitter.com/VanZelleb" target="_blank" rel="noreferrer"
-          >vanzelleb</a
-        >
+        <b>
+          Made by
+          <a
+            href="https://twitter.com/VanZelleb"
+            target="_blank"
+            rel="noreferrer"
+            >vanzelleb</a
+          >
+        </b>
       </p>
     </footer>
-  </div>
+  </main>
 </template>
 
 
 <script>
 import { Asset, assets, saveAsset, removeAsset } from "../modules/asset";
 import { store } from "../modules/store";
-import { reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { today } from "../modules/utils";
 import DetailChart from "./DetailChart.vue";
 import Settings from "./Settings.vue";
@@ -87,7 +91,9 @@ export default {
   },
 
   setup() {
+    const scrolled = ref(false);
     const asset = reactive(new Asset());
+
     if (localStorage.store) {
       // copy store from local storage
       Object.assign(store, JSON.parse(localStorage.store));
@@ -109,6 +115,11 @@ export default {
           getFx(asset, trx.date);
         });
       });
+
+      let scrollArea = document.getElementById("main");
+      scrollArea.addEventListener("scroll", () => {
+        scrolled.value = scrollArea.scrollTop > 0;
+      });
     });
 
     const remove = (asset) => {
@@ -122,7 +133,13 @@ export default {
       Object.assign(asset, new Asset(item));
     };
 
+    const handleScroll = (e) => {
+      console.log(e);
+      scrolled.value = e.target.documentElement.scrollTop > 0;
+    };
+
     return {
+      scrolled,
       asset,
       assets,
       remove,
@@ -134,10 +151,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-main {
-  width: 100%;
-}
-
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
@@ -145,15 +158,15 @@ main {
   padding: 1.2rem 0;
 }
 
-footer {
-  width: 100%;
-  font-size: 0.8rem;
-  text-align: center;
-}
-
 .space-between {
   display: flex;
   justify-content: space-between;
+}
+
+.scroll {
+  -webkit-box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
+  -moz-box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
+  box-shadow: 0 3px 5px rgba(57, 63, 72, 0.3);
 }
 </style>
 
