@@ -6,7 +6,7 @@
       <button id="export" @click="exportData()" :disabled="assets.length === 0">
         💾 Backup
       </button>
-      <button id="import" @click="uploader()">📄 Restore</button>
+      <button id="import" @click="$refs.uploader.click()">📄 Restore</button>
       <input
         type="file"
         @change="importData($event)"
@@ -50,79 +50,58 @@
   </details>
 </template>
 
-<script>
-import { onMounted, watch, toRefs, computed } from "vue";
-import { Asset, assets } from "../modules/asset";
+<script setup>
+import { ref, onMounted, watch, toRefs, computed } from "vue";
+import { Asset, assets, saveAsset } from "../modules/asset";
+import { store } from "../modules/store";
 import { stopLossPct } from "../modules/stopLoss";
 import { currencies, appCurrency } from "../modules/currencies";
 import { today } from "../modules/utils";
 
-export default {
-  setup() {
-    const benchmarksList = [
-      { text: "S&P500", value: "SPY" },
-      { text: "NASDAQ", value: "QQQ" },
-      { text: "DOW JONES", value: "DIA" },
-    ];
+const benchmarksList = [
+  { text: "S&P500", value: "SPY" },
+  { text: "NASDAQ", value: "QQQ" },
+  { text: "DOW JONES", value: "DIA" },
+];
 
-    return {
-      currencies,
-      appCurrency,
-      benchmarksList,
-      stopLossPct,
-      assets,
+const exportData = () => {
+  // remove timeseries data for better readability of the exported file
+  const rows = assets.value.map((item) => {
+    item.timeseries = null;
+    return JSON.stringify(item);
+  });
+  let string = rows.join("\r\n");
+  var a = document.createElement("a");
+  a.href = "data:text/plain," + encodeURIComponent(string);
+  a.target = "_blank";
+  a.download = "Portfolio" + today + ".json";
+  document.body.appendChild(a);
+  a.click();
+};
+
+const importData = (e) => {
+  var file = e.target.files[0];
+  if (file) {
+    var reader = new FileReader();
+    reader.onload = async (event) => {
+      var fileContent = event.target.result;
+      var allTextLines = fileContent.split(/\r\n|\n/);
+
+      if (allTextLines.length >= 1) {
+        store.assetList = [];
+        allTextLines.forEach((line) => {
+          try {
+            const json = JSON.parse(line);
+            const item = new Asset(json);
+            saveAsset(item);
+          } catch (error) {
+            alert("The data is not in the correct format");
+          }
+        });
+      } else alert("The file is empty, my friend.");
     };
-  },
-  methods: {
-    exportData: function () {
-      const rows = assets.value.map((item) => {
-        // remove timeseries data for better readability
-        item.timeseries = null;
-        return JSON.stringify(item);
-      });
-      let string = rows.join("\r\n");
-      var a = document.createElement("a");
-      a.href = "data:text/plain," + encodeURIComponent(string);
-      a.target = "_blank";
-      a.download = "Portfolio" + today + ".txt";
-      document.body.appendChild(a);
-      a.click();
-    },
-    uploader: function () {
-      this.$refs.uploader.click();
-    },
-    importData: function (ev) {
-      var file = ev.target.files[0];
-      if (file) {
-        var reader = new FileReader();
-        reader.onload = async function (event) {
-          var fileContent = event.target.result;
-          var allTextLines = fileContent.split(/\r\n|\n/);
-
-          if (allTextLines.length >= 1) {
-            store.assetList = [];
-            allTextLines.forEach(function (line) {
-              try {
-                const json = JSON.parse(line);
-                const item = new Asset(json);
-                requestHandler("history", { asset: item });
-                if (!item.isSold()) {
-                  requestHandler("quote", { asset: item });
-                  requestHandler("signal", { asset: item });
-                  requestHandler("target", { asset: item });
-                }
-              } catch (error) {
-                alert("The data is not in the correct format");
-              }
-            });
-          } else alert("The file is empty, my friend.");
-        };
-        reader.readAsText(file);
-      } else alert("No file found.");
-
-      this.close();
-    },
-  },
+    reader.readAsText(file);
+  } else alert("No file found.");
 };
 </script>
 

@@ -10,8 +10,7 @@ export const saveAsset = (asset) => {
   // only save assets that have an ID
   if (asset._id) {
     console.log("Save asset...");
-    // To ensure store's Vue watcher notices the change:
-    // if the asset is already in the list delete it and add it again
+    // To ensure store's Vue watcher notices the change we delete the asset and add it again
     removeAsset(asset);
     // save a new copy of the asset to avoid side effects
     assetList.value.push(new Asset(asset));

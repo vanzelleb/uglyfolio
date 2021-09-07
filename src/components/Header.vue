@@ -6,7 +6,7 @@
     <span v-else></span>
     <span class="title">
       <template v-if="asset.dataload.name"> {{ asset.dataload.name }}</template>
-      <template v-else><b>Uglyfolio</b></template>
+      <template v-else><b>Uglifolio</b></template>
     </span>
     <span></span>
   </header>
@@ -34,6 +34,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
+span {
+  min-width: 30px;
+}
+
 span:first-child {
   margin-right: auto;
 }
