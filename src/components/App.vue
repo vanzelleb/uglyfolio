@@ -16,7 +16,7 @@
         <Settings />
         <PortfolioStats :assets="assets" />
         <Optimize :assets="assets" />
-        <SearchAsset />
+        <AddAsset />
         <div class="card-grid">
           <Card
             v-for="(item, id) of assets"
@@ -59,7 +59,7 @@ import { today } from "../modules/utils";
 import DetailChart from "./DetailChart.vue";
 import Settings from "./Settings.vue";
 import PortfolioStats from "./PortfolioStats.vue";
-import SearchAsset from "./SearchAsset.vue";
+import AddAsset from "./AddAsset.vue";
 import Card from "./Card.vue";
 import News from "./News.vue";
 import Income from "./Income.vue";

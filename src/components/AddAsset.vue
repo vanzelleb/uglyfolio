@@ -48,69 +48,51 @@
   </details>
 </template>
 
-<script>
+<script setup>
 import { watch, ref, reactive, onMounted, computed } from "vue";
 import { Asset, saveAsset, assets } from "../modules/asset";
 import { today } from "../modules/utils";
 import useCompanyApi from "../composables/useCompanyApi";
 
-export default {
-  setup() {
-    const ticker = ref("");
-    const asset = reactive(new Asset());
-    const searching = ref(false);
-    const warning = ref("");
-    const { getCompany } = useCompanyApi(asset);
+const ticker = ref("");
+const asset = reactive(new Asset());
+const searching = ref(false);
+const warning = ref("");
+const { getCompany } = useCompanyApi(asset);
 
-    watch(
-      () => ticker.value,
-      () => {
-        // reset errors when the ticker is reset
-        if (!ticker.value) warning.value = "";
-      }
-    );
+// reset errors when the ticker changes
+watch(ticker, () => {
+  warning.value = "";
+});
 
-    const getCompanyInfo = async () => {
-      if (ticker.value) {
-        // check is the asset is already part of the portfolio
-        if (
-          assets.value.find(
-            (item) => item.ticker === ticker.value.toUpperCase()
-          ) === undefined
-        ) {
-          searching.value = true;
-          asset.ticker = ticker.value;
-          await getCompany();
-          searching.value = false;
-          if (!asset.dataload.name) warning.value = "Not found";
-        } else warning.value = "Already added";
-      }
-    };
+const getCompanyInfo = async () => {
+  if (ticker.value) {
+    // check is the asset is already part of the portfolio
+    if (
+      assets.value.find(
+        (item) => item.ticker === ticker.value.toUpperCase()
+      ) === undefined
+    ) {
+      searching.value = true;
+      asset.ticker = ticker.value;
+      await getCompany();
+      searching.value = false;
+      if (!asset.dataload.name) warning.value = "Not found";
+    } else warning.value = "Already added";
+  }
+};
 
-    const close = () => {
-      // reset the form and asset object
-      ticker.value = "";
-      Object.assign(asset, new Asset());
-    };
+// reset the form and asset object
+const close = () => {
+  ticker.value = "";
+  Object.assign(asset, new Asset());
+};
 
-    const confirm = () => {
-      asset.id = asset.ticker;
-      // save a copy of the local asset object to avoid side effects
-      saveAsset(new Asset(asset));
-      close();
-    };
-
-    return {
-      assets,
-      searching,
-      asset,
-      ticker,
-      confirm,
-      close,
-      getCompanyInfo,
-      warning,
-    };
-  },
+// save a copy of the local asset object to avoid side effects
+const confirm = () => {
+  asset.id = asset.ticker;
+  saveAsset(new Asset(asset));
+  close();
 };
 </script>
 

@@ -31,9 +31,6 @@ body {
   justify-content: space-between;
   padding: 15px 15px;
   background: rgb(255, 255, 255);
-
-  /*background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(5px);*/
 }
 
 #app > main {
@@ -104,7 +101,7 @@ select {
 }
 
 fieldset {
-  margin: 0.8rem 6px 0 0;
+  margin: 12px 6px 24px 0;
   padding: 0.8rem;
   vertical-align: top;
   background-color: #fbfbfb;
@@ -117,9 +114,12 @@ legend {
   font-weight: bold;
 }
 
-details,
+details {
+  margin: 12px 0;
+}
+
 summary {
-  margin: 0.8rem 0;
+  margin: 12px 0;
 }
 
 button {

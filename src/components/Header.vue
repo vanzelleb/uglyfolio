@@ -13,22 +13,16 @@
 </template>
 
 
-<script>
-import { onMounted, ref } from "vue";
+<script setup>
+import { defineProps, onMounted, ref } from "vue";
 import { Asset } from "../modules/asset";
 
-export default {
-  props: ["asset"],
-  setup(props) {
-    const back = () => {
-      // clear asset variable in order to return from detail screen
-      Object.assign(props.asset, new Asset(null));
-    };
-
-    return {
-      back,
-    };
-  },
+const props = defineProps({
+  asset: Object,
+});
+const back = () => {
+  // clear asset variable in order to return from detail screen
+  Object.assign(props.asset, new Asset(null));
 };
 </script>
 

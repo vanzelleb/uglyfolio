@@ -15,37 +15,33 @@
   </fieldset>
 </template>
 
-<script>
+<script setup>
 import { computed, ref } from "vue";
 import { avgBuyPrice, totalPayoutValue } from "../modules/stats";
+import { appCurrency } from "../modules/currencies";
 
-export default {
-  props: ["asset"],
-  setup(props) {
-    const stats = ref([
-      {
-        name: "Avg. purchase price/share:",
-        number: computed(() => {
-          const val = avgBuyPrice(props.asset);
-          return val ? val.toFixed(2) : null;
-        }),
-        unit: props.asset.dataload.currency,
-      },
-      {
-        name: "Total of dividends received:",
-        number: computed(() => {
-          const val = totalPayoutValue(props.asset);
-          return val ? val.toFixed(2) : null;
-        }),
-        unit: props.asset.dataload.currency,
-      },
-    ]);
+const props = defineProps({
+  asset: Object,
+});
 
-    return {
-      stats,
-    };
+const stats = ref([
+  {
+    name: "Avg. purchase price/share:",
+    number: computed(() => {
+      const val = avgBuyPrice(props.asset);
+      return val ? val.toFixed(2) : null;
+    }),
+    unit: props.asset.dataload.currency,
   },
-};
+  {
+    name: "Total dividends:",
+    number: computed(() => {
+      const val = totalPayoutValue(props.asset);
+      return val ? val.toFixed(2) : null;
+    }),
+    unit: appCurrency,
+  },
+]);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to component only -->

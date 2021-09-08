@@ -46,40 +46,29 @@
   </details>
 </template>
 
-<script>
-import { ref, computed, onMounted, watch } from "vue";
+<script setup>
+import { defineProps, ref, computed, onMounted, watch } from "vue";
 import useNewsApi from "../composables/useNewsApi";
 
-export default {
-  props: ["asset"],
-  setup(props) {
-    const range = ref([0, props.asset.dates.length - 1]);
-    const shake = ref(false);
-    const searching = ref(false);
-    const from = computed(() => props.asset.dates[range.value[0]]);
-    const to = computed(() => props.asset.dates[range.value[1]]);
-    props.asset.dataload.news = [];
+const props = defineProps({
+  asset: Object,
+});
+const range = ref([0, props.asset.dates.length - 1]);
+const shake = ref(false);
+const searching = ref(false);
+const from = computed(() => props.asset.dates[range.value[0]]);
+const to = computed(() => props.asset.dates[range.value[1]]);
+props.asset.dataload.news = [];
 
-    const { getNews } = useNewsApi(props.asset);
+const { getNews } = useNewsApi(props.asset);
 
-    const searchNews = async () => {
-      shake.value = false;
-      searching.value = true;
-      await getNews(from, to);
-      searching.value = false;
-      // animate the search button to indicate that no news were found
-      if (props.asset.dataload.news.length === 0) shake.value = true;
-    };
-
-    return {
-      range,
-      from,
-      to,
-      searchNews,
-      searching,
-      shake,
-    };
-  },
+const searchNews = async () => {
+  shake.value = false;
+  searching.value = true;
+  await getNews(from, to);
+  searching.value = false;
+  // animate the search button to indicate that no news were found
+  if (props.asset.dataload.news.length === 0) shake.value = true;
 };
 </script>
 

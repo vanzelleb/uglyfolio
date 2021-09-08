@@ -21,13 +21,12 @@
   </details>
 </template>
 
-<script>
-export default {
-  props: ["asset"],
-  setup(props) {
-    return {};
-  },
-};
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps({
+  asset: Object,
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to component only -->

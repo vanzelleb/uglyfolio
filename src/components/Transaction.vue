@@ -42,50 +42,43 @@
   </form>
 </template>
 
-<script>
-import { reactive, computed } from "vue";
+<script setup>
+import { ref, reactive, computed } from "vue";
 import { today } from "../modules/utils";
 import { Trx, useTransactions } from "../composables/useTransactions";
 import { totalSharesBought, totalSharesSold } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 
-export default {
-  props: ["asset", "trxIdx", "type"],
-  setup(props) {
-    let trx = reactive(new Trx({ type: props.type }));
-    const { saveTrx, removeTrx } = useTransactions(props.asset);
+const props = defineProps({
+  asset: Object,
+  trxIdx: Number,
+  type: String,
+});
 
-    // if there is an id it means the transaction has previously been saved
-    if (props.trxIdx !== undefined)
-      Object.assign(trx, props.asset.trxns[props.trxIdx]);
+let trx = reactive(new Trx({ type: props.type }));
+const { saveTrx, removeTrx } = useTransactions(props.asset);
 
-    const save = () => {
-      saveTrx(trx, props.trxIdx);
-      if (props.trxIdx === undefined) {
-        // reset new trx form fields after saving a new transaction
-        Object.assign(trx, new Trx({ type: props.type }));
-      }
-    };
+// if there is an id it means the transaction has previously been saved
+if (props.trxIdx !== undefined)
+  Object.assign(trx, props.asset.trxns[props.trxIdx]);
 
-    const remove = () => {
-      removeTrx(props.trxIdx);
-    };
-
-    const maxSellAmount = computed(
-      () => totalSharesBought(props.asset) - totalSharesSold(props.asset)
-    );
-
-    return {
-      trx,
-      save,
-      remove,
-      today,
-      maxSellAmount,
-      assetCurrency: props.asset.dataload.currency,
-      appCurrency,
-    };
-  },
+const save = () => {
+  saveTrx(trx, props.trxIdx);
+  if (props.trxIdx === undefined) {
+    // reset new trx form fields after saving a new transaction
+    Object.assign(trx, new Trx({ type: props.type }));
+  }
 };
+
+const remove = () => {
+  removeTrx(props.trxIdx);
+};
+
+const maxSellAmount = computed(
+  () => totalSharesBought(props.asset) - totalSharesSold(props.asset)
+);
+
+const assetCurrency = ref(props.asset.dataload.currency);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to component only -->

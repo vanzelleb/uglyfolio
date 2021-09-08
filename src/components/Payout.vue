@@ -20,43 +20,38 @@
   </form>
 </template>
 
-<script>
+<script setup>
 import { reactive, computed } from "vue";
 import { today } from "../modules/utils";
 import { appCurrency } from "../modules/currencies";
-import { saveAsset } from "../modules/asset";
+import { Asset, saveAsset } from "../modules/asset";
 import { Trx, useTransactions } from "../composables/useTransactions";
 
-export default {
-  props: ["asset", "listIdx", "type"],
-  setup(props) {
-    let payout = reactive(new Trx({ type: props.type }));
-    const { saveTrx, removeTrx } = useTransactions(props.asset);
-
-    // if there is an id it means the transaction has previously been saved
-    if (props.listIdx !== undefined)
-      Object.assign(payout, props.asset.trxns[props.listIdx]);
-
-    const save = () => {
-      saveTrx(payout, props.listIdx);
-      if (props.listIdx === undefined) {
-        // reset new trx form fields after saving a new transaction
-        Object.assign(payout, new Trx({ type: props.type }));
-      }
-    };
-
-    const remove = () => {
-      removeTrx(props.listIdx);
-    };
-
-    return {
-      payout,
-      save,
-      remove,
-      today,
-      appCurrency,
-    };
+const props = defineProps({
+  asset: {
+    type: Object,
+    default: new Asset(),
   },
+  listIdx: Number,
+});
+
+const payout = reactive(new Trx({ type: "Payout" }));
+const { saveTrx, removeTrx } = useTransactions(props.asset);
+
+// if there is an id it means the transaction has previously been saved
+if (props.listIdx !== undefined)
+  Object.assign(payout, props.asset.trxns[props.listIdx]);
+
+const save = () => {
+  saveTrx(payout, props.listIdx);
+  if (props.listIdx === undefined) {
+    // reset new trx form fields after saving a new transaction
+    Object.assign(payout, new Trx({ type: "Payout" }));
+  }
+};
+
+const remove = () => {
+  removeTrx(props.listIdx);
 };
 </script>
 

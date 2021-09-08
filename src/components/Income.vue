@@ -11,50 +11,42 @@
             {{ payout.date }}: {{ toLocaleNumber(payout.value, 2) }}
             {{ appCurrency }}
           </summary>
-          <Payout :asset="asset" :listIdx="idx" type="Payout" />
+          <Payout :asset="asset" :listIdx="idx" />
         </details>
       </template>
       <details :open="payoutFormOpen">
         <summary class="link" @click.prevent="payoutFormOpen = !payoutFormOpen">
           Add dividend
         </summary>
-        <Payout :asset="asset" type="Payout" />
+        <Payout :asset="asset" />
       </details>
     </fieldset>
   </details>
 </template>
 
-<script>
+<script setup>
 import { computed, ref, watch } from "vue";
 import Payout from "./Payout.vue";
 import { toLocaleNumber } from "../modules/utils";
 import { totalPayoutValue, payouts } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
+import { Asset } from "../modules/asset";
 
-export default {
-  components: {
-    Payout,
+const props = defineProps({
+  asset: {
+    type: Object,
+    default: new Asset(),
   },
-  props: ["asset"],
-  setup(props) {
-    const payoutFormOpen = ref(false);
+});
 
-    watch(
-      () => props.asset.trxns.length,
-      () => {
-        payoutFormOpen.value = false;
-      }
-    );
+const payoutFormOpen = ref(false);
 
-    return {
-      appCurrency,
-      toLocaleNumber,
-      payouts,
-      payoutFormOpen,
-      totalPayoutValue,
-    };
-  },
-};
+watch(
+  () => props.asset.trxns.length,
+  () => {
+    payoutFormOpen.value = false;
+  }
+);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to component only -->

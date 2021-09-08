@@ -44,7 +44,7 @@
   </details>
 </template>
 
-<script>
+<script setup>
 import { computed, ref, watch } from "vue";
 import Transaction from "./Transaction.vue";
 import { toLocaleNumber } from "../modules/utils";
@@ -58,43 +58,26 @@ import {
 } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 
-export default {
-  components: {
-    Transaction,
-  },
-  props: ["asset"],
-  setup(props) {
-    const buyFormOpen = ref(false);
-    const sellFormOpen = ref(false);
+const props = defineProps({
+  asset: Object,
+});
 
-    watch(
-      () => buys(props.asset).length,
-      () => {
-        buyFormOpen.value = false;
-      }
-    );
+const buyFormOpen = ref(false);
+const sellFormOpen = ref(false);
 
-    watch(
-      () => sells(props.asset).length,
-      () => {
-        sellFormOpen.value = false;
-      }
-    );
+watch(
+  () => buys(props.asset).length,
+  () => {
+    buyFormOpen.value = false;
+  }
+);
 
-    return {
-      buyFormOpen,
-      sellFormOpen,
-      toLocaleNumber,
-      appCurrency,
-      sells,
-      buys,
-      totalSharesSold,
-      totalSharesBought,
-      totalSellValue,
-      totalBuyValue,
-    };
-  },
-};
+watch(
+  () => sells(props.asset).length,
+  () => {
+    sellFormOpen.value = false;
+  }
+);
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to component only -->

@@ -33,28 +33,15 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Sparkline from "../components/Sparkline.vue";
 import { toLocaleNumber } from "../modules/utils";
 import { isSold, change, nominalReturn, buys } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 
-export default {
-  components: {
-    Sparkline,
-  },
-  props: ["asset"],
-  setup() {
-    return {
-      toLocaleNumber,
-      appCurrency,
-      isSold,
-      change,
-      nominalReturn,
-      buys,
-    };
-  },
-};
+const props = defineProps({
+  asset: Object,
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
