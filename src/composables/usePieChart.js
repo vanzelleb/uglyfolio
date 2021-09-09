@@ -1,7 +1,7 @@
 import { ref, onMounted, watch, computed } from "vue";
 import ApexCharts from "apexcharts";
 
-export default function (assets) {
+export default function (id, assets) {
   const chart = ref(null);
   const assetWeights = computed(() =>
     assets.value.map(() => 1 / assets.value.length)
@@ -10,16 +10,16 @@ export default function (assets) {
     assets.value.map((asset) => asset.dataload.name)
   );
   const renderChart = () => {
-    const element = document.querySelector("#piechart");
+    const element = document.getElementById(id);
     const options = {
       series: assetWeights.value,
+      labels: assetNames.value,
       chart: {
-        width: 200,
+        width: "100%",
         type: "pie"
       },
-      labels: assetNames.value,
       legend: {
-        position: "bottom"
+        position: "top"
       }
     };
     if (element) {

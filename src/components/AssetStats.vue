@@ -17,7 +17,8 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { avgBuyPrice, totalPayoutValue } from "../modules/stats";
+import { avgBuyPrice, totalPayoutValue,   totalSellValue,
+  totalBuyValue, } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 
 const props = defineProps({
@@ -25,6 +26,22 @@ const props = defineProps({
 });
 
 const stats = ref([
+    {
+    name: "Total investment:",
+    number: computed(() => {
+      const val = totalBuyValue(props.asset)
+      return val ? val.toFixed(2) : null;
+    }),
+    unit: appCurrency,
+  },
+   {
+    name: "Total sold:",
+    number: computed(() => {
+      const val = totalSellValue(props.asset)
+      return val ? val.toFixed(2) : null;
+    }),
+    unit: appCurrency,
+  },
   {
     name: "Avg. purchase price/share:",
     number: computed(() => {
@@ -41,6 +58,8 @@ const stats = ref([
     }),
     unit: appCurrency,
   },
+
+  
 ]);
 </script>
 

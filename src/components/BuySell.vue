@@ -3,8 +3,7 @@
     <summary><span class="link">Buy & Sell</span></summary>
     <fieldset>
       <legend>Shares bought</legend>
-      You bought {{ totalSharesBought(asset) }} shares for
-      {{ toLocaleNumber(totalBuyValue(asset), 2) }} {{ appCurrency }}
+      You own {{ totalSharesBought(asset) }} shares.
       <br />
       <template v-for="(trx, id) of asset.trxns" :key="`buy-${id}`">
         <details v-if="trx.type === 'Buy'">
@@ -23,8 +22,7 @@
     </fieldset>
     <fieldset v-if="buys(asset).length > 0">
       <legend>Shares sold</legend>
-      You sold {{ totalSharesSold(asset) }} shares for
-      {{ toLocaleNumber(totalSellValue(asset), 2) }} {{ appCurrency }}
+      You sold {{ totalSharesSold(asset) }} shares.
       <br />
       <template v-for="(trx, id) of asset.trxns" :key="`sell-${id}`">
         <details v-if="trx.type === 'Sell'">
@@ -53,8 +51,6 @@ import {
   buys,
   totalSharesSold,
   totalSharesBought,
-  totalSellValue,
-  totalBuyValue,
 } from "../modules/stats";
 import { appCurrency } from "../modules/currencies";
 

@@ -18,18 +18,17 @@
       </h5>
       <div v-if="buys(asset).length > 0">
         <h3 v-if="!isSold(asset)">
-          You are {{ change(asset) >= 0 ? "up " : "down " }}
+          {{ change(asset) >= 0 ? "Up " : "Down " }}
           {{ toLocaleNumber(change(asset), 0) }}
         </h3>
         <h3 v-else :class="{ posColor: nominalReturn(asset) >= 0 }">
-          You
-          {{ nominalReturn(asset) >= 0 ? "sold & gained " : "sold & lost " }}
-          {{ toLocaleNumber(nominalReturn(asset), 0) }}
+          You{{ nominalReturn(asset) >= 0 ? " gained " : " lost "
+          }}{{ toLocaleNumber(nominalReturn(asset), 0) }}
         </h3>
         <h6>&nbsp;{{ appCurrency }}</h6>
       </div>
     </figcaption>
-    <Sparkline :asset="asset" class="sparkline" />
+    <Sparkline :asset="asset" />
   </div>
 </template>
 
@@ -47,6 +46,9 @@ const props = defineProps({
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   margin: 0 6px 0 0;
   border: 2px solid;
   border-radius: 5px;

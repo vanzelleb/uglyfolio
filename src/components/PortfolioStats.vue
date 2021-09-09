@@ -37,14 +37,6 @@ const props = defineProps({
 
 const kpis = reactive([
   {
-    title: "Currently invested",
-    icon: "🛒",
-    subtitle: "Purchase value of your assets.",
-    info: "https://www.investopedia.com/terms/i/investment.asp",
-    method: (asset) => (isSold(asset) ? 0 : totalBuyValue(asset)),
-    unit: appCurrency.value,
-  },
-  {
     title: "Day's change",
     icon: "📯",
     subtitle: "How much you are up/down.",
@@ -62,6 +54,14 @@ const kpis = reactive([
     unit: appCurrency.value,
   },
   {
+    title: "Invested",
+    icon: "🛒",
+    subtitle: "Purchase value of your assets.",
+    info: "https://www.investopedia.com/terms/i/investment.asp",
+    method: (asset) => (isSold(asset) ? 0 : totalBuyValue(asset)),
+    unit: appCurrency.value,
+  },
+  {
     title: "Current balance",
     icon: "🗓️",
     subtitle: "Your assets' current value.",
@@ -71,7 +71,7 @@ const kpis = reactive([
     unit: appCurrency.value,
   },
   {
-    title: "Profit/Loss from selling",
+    title: "Profit/Loss",
     icon: "💰",
     subtitle: "Gain/Loss from sold assets & dividends.",
     info: "https://www.investopedia.com/terms/r/return.asp",
@@ -79,7 +79,7 @@ const kpis = reactive([
     unit: appCurrency.value,
   },
   {
-    title: "Dividend payments",
+    title: "Dividends",
     icon: "🤑",
     subtitle: "Income from receiving dividends.",
     info: "https://www.investopedia.com/terms/d/dividend.asp",
@@ -87,7 +87,7 @@ const kpis = reactive([
     unit: appCurrency.value,
   },
   {
-    title: "Missed Profit",
+    title: "Missed opportunity",
     icon: "😢",
     subtitle: "Drop in value from highest price.",
     info: null,
@@ -139,7 +139,8 @@ h6 {
   display: inline-block;
 }
 
-number {
+.number {
   text-align: right;
+  padding: 0 0 0 5px;
 }
 </style>

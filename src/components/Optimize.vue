@@ -2,26 +2,21 @@
   <details v-if="assets.length > 1">
     <summary>🍰 <span class="link">Optimize</span></summary>
     <fieldset>
-      The Markowitz optimization tries to find the asset mix that strikes a
-      balance between portfolio returns and volatility. This is based on
-      historical data and does not guarantee any future gains.
-      <div id="piechart"></div>
-      <div v-if="finalreturn && finalvol">
-        <br />
-        <h4>{{ finalreturn.toFixed(0) }}% expected return</h4>
-        <h4>{{ finalvol.toFixed(0) }}% expected volatility</h4>
+      <small>
+        Optimize for the asset mix that strikes a balance between portfolio
+        returns and volatility. This is based on historical data and does not
+        guarantee any future gains.</small
+      >
+
+      <button @click="start()" :disabled="inProgress">
+        <template v-if="!inProgress">Optimize</template
+        ><template v-else>Doing the math...</template>
+      </button>
+      <div v-if="vol && ret">
+        <h5>{{ ret.toFixed(0) }}% expected return</h5>
+        <h5>{{ vol.toFixed(0) }}% expected volatility</h5>
       </div>
-      <div v-else>
-        <button
-          v-if="!inProgress"
-          @click="start()"
-          :disabled="inProgress"
-          style="display: inline-block"
-        >
-          Optimize
-        </button>
-        <span v-else>Doing the math...</span>
-      </div>
+      <div id="weights"></div>
     </fieldset>
   </details>
 </template>
@@ -34,24 +29,25 @@ import usePieChart from "../composables/usePieChart";
 import MyWorker from "../modules/markowitz-optimizer?worker";
 
 const inProgress = ref(false);
-const finalvol = ref(0);
-const finalreturn = ref(0);
+const vol = ref(null);
+const ret = ref(null);
 const weights = ref([]);
-const { chart } = usePieChart(assets);
+const { chart } = usePieChart("weights", assets);
 
 const start = () => {
   inProgress.value = true;
-  let prices = assets.value.map((item) => [...item.prices]);
-  console.log("Message to be sent to worker: ", prices);
+  const pricesArray = assets.value.map((item) => [...item.prices]);
+  console.log("Prices to be sent to worker: ", pricesArray);
 
   const worker = new MyWorker();
-  worker.postMessage({ prices: prices });
+  worker.postMessage({ pricesArray: pricesArray });
   worker.onmessage = function (msg) {
     console.log("Message received from worker: ", msg.data);
     weights.value = msg.data.weights;
+    ret.value = msg.data.ret;
+    vol.value = msg.data.vol;
     chart.value.updateSeries(weights.value);
-    finalreturn.value = msg.data.return;
-    finalvol.value = msg.data.vol;
+    document.getElementById("weights").style.display = "block";
     inProgress.value = false;
     worker.terminate();
   };
@@ -60,4 +56,11 @@ const start = () => {
 
 <!-- Add "scoped" attribute to limit CSS to component only -->
 <style scoped>
+#weights {
+  display: none;
+}
+
+button {
+  display: block;
+}
 </style>

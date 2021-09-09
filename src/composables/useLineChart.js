@@ -1,5 +1,5 @@
 import ApexCharts from "apexcharts";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { stopLossLimit } from "../modules/stopLoss";
 
 function xAxisAnnotation(text, date) {
