@@ -67,29 +67,6 @@ function signalResponse(json, asset) {
   saveAsset(asset);
 }
 
-function newsRequest(asset, from, to) {
-  const params = {
-    path: "company-news",
-    symbol: asset.ticker,
-    from: from,
-    to: to
-  };
-  return { provider, params };
-}
-
-function newsResponse(json, asset) {
-  const headlines = json.map((item) => item.headline);
-  const IDs = headlines.map((headline, i) => headlines.indexOf(headline));
-  const uniqueIDs = [...new Set(IDs)];
-  const uniqueNews = uniqueIDs.map((id) => json[id]);
-  uniqueNews.map((item) => {
-    item.datetime = toDate(item.datetime);
-    return item;
-  });
-  asset.dataload.news = uniqueNews;
-  saveAsset(asset);
-}
-
 function toTimestamp(date) {
   date = date ? new Date(date) : new Date();
   return (date.getTime() / 1000) | 0;
@@ -100,14 +77,14 @@ function toDate(date) {
 }
 
 export const finnhubAPI = {
+  companyNews: "company-news",
+  toDate: toDate,
   historyRequest,
   quoteRequest,
   companyRequest,
   signalRequest,
-  newsRequest,
   historyResponse,
   quoteResponse,
   companyResponse,
-  signalResponse,
-  newsResponse
+  signalResponse
 };

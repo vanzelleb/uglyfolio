@@ -65,7 +65,9 @@ const { getNews } = useNewsApi(props.asset);
 const searchNews = async () => {
   shake.value = false;
   searching.value = true;
-  await getNews(from, to);
+  console.log("Search news from: ", from.value);
+  console.log("Search news to: ", to.value);
+  await getNews(from.value, to.value);
   searching.value = false;
   // animate the search button to indicate that no news were found
   if (props.asset.dataload.news.length === 0) shake.value = true;

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "test": "jest",
     "build": "vite build",
     "start:lambda": "netlify-lambda serve ./functions",
     "build:lambda": "netlify-lambda build ./functions"

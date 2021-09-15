@@ -18,9 +18,7 @@ export const saveAsset = (asset) => {
 };
 
 export const removeAsset = (asset) => {
-  const idx = assetList.value.findIndex(
-    (item) => item._ticker === asset._ticker
-  );
+  const idx = assetList.value.findIndex((item) => item._id === asset._id);
   if (idx !== -1) assetList.value.splice(idx, 1);
 };
 
